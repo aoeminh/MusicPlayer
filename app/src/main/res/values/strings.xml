@@ -1,6 +1,11 @@
 <resources>
-    <string name="app_name">MusicPlayer</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="app_name">Music Player</string>
+    <string name="title_audio_book">Audiobooks</string>
+    <string name="title_ringtone_cutter">Ringtone Cutter</string>
+    <string name="title_genres">Genres</string>
+    <string name="title_theme">Theme</string>
+    <string name="title_sleep_timer">Sleep Timer</string>
+    <string name="title_setting">Setting</string>
+    <string name="title_equalizer">Equalizer</string>
+
 </resources>
