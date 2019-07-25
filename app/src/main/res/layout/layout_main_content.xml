@@ -16,20 +16,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:background="@color/transparent"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:title="@string/app_name"
                 />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager.widget.ViewPager
-            android:id="@+id/view_pager_main"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+        <androidx.viewpager.widget.ViewPager
+                android:id="@+id/view_pager_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+               />
 
-    <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tablayout_main"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabMode="fixed"/>
+        <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tablayout_main"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:background="@color/background_tablayout"
+                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+                app:tabTextColor="@color/color_text"
+                android:layout_gravity="bottom"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

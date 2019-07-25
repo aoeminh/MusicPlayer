@@ -7,5 +7,11 @@
     <string name="title_sleep_timer">Sleep Timer</string>
     <string name="title_setting">Setting</string>
     <string name="title_equalizer">Equalizer</string>
+    <string name="title_playlist">Playlist</string>
+    <string name="title_songs">Songs</string>
+    <string name="title_artist">Artist</string>
+    <string name="title_album">Album</string>
+    <string name="title_folder">Folder</string>
+
 
 </resources>
