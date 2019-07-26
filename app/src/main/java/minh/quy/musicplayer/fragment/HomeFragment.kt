@@ -10,8 +10,8 @@ import minh.quy.musicplayer.R
 class HomeFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_home,container,false)
-        return view
+        val view1 = inflater.inflate(R.layout.fragment_home,container,false)
+        return view1
     }
 
 }
