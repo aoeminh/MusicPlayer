@@ -12,13 +12,13 @@ import minh.quy.musicplayer.model.Playlist
 class PlaylistAdapter(var context: Context, var listPlaylist: MutableList<Playlist>? ) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(context).inflate(R.layout.item_list_playlist,parent,false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_list_playlist,parent,false)
         return ViewHolder(view)
 
     }
 
     override fun getItemCount(): Int {
-        listPlaylist?.size
+        return listPlaylist!!.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
