@@ -12,6 +12,16 @@
     <string name="title_artist">Artist</string>
     <string name="title_album">Album</string>
     <string name="title_folder">Folder</string>
+    
+    <!--menu item -->
+    <string name="title_search_item">Search</string>
+    <string name="title_voice_item">Voice</string>
+    <string name="create_new_playlist">Create New Playlist</string>
+    <string name="equalizer">Equalizer</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sufftle">Sufftle</string>
+    <string name="add_to_home_screen">Add to Home screen</string>
+
 
 
 </resources>

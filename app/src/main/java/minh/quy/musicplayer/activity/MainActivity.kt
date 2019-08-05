@@ -44,13 +44,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         when (tabSelected) {
-            0 -> toolbar_main.inflateMenu(R.menu.menu_toolbar_playlist)
-            1 -> toolbar_main.inflateMenu(R.menu.menu_toolbat_songs)
-//            2 -> toolbar_main.inflateMenu(R.menu.menu_toolbar_playlist)
-//            3 -> toolbar_main.inflateMenu(R.menu.menu_toolbar_playlist)
-//            4 -> toolbar_main.inflateMenu(R.menu.menu_toolbar_playlist)
-
-
+            PositionNavigation.PLAYLIST.position -> {
+                toolbar_main.menu.clear()
+                toolbar_main.inflateMenu(R.menu.menu_toolbar_playlist)
+            }
+            PositionNavigation.SONGS.position -> {
+                toolbar_main.menu.clear()
+                toolbar_main.inflateMenu(R.menu.menu_toolbat_songs)
+            }
+            PositionNavigation.ARTIST.position, PositionNavigation.ALBUM.position -> {
+                toolbar_main.menu.clear()
+                toolbar_main.inflateMenu(R.menu.menu_toolbar_artist_and_album)
+            }
+            PositionNavigation.FOLDER.position -> {
+                toolbar_main.menu.clear()
+                toolbar_main.inflateMenu(R.menu.menu_toolbar_folder)
+            }
         }
 
         return super.onPrepareOptionsMenu(menu)
@@ -58,9 +67,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.item_search_toolbar -> Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show()
-            R.id.item_voice_toolbar -> Toast.makeText(this, "Voice", Toast.LENGTH_SHORT).show()
-            R.id.item_voice_toolbar1 ->Toast.makeText(this,"Voice1",Toast.LENGTH_SHORT).show()
+            R.id.item_search_toolbar -> {
+                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show()
+            }
+            R.id.item_voice_toolbar -> {
+                Toast.makeText(this, "Voice", Toast.LENGTH_SHORT).show()
+            }
+            R.id.item_create_playlist -> {
+                Toast.makeText(this, "Create new Playlist", Toast.LENGTH_SHORT).show()
+            }
+            R.id.item_equalizer -> {
+                Toast.makeText(this, "Equalizer", Toast.LENGTH_SHORT).show()
+            }
+            R.id.item_sort -> {
+                Toast.makeText(this, "Sort", Toast.LENGTH_SHORT).show()
+            }
+            R.id.item_sufftle -> {
+                Toast.makeText(this, "Sufftle", Toast.LENGTH_SHORT).show()
+            }
+            R.id.item_add_to_home_screen -> {
+                Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show()
+            }
+
+
         }
         return super.onOptionsItemSelected(item)
     }
@@ -121,7 +150,6 @@ class MainActivity : AppCompatActivity() {
         when (position) {
             PositionNavigation.PLAYLIST.position -> {
                 tabSelected = PositionNavigation.PLAYLIST.position
-                setToolbar()
                 tab.setIcon(R.drawable.playlist_selected_home)
                 tablayout_main.setTabTextColors(
                     Color.parseColor(getResources().getString(R.color.color_text)),
@@ -132,7 +160,6 @@ class MainActivity : AppCompatActivity() {
 
             PositionNavigation.SONGS.position -> {
                 tabSelected = PositionNavigation.SONGS.position
-                toolbar_main.menu.clear()
                 toolbar_main.inflateMenu(R.menu.menu_toolbat_songs)
                 tab.setIcon(R.drawable.songs_selected_home)
                 tablayout_main.setTabTextColors(
@@ -143,7 +170,6 @@ class MainActivity : AppCompatActivity() {
 
             PositionNavigation.ARTIST.position -> {
                 tabSelected = PositionNavigation.ARTIST.position
-                toolbar_main.menu.clear()
                 tab.setIcon(R.drawable.artist_selected_home)
                 tablayout_main.setTabTextColors(
                     Color.parseColor(getResources().getString(R.color.color_text)),
@@ -152,8 +178,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             PositionNavigation.ALBUM.position -> {
-                tabSelected = PositionNavigation.ARTIST.position
-                toolbar_main.menu.clear()
+                tabSelected = PositionNavigation.ALBUM.position
                 tab.setIcon(R.drawable.album_selected_home)
                 tablayout_main.setTabTextColors(
                     Color.parseColor(getResources().getString(R.color.color_text)),
@@ -162,7 +187,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             PositionNavigation.FOLDER.position -> {
-                toolbar_main.menu.clear()
+                tabSelected = PositionNavigation.FOLDER.position
                 tab.setIcon(R.drawable.folder_selected_home)
                 tablayout_main.setTabTextColors(
                     Color.parseColor(getResources().getString(R.color.color_text)),
