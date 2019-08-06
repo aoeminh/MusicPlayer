@@ -11,6 +11,7 @@ import minh.quy.musicplayer.model.Playlist
 
 class PlaylistAdapter(var context: Context, var listPlaylist: MutableList<Playlist>? ) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
+    var currenImage = 1
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_list_playlist,parent,false)
         return ViewHolder(view)
@@ -23,7 +24,37 @@ class PlaylistAdapter(var context: Context, var listPlaylist: MutableList<Playli
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.item.tv_name_item_list_playlist.text = listPlaylist?.get(position)?.name
-        
+        when(currenImage){
+            1 -> {
+                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_1)
+                currenImage++
+            }
+            2 -> {
+                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_2)
+                currenImage++
+            }
+            3 -> {
+                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_3)
+                currenImage++
+            }
+            4 -> {
+                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_4)
+                currenImage++
+            }
+            5 -> {
+                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_5)
+                currenImage++
+            }
+            6 -> {
+                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_6)
+                currenImage++
+            }
+            7 -> {
+                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_6)
+                currenImage =1
+            }
+
+        }
 
     }
 

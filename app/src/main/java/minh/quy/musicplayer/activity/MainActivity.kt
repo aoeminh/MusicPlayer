@@ -3,6 +3,7 @@ package minh.quy.musicplayer.activity
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -13,8 +14,14 @@ import kotlinx.android.synthetic.main.layout_main_content.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.adapter.BottomNavigationAdapter
 import minh.quy.musicplayer.fragment.*
+import minh.quy.musicplayer.model.Playlist
+import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
+    override fun getLayoutId(): Int {
+        return R.layout.activity_main
+    }
+
     enum class PositionNavigation(val position: Int) {
         PLAYLIST(0),
         SONGS(1),
@@ -23,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         FOLDER(4),
     }
 
+
     var tabSelected: Int = 0
 
 
@@ -30,12 +38,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
         setItemIconTintList()
         initViewPager()
         addTablayoutAction()
         setToolbar()
+        var playlist = Playlist("a")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

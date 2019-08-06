@@ -31,11 +31,13 @@
         <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tablayout_main"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_height="wrap_content"
                 android:background="@color/background_tablayout"
                 app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
                 app:tabTextColor="@color/color_text"
-                android:layout_gravity="bottom"/>
+                app:tabMode="fixed"
+                android:layout_gravity="bottom"
+                />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

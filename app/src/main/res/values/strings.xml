@@ -22,6 +22,9 @@
     <string name="sufftle">Sufftle</string>
     <string name="add_to_home_screen">Add to Home screen</string>
 
+    <!-- popup create new playlist -->
+    <string name="text_btn_cancel">Cancel</string>
+    <string name="text_btn_create">Create New</string>
 
 
 </resources>

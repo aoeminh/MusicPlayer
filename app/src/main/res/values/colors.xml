@@ -11,4 +11,8 @@
     <color name="folder_tab_selected">#b7ac08</color>
     <color name="album_tab_selected">#338c60</color>
     <color name="artist_tab_selected">#850eee</color>
+
+    <!-- popup create playlist -->
+    <color name="color_popup_create_playlist">#2196F3</color>
+    <color name="background_popup_create_playlist">#FFFFFF</color>
 </resources>
