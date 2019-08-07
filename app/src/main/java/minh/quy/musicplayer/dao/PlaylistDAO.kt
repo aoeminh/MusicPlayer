@@ -14,7 +14,7 @@ interface PlaylistDAO {
     fun insertPlaylist(playlist: Playlist): Long
 
     @Query("SELECT * FROM playlists")
-    fun getAllPlaylist(): LiveData<List<Playlist>>
+    fun getAllPlaylist(): LiveData<MutableList<Playlist>>
 
     
 }

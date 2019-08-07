@@ -2,22 +2,26 @@ package minh.quy.musicplayer.activity
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_main_content.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.adapter.BottomNavigationAdapter
 import minh.quy.musicplayer.fragment.*
-import minh.quy.musicplayer.model.Playlist
-import java.util.*
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+
     override fun getLayoutId(): Int {
         return R.layout.activity_main
     }
@@ -36,13 +40,13 @@ class MainActivity : BaseActivity() {
 
     var bottomNavigationAdapter: BottomNavigationAdapter? = null
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setItemIconTintList()
         initViewPager()
         addTablayoutAction()
         setToolbar()
-        var playlist = Playlist("a")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -81,7 +85,7 @@ class MainActivity : BaseActivity() {
                 Toast.makeText(this, "Voice", Toast.LENGTH_SHORT).show()
             }
             R.id.item_create_playlist -> {
-                Toast.makeText(this, "Create new Playlist", Toast.LENGTH_SHORT).show()
+                showPopupCreatePlaylist()
             }
             R.id.item_equalizer -> {
                 Toast.makeText(this, "Equalizer", Toast.LENGTH_SHORT).show()
@@ -101,8 +105,35 @@ class MainActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onBackPressed() {
+        if(drawLayout.isDrawerOpen(GravityCompat.START)){
+            drawLayout.closeDrawer(GravityCompat.START)
+        }else{
+            super.onBackPressed()
+        }
+    }
+
+    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+        drawLayout.closeDrawer(GravityCompat.START)
+        return  true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
     fun setToolbar() {
         setSupportActionBar(toolbar_main)
+        toolbar_main.getOverflowIcon()?.setColorFilter(getColor(R.color.color_toolbar), PorterDuff.Mode.SRC_ATOP);
+        toolbar_main.setNavigationIcon(R.drawable.ic_menu_white_24dp)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false);
+
+        val toggle = ActionBarDrawerToggle(
+            this, drawLayout, toolbar_main, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        drawLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        navigation_main.setNavigationItemSelectedListener(this)
     }
 
     fun setItemIconTintList() {

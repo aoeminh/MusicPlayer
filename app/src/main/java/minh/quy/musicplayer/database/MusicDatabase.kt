@@ -17,7 +17,8 @@ abstract class MusicDatabase : RoomDatabase() {
         val DATABASE_NAME = "MusicDatabase"
         fun getInstanceDatabase(context: Context): MusicDatabase {
             if (musicDatabase == null) {
-                musicDatabase = databaseBuilder(context, MusicDatabase::class.java, DATABASE_NAME).build()
+                musicDatabase = databaseBuilder(context, MusicDatabase::class.java, DATABASE_NAME)
+                    .allowMainThreadQueries().build()
                 return musicDatabase!!
             }
             return musicDatabase!!

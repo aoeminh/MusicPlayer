@@ -15,4 +15,7 @@
     <!-- popup create playlist -->
     <color name="color_popup_create_playlist">#2196F3</color>
     <color name="background_popup_create_playlist">#FFFFFF</color>
+
+    <!-- toolbar -->
+    <color name="color_toolbar">#E2E2E2</color>
 </resources>

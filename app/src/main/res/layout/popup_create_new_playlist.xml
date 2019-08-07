@@ -3,8 +3,8 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_200sdp"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="wrap_content"
         android:background="@drawable/background_popup_create_playlist">
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -18,14 +18,15 @@
             android:textColor="@color/color_text"
             android:textStyle="bold"
             android:gravity="center"
-            android:textSize="@dimen/_20ssp"/>
+            android:textSize="@dimen/_15ssp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name:"
-            android:textSize="@dimen/_15ssp"
+            android:text="@string/text_name_playlist"
+            android:textStyle="bold"
+            android:textSize="@dimen/_10ssp"
             android:layout_marginTop="@dimen/_30sdp"
             android:layout_marginStart="@dimen/_10sdp"
             android:textColor="@color/color_popup_create_playlist"
@@ -35,6 +36,7 @@
             />
 
     <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edt_name_playlist"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@+id/tv_name"
@@ -42,13 +44,19 @@
             app:layout_constraintTop_toTopOf="@+id/tv_name"
             app:layout_constraintBottom_toBottomOf="@id/tv_name"
             android:layout_marginEnd="@dimen/_10sdp"
-            android:id="@+id/edt_name_playlist"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:maxLines="2"
+            android:maxLength="100"
+            android:textColor="@color/color_popup_create_playlist"
+            android:backgroundTint="@color/color_popup_create_playlist"
+            android:textSize="@dimen/_10ssp"
+            android:textCursorDrawable="@drawable/cursor_drawable_popup_create_playlist"
             />
 
     <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_cancle_playlist"
-            android:layout_width="@dimen/_100sdp"
-            android:layout_height="@dimen/_30sdp"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_30sdp"
             android:padding="@dimen/_5sdp"
             app:layout_constraintTop_toBottomOf="@+id/edt_name_playlist"
@@ -56,25 +64,31 @@
             android:drawableTint="@color/color_popup_create_playlist"
             android:text="@string/text_btn_cancel"
             android:textAllCaps="false"
-            android:textSize="@dimen/_15ssp"
+            android:textSize="@dimen/_10ssp"
             android:textColor="@color/color_popup_create_playlist"
             android:background="@drawable/backgournd_button_cancel_playlist"
-            android:drawableStart="@android:drawable/ic_menu_close_clear_cancel"/>
+            android:drawableStart="@android:drawable/ic_menu_close_clear_cancel"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_create_playlist"
             android:layout_width="@dimen/_100sdp"
             android:layout_height="wrap_content"
             android:padding="@dimen/_5sdp"
             app:layout_constraintTop_toTopOf="@id/btn_cancle_playlist"
             app:layout_constraintBottom_toBottomOf="@+id/btn_cancle_playlist"
             app:layout_constraintStart_toEndOf="@id/btn_cancle_playlist"
-            app:layout_constraintEnd_toEndOf="@id/edt_name_playlist"
             android:text="@string/text_btn_create"
-            android:textSize="@dimen/_15ssp"
+            android:textSize="@dimen/_10ssp"
             android:textAllCaps="false"
             android:textColor="@color/color_text"
             android:drawableStart="@drawable/ic_done_white"
             android:background="@drawable/background_button_create_new"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.938"
             />
 
 

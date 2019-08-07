@@ -25,6 +25,9 @@
     <!-- popup create new playlist -->
     <string name="text_btn_cancel">Cancel</string>
     <string name="text_btn_create">Create New</string>
+    <string name="text_name_playlist">Name:</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
 
 
 </resources>
