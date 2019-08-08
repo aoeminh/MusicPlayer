@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:paddingStart="@dimen/_10sdp"
             android:layout_weight="1"
-            android:textColor="@color/color_text"
+            style="@style/title_text_item"
             android:gravity="center_vertical"
             />
     <androidx.appcompat.widget.AppCompatImageView

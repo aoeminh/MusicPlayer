@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.popup_create_new_playlist.*
 import kotlinx.android.synthetic.main.popup_create_new_playlist.view.*
 import kotlinx.android.synthetic.main.popup_create_new_playlist.view.edt_name_playlist
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.Utils.RequestPermission
 import minh.quy.musicplayer.database.MusicDatabase
 import minh.quy.musicplayer.model.Playlist
 
@@ -22,7 +23,7 @@ abstract class BaseActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
         musicDatabase = MusicDatabase.getInstanceDatabase(this)
-
+        RequestPermission.requestPermision(this)
     }
     abstract fun getLayoutId(): Int
 

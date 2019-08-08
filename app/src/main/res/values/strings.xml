@@ -30,4 +30,6 @@
     <string name="navigation_drawer_close">Close</string>
 
 
+    <!-- song fragment -->
+    <string name="one_dot">•</string>
 </resources>
