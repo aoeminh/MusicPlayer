@@ -75,7 +75,7 @@
             app:layout_constraintTop_toTopOf="@+id/img_item_song_fragment"
             app:layout_constraintBottom_toBottomOf="@+id/img_item_song_fragment"
             app:layout_constraintEnd_toEndOf="parent"
-            android:src="@drawable/ic_3dots_vertical"
+            android:src="@drawable/ic_items_dots"
             />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
