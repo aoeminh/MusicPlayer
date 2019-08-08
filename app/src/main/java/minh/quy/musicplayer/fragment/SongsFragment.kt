@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_songs.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.SongFragmentAdapter
+import minh.quy.musicplayer.model.Album
 import minh.quy.musicplayer.model.Song
 import java.util.*
 
@@ -23,7 +24,8 @@ class SongsFragment : Fragment() {
     lateinit var mainActivity: MainActivity
     var contextSong: Context? = null
     var songlist: MutableList<Song> = arrayListOf()
-    var adapterSong: SongFragmentAdapter? =null
+    var adapterSong: SongFragmentAdapter? = null
+    var albumList: MutableList<Album> = arrayListOf()
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -36,6 +38,24 @@ class SongsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         songlist = scanDeviceForMp3Files()
+        songlist.forEach { song ->
+            var exist = false
+           albumList.forEach { album ->
+                if (album.albummId == song.albumId) {
+                    Log.d("MinhNQ","exist + " + song.albumId)
+                    exist = true
+                    album.songCount +=1
+                    return
+                }else{
+                    exist =false
+                }
+            }
+            Log.d("MinhNQ"," not exist + " + song.albumId)
+
+            if(!exist)
+            albumList.add(Album(song.albumId,song.albumName,1))
+        }
+        Log.d("MinhNQ"," size + " + albumList.size)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
