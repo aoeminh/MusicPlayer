@@ -18,13 +18,10 @@ import kotlinx.android.synthetic.main.layout_main_content.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.adapter.BottomNavigationAdapter
 import minh.quy.musicplayer.fragment.*
+import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-
-    override fun getLayoutId(): Int {
-        return R.layout.activity_main
-    }
 
     enum class PositionNavigation(val position: Int) {
         PLAYLIST(0),
@@ -36,9 +33,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
 
     var tabSelected: Int = 0
-
-
     var bottomNavigationAdapter: BottomNavigationAdapter? = null
+    var functionToolbarPlaylist: FunctionToolbarPlaylist? = null
+    override fun getLayoutId(): Int {
+        return R.layout.activity_main
+    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +84,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 Toast.makeText(this, "Voice", Toast.LENGTH_SHORT).show()
             }
             R.id.item_create_playlist -> {
-                showPopupCreatePlaylist()
+                functionToolbarPlaylist?.createNewPlaylist()
             }
             R.id.item_equalizer -> {
                 Toast.makeText(this, "Equalizer", Toast.LENGTH_SHORT).show()
@@ -106,16 +105,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onBackPressed() {
-        if(drawLayout.isDrawerOpen(GravityCompat.START)){
+        if (drawLayout.isDrawerOpen(GravityCompat.START)) {
             drawLayout.closeDrawer(GravityCompat.START)
-        }else{
+        } else {
             super.onBackPressed()
         }
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         drawLayout.closeDrawer(GravityCompat.START)
-        return  true
+        return true
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -260,5 +259,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    fun setFunctionPlaylist(functionToolbarPlaylist: FunctionToolbarPlaylist) {
+        this.functionToolbarPlaylist = functionToolbarPlaylist
+    }
 
 }
