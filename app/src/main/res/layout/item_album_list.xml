@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+        android:background="#2196F3">
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_150sdp"
+            android:background="@drawable/bg_view_item_album"
+            android:layout_alignParentBottom="true"
+            />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_150sdp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_item_album_list"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_100sdp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_album_name_item_album"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_20sdp"
+                app:layout_constraintTop_toBottomOf="@+id/img_item_album_list"
+                app:layout_constraintStart_toStartOf="parent"
+                style="@style/title_text_item"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_number_track_item_album"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/tv_album_name_item_album"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/img_option_item_album"
+                style="@style/small_text_item"
+                />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_option_item_album"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/tv_number_track_item_album"
+                app:layout_constraintBottom_toBottomOf="@id/tv_album_name_item_album"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>
