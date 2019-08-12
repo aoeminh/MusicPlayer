@@ -1,7 +1,12 @@
 package minh.quy.musicplayer.activity
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.database.Cursor
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +15,10 @@ import minh.quy.musicplayer.database.MusicDatabase
 import minh.quy.musicplayer.model.Album
 import minh.quy.musicplayer.model.Artist
 import minh.quy.musicplayer.model.Song
+import minh.quy.musicplayer.service.PlayMusicService
+import minh.quy.musicplayer.service.PlayMusicService.MusicBinder
 import java.util.*
+
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -18,6 +26,27 @@ abstract class BaseActivity : AppCompatActivity() {
     var songlist: MutableList<Song> = arrayListOf()
     var albumList: MutableList<Album> = arrayListOf()
     var artistList: MutableList<Artist> = arrayListOf()
+
+    var musicService: PlayMusicService? = null
+    var playIntent: Intent? = null
+    var musicBound = false
+
+    private val musicConnection = object : ServiceConnection {
+
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val binder = service as MusicBinder
+            //get service
+            musicService = binder.service
+            //pass list
+            musicService?.setSongs(songlist)
+            musicBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            musicBound = false
+        }
+    }
+
 
     abstract fun getLayoutId(): Int
 
@@ -29,6 +58,7 @@ abstract class BaseActivity : AppCompatActivity() {
         songlist = scanDeviceForMp3Files()
         getAllAlbum()
         getAllArtist()
+        startService()
     }
 
     private fun scanDeviceForMp3Files(): ArrayList<Song> {
@@ -136,5 +166,14 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         Log.d("MinhNQ", " size + " + albumList.size)
     }
+
+    fun startService() {
+        if (playIntent != null) {
+            playIntent = Intent(this, PlayMusicService::class.java)
+        }
+        bindService(playIntent,musicConnection, Context.BIND_AUTO_CREATE)
+        startService(playIntent)
+    }
+
 
 }
