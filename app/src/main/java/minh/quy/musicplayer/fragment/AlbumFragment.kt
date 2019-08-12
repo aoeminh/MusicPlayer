@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_album.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.AlbumAdapter
+import minh.quy.musicplayer.decoration.ItemAlbumDecoration
 
 class AlbumFragment : Fragment() {
 
@@ -44,6 +45,7 @@ class AlbumFragment : Fragment() {
             alBumAdater = AlbumAdapter(alBumContext)
             alBumAdater?.addAlbumList(mainActivity!!.albumList)
             adapter = alBumAdater
+            addItemDecoration(ItemAlbumDecoration(30))
         }
     }
 }

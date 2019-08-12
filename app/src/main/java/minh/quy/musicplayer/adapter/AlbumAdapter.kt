@@ -1,5 +1,6 @@
 package minh.quy.musicplayer.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import minh.quy.musicplayer.model.Album
 class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
     var albumList: MutableList<Album> = arrayListOf()
     var currenImage = 1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_album_list, parent, false)
         return ViewHolder(view)
@@ -21,9 +23,11 @@ class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.Vie
         return albumList.size
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.item.tv_album_name_item_album.text = albumList[position].albumName
-        holder.item.tv_number_track_item_album.text = albumList[position].songCount.toString()
+        holder.item.tv_number_track_item_album.text = """${albumList[position].songCount} tracks"""
+        holder.item.img_item_album_list.clipToOutline = true
         when (currenImage) {
             1 -> {
                 holder.item.img_item_album_list.setImageResource(R.drawable.album_art_1)

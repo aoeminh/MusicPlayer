@@ -32,4 +32,6 @@
 
     <!-- song fragment -->
     <string name="one_dot">•</string>
+
+    <string name="tracks">tracks</string>
 </resources>
