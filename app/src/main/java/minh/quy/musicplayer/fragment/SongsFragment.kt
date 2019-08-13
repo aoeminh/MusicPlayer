@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_songs.*
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.SongFragmentAdapter
 import minh.quy.musicplayer.model.Album
 import minh.quy.musicplayer.model.Song
 
-class SongsFragment : Fragment() {
+class SongsFragment : Fragment(),OnItemCommonClick {
 
     lateinit var mainActivity: MainActivity
     var contextSong: Context? = null
@@ -48,6 +49,11 @@ class SongsFragment : Fragment() {
         Log.d("MinhNQ", songlist.size.toString())
         initRecyclerview()
 
+    }
+
+    override fun onItemClick(postion: Int) {
+        mainActivity.musicService?.setSongPosition(postion)
+        mainActivity.musicService?.playMusic()
     }
 
     fun initRecyclerview() {

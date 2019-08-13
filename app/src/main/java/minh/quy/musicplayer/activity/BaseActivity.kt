@@ -61,6 +61,11 @@ abstract class BaseActivity : AppCompatActivity() {
         startService()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(musicConnection)
+    }
+
     private fun scanDeviceForMp3Files(): ArrayList<Song> {
         val songs = arrayListOf<Song>()
         val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
@@ -168,7 +173,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun startService() {
-        if (playIntent != null) {
+        if (playIntent == null) {
             playIntent = Intent(this, PlayMusicService::class.java)
         }
         bindService(playIntent,musicConnection, Context.BIND_AUTO_CREATE)
