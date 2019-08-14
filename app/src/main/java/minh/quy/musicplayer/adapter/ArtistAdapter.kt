@@ -5,12 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.futuremind.recyclerviewfastscroll.SectionTitleProvider
 import kotlinx.android.synthetic.main.item_album_list.view.*
 import kotlinx.android.synthetic.main.item_artist_fragment.view.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.model.Artist
 
-class ArtistAdapter(val context: Context) : RecyclerView.Adapter<ArtistAdapter.ViewHolder>() {
+class ArtistAdapter(val context: Context) : RecyclerView.Adapter<ArtistAdapter.ViewHolder>(),SectionTitleProvider {
 
     var artistList: MutableList<Artist> = arrayListOf()
     var currenImage = 1
@@ -61,6 +62,10 @@ class ArtistAdapter(val context: Context) : RecyclerView.Adapter<ArtistAdapter.V
 
 
         }
+    }
+
+    override fun getSectionTitle(position: Int): String {
+        return artistList[position].artistName.substring(0,1)
     }
 
     fun addArtistList(artists: MutableList<Artist>){

@@ -19,4 +19,6 @@
 
     <!-- toolbar -->
     <color name="color_toolbar">#E2E2E2</color>
+    <color name="fastscroll__bubbleColor">#2198F3</color>
+    <color name="fastscroll__handleColor">#D6D5D5</color>
 </resources>

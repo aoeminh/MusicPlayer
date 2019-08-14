@@ -6,11 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.futuremind.recyclerviewfastscroll.SectionTitleProvider
 import kotlinx.android.synthetic.main.item_album_list.view.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.model.Album
 
-class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
+class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>(), SectionTitleProvider {
     var albumList: MutableList<Album> = arrayListOf()
     var currenImage = 1
 
@@ -60,6 +61,10 @@ class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.Vie
 
 
         }
+    }
+
+    override fun getSectionTitle(position: Int): String {
+        return albumList[position].albumName.substring(0,1)
     }
 
     fun addAlbumList(albums: MutableList<Album>){
