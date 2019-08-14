@@ -61,6 +61,7 @@ class SongsFragment : Fragment(),OnItemCommonClick {
             layoutManager = LinearLayoutManager(contextSong, RecyclerView.VERTICAL, false)
             adapterSong = SongFragmentAdapter(contextSong!!)
             adapterSong?.setlistSong(songlist)
+            adapterSong?.setOnItemClick(this@SongsFragment)
             adapter = adapterSong
         }
     }

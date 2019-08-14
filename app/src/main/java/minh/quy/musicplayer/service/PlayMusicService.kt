@@ -14,7 +14,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
 
     var binder: Binder = MusicBinder()
     var mediaPlayer: MediaPlayer? = null
-    var songList: MutableList<Song>? = null
+    var songList: MutableList<Song> = arrayListOf()
     var songPos: Int = 0
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -61,8 +61,8 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     fun setSongs(songs: MutableList<Song>) {
-        this.songList?.clear()
-        this.songList?.addAll(songs)
+        this.songList.clear()
+        this.songList.addAll(songs)
     }
 
     fun setSongPosition(position: Int){
