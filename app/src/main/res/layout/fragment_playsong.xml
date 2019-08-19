@@ -4,8 +4,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/_10sdp">
 
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_playsong_fragment"
@@ -13,27 +14,168 @@
             android:layout_height="?actionBarSize"
             app:layout_constraintTop_toTopOf="parent"/>
 
-    <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_ava_song"
+    <RelativeLayout
+            android:id="@+id/rl_image_song"
             android:layout_width="@dimen/_150sdp"
             android:layout_height="@dimen/_150sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_playsong_fragment"
-            android:layout_marginTop="64dp"/>
+            android:layout_marginTop="64dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_ava_song"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+    </RelativeLayout>
+
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/img_ava_song"
+            android:layout_height="@dimen/_40sdp"
+            app:layout_constraintTop_toBottomOf="@id/rl_image_song"
             android:layout_marginTop="48dp"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal"
+            android:id="@+id/linearLayout">
+
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_add_to_playlist"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_add_to_playlist_white"/>
+                android:src="@drawable/ic_add_to_playlist_white"
+                app:srcCompat="@drawable/ic_add_to_playlist_white"
+                android:layout_gravity="center"/>
+
+        <LinearLayout
+                android:id="@+id/ln_song_info"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0sp"
+                    android:layout_weight="1"
+                    style="@style/title_text_item"
+                    android:gravity="center"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/small_text_item"
+                    android:gravity="center"/>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_song_queue"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_play_queue_white"
+                app:srcCompat="@drawable/ic_add_to_playlist_white"
+                android:layout_gravity="center"
+                />
     </LinearLayout>
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_20sdp"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_realtime_song"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="match_parent"/>
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_total_time_song"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_play_repeat_white"
+                android:layout_weight="1"/>
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_play_repeat_white"
+                android:layout_weight="1"/>
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_play_repeat_white"
+                android:layout_weight="1"/>
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_play_repeat_white"
+                android:layout_weight="1"/>
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_play_repeat_white"
+                android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_repeat"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_play_repeat_white"
+        app:layout_constraintEnd_toStartOf="@+id/img_previous"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_previous"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_play_repeat_white"
+            app:layout_constraintEnd_toStartOf="@+id/textView3"
+            app:layout_constraintStart_toEndOf="@+id/img_repeat"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="TextView" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_play"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_play_repeat_white"
+            app:layout_constraintEnd_toEndOf="textView3"
+            app:layout_constraintStart_toEndOf="@+id/img_previous"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="TextView" />
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/textView3"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_play_repeat_white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img_play"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="TextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
