@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
@@ -35,6 +36,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     var tabSelected: Int = 0
     var bottomNavigationAdapter: BottomNavigationAdapter? = null
     var functionToolbarPlaylist: FunctionToolbarPlaylist? = null
+    var fragmentManager: FragmentManager? =null
+
     override fun getLayoutId(): Int {
         return R.layout.activity_main
     }
@@ -46,6 +49,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         initViewPager()
         addTablayoutAction()
         setToolbar()
+        fragmentManager = supportFragmentManager
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_list_playlist.view.*
+import minh.quy.musicplayer.Constant.Companion.MAX_DEFAULT_COUNT
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.model.Playlist
 
 class PlaylistAdapter(var context: Context) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
@@ -26,39 +28,16 @@ class PlaylistAdapter(var context: Context) : RecyclerView.Adapter<PlaylistAdapt
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.item.tv_name_item_list_playlist.text = listPlaylist.get(position).name
         Log.d("MinhNQ", "image " + currenImage)
-
-        when (currenImage) {
-            1 -> {
-                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_1)
-                currenImage++
-            }
-            2 -> {
-                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_2)
-                currenImage++
-            }
-            3 -> {
-                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_3)
-                currenImage++
-            }
-            4 -> {
-                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_4)
-                currenImage++
-            }
-            5 -> {
-                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_5)
-                currenImage++
-            }
-            6 -> {
-                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_6)
-                currenImage++
-            }
-            7 -> {
-                holder.item.ava_item_list_playlist.setImageResource(R.drawable.album_art_7)
-                currenImage = 1
-            }
+        if (position < MAX_DEFAULT_COUNT) {
+            currenImage = position + 1
+        } else {
+            currenImage = Utils.getDefaultImage(position)
         }
-
-
+        holder.item.ava_item_list_playlist.setImageResource(
+            Utils.getDrawableIdDefaultImage(
+                currenImage
+            )
+        )
     }
 
     fun addPlaylists(playlists: MutableList<Playlist>) {

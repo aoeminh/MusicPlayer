@@ -179,6 +179,4 @@ abstract class BaseActivity : AppCompatActivity() {
         bindService(playIntent,musicConnection, Context.BIND_AUTO_CREATE)
         startService(playIntent)
     }
-
-
 }

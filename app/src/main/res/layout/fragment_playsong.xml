@@ -2,25 +2,48 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/_10sdp">
+        android:padding="@dimen/_10sdp"
+        android:background="#000">
 
-    <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_playsong_fragment"
+    <RelativeLayout
+            android:id="@+id/layout_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_back_play_song_fragment"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:src="@drawable/ic__arrow_down_white_24dp"
+                />
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_equalizer_play_song_fragment"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_toLeftOf="@+id/img_option_play_song_fragment"
+                android:src="@drawable/ic_equalizer_white_24dp"/>
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_option_play_song_fragment"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/ic_more_vert_white_24dp"
+                />
+    </RelativeLayout>
 
     <RelativeLayout
             android:id="@+id/rl_image_song"
-            android:layout_width="@dimen/_150sdp"
-            android:layout_height="@dimen/_150sdp"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_playsong_fragment"
+            app:layout_constraintTop_toBottomOf="@+id/layout_toolbar"
             android:layout_marginTop="64dp">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -30,20 +53,20 @@
                 />
     </RelativeLayout>
 
-
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="@dimen/_60sdp"
             app:layout_constraintTop_toBottomOf="@id/rl_image_song"
             android:layout_marginTop="48dp"
             app:layout_constraintStart_toStartOf="parent"
             android:orientation="horizontal"
-            android:id="@+id/linearLayout">
+            android:id="@+id/linearLayout"
+            android:gravity="center">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_add_to_playlist"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
                 android:src="@drawable/ic_add_to_playlist_white"
                 app:srcCompat="@drawable/ic_add_to_playlist_white"
                 android:layout_gravity="center"/>
@@ -60,37 +83,41 @@
                     android:layout_height="0sp"
                     android:layout_weight="1"
                     style="@style/title_text_item"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:text="aaaaaaaaaaaaaaaaaaaa"
+                    />
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/small_text_item"
+                    android:text="aaaaaaaa"
                     android:gravity="center"/>
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_song_queue"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
                 android:src="@drawable/ic_play_queue_white"
                 app:srcCompat="@drawable/ic_add_to_playlist_white"
-                android:layout_gravity="center"
                 />
     </LinearLayout>
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_20sdp"
+            android:layout_height="@dimen/_40sdp"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="@dimen/_20sdp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_realtime_song"
                 android:layout_width="@dimen/_40sdp"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                style="@style/title_text_item"/>
 
         <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/seekbar"
@@ -101,81 +128,81 @@
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_total_time_song"
                 android:layout_width="@dimen/_40sdp"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                style="@style/title_text_item"/>
     </LinearLayout>
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/_20sdp"
             >
-        <androidx.appcompat.widget.AppCompatImageView
+        <LinearLayout
+                android:id="@+id/layout_repeat"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_play_repeat_white"
-                android:layout_weight="1"/>
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_play_repeat_white"
-                android:layout_weight="1"/>
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_play_repeat_white"
-                android:layout_weight="1"/>
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_play_repeat_white"
-                android:layout_weight="1"/>
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_play_repeat_white"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:gravity="center">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    app:srcCompat="@drawable/ic_play_repeat_white" />
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/layout_previous"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    app:srcCompat="@drawable/ic_play_previous_white"
+                    />
+        </LinearLayout>
+        <LinearLayout
+                android:id="@+id/layout_play"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_50sdp"
+                    app:srcCompat="@drawable/ic_play_play_white"
+                    />
+        </LinearLayout>
+        <LinearLayout
+                android:id="@+id/layout_next"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    app:srcCompat="@drawable/ic_play_next_white"
+                    />
+        </LinearLayout>
+        <LinearLayout
+                android:id="@+id/layout_shuffle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    app:srcCompat="@drawable/ic_play_shuffle_white"
+                    />
+        </LinearLayout>
 
     </LinearLayout>
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_repeat"
-        android:layout_width="@dimen/_40sdp"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_play_repeat_white"
-        app:layout_constraintEnd_toStartOf="@+id/img_previous"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintTop_toTopOf="parent"
-         />
 
-    <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_previous"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_play_repeat_white"
-            app:layout_constraintEnd_toStartOf="@+id/textView3"
-            app:layout_constraintStart_toEndOf="@+id/img_repeat"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="TextView" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_play"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_play_repeat_white"
-            app:layout_constraintEnd_toEndOf="textView3"
-            app:layout_constraintStart_toEndOf="@+id/img_previous"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="TextView" />
-    <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/textView3"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_play_repeat_white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/img_play"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="TextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

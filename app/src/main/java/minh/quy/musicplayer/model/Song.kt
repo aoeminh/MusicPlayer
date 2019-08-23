@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import org.jetbrains.annotations.NotNull
 
-@Entity(tableName = "songs")
 class Song @JvmOverloads constructor(
 
     @ColumnInfo(name = "song_name")
@@ -46,4 +45,5 @@ class Song @JvmOverloads constructor(
 ) {
 
     var isSelected: Boolean? = null
+    var avatar: String? = null
 }

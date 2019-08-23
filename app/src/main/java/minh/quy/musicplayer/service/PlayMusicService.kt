@@ -37,11 +37,11 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return false
     }
 
     override fun onCompletion(p0: MediaPlayer?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
@@ -65,14 +65,14 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
         this.songList.addAll(songs)
     }
 
-    fun setSongPosition(position: Int){
+    fun setSongPosition(position: Int) {
         songPos = position
     }
 
-    fun playMusic(){
+    fun playMusic() {
         mediaPlayer?.reset()
         val songUri = Uri.parse(songList?.get(songPos)?.data)
-        mediaPlayer?.setDataSource(applicationContext,songUri)
+        mediaPlayer?.setDataSource(applicationContext, songUri)
         mediaPlayer?.prepareAsync()
 
     }

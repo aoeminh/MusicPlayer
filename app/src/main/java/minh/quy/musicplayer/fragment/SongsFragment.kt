@@ -30,18 +30,23 @@ class SongsFragment : Fragment(), OnItemCommonClick {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         contextSong = context
-        if (activity is MainActivity) {
-            mainActivity = activity as MainActivity
-        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (activity is MainActivity) {
+            mainActivity = activity as MainActivity
+        }
         songlist = mainActivity.songlist
         albumList = mainActivity.albumList
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_songs, container, false)
 
         return view
@@ -57,6 +62,11 @@ class SongsFragment : Fragment(), OnItemCommonClick {
     override fun onItemClick(postion: Int) {
         mainActivity.musicService?.setSongPosition(postion)
         mainActivity.musicService?.playMusic()
+        val fragment = PlaySongFragment.newInstance(postion)
+        val transaction = mainActivity.fragmentManager?.beginTransaction()
+        transaction?.add(fragment,null)
+        transaction?.commit()
+
     }
 
     fun initRecyclerview() {

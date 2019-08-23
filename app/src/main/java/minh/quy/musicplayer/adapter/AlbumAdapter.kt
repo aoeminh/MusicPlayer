@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider
 import kotlinx.android.synthetic.main.item_album_list.view.*
+import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.model.Album
 
-class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>(), SectionTitleProvider {
+class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>(),
+    SectionTitleProvider {
     var albumList: MutableList<Album> = arrayListOf()
     var currenImage = 1
 
@@ -29,48 +32,27 @@ class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.Vie
         holder.item.tv_album_name_item_album.text = albumList[position].albumName
         holder.item.tv_number_track_item_album.text = """${albumList[position].songCount} tracks"""
         holder.item.img_item_album_list.clipToOutline = true
-        when (currenImage) {
-            1 -> {
-                holder.item.img_item_album_list.setImageResource(R.drawable.album_art_1)
-                currenImage++
-            }
-            2 -> {
-                holder.item.img_item_album_list.setImageResource(R.drawable.album_art_2)
-                currenImage++
-            }
-            3 -> {
-                holder.item.img_item_album_list.setImageResource(R.drawable.album_art_3)
-                currenImage++
-            }
-            4 -> {
-                holder.item.img_item_album_list.setImageResource(R.drawable.album_art_4)
-                currenImage++
-            }
-            5 -> {
-                holder.item.img_item_album_list.setImageResource(R.drawable.album_art_5)
-                currenImage++
-            }
-            6 -> {
-                holder.item.img_item_album_list.setImageResource(R.drawable.album_art_6)
-                currenImage++
-            }
-            7 -> {
-                holder.item.img_item_album_list.setImageResource(R.drawable.album_art_7)
-                currenImage = 1
-            }
-
-
+        if (position < Constant.MAX_DEFAULT_COUNT) {
+            currenImage = position + 1
+        } else {
+            currenImage = Utils.getDefaultImage(position)
         }
+        holder.item.img_item_album_list.setImageResource(
+            Utils.getDrawableIdDefaultImage(
+                currenImage
+            )
+        )
     }
 
     override fun getSectionTitle(position: Int): String {
-        return albumList[position].albumName.substring(0,1)
+        return albumList[position].albumName.substring(0, 1)
     }
 
-    fun addAlbumList(albums: MutableList<Album>){
+    fun addAlbumList(albums: MutableList<Album>) {
         this.albumList.clear()
         this.albumList.addAll(albums)
         notifyDataSetChanged()
     }
+
     inner class ViewHolder(val item: View) : RecyclerView.ViewHolder(item)
 }
