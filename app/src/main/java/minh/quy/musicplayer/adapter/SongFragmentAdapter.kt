@@ -39,7 +39,7 @@ class SongFragmentAdapter(var context: Context) :
         if (position < MAX_DEFAULT_COUNT) {
             currenImage = position + 1
         } else {
-            currenImage = Utils.getDefaultImage(position)
+            currenImage = Utils.getPositionDefaultImage(position)
         }
         holder.item.img_item_song_fragment.setImageResource(
             Utils.getDrawableIdDefaultImage(

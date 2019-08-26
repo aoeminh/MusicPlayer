@@ -15,7 +15,9 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_main_content.*
+import layout.HomeFragment
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.adapter.BottomNavigationAdapter
 import minh.quy.musicplayer.fragment.*
@@ -45,79 +47,84 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setItemIconTintList()
-        initViewPager()
-        addTablayoutAction()
-        setToolbar()
+//        setItemIconTintList()
+//        initViewPager()
+//        addTablayoutAction()
+//        setToolbar()
         fragmentManager = supportFragmentManager
+        val transaction = fragmentManager?.beginTransaction()
+        val homeFragment = HomeFragment()
+        transaction?.add(R.id.frame_main,homeFragment,null)
+        transaction?.commit()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        when (tabSelected) {
-            PositionNavigation.PLAYLIST.position -> {
-                toolbar_main.menu.clear()
-                toolbar_main.inflateMenu(R.menu.menu_toolbar_playlist)
-            }
-            PositionNavigation.SONGS.position -> {
-                toolbar_main.menu.clear()
-                toolbar_main.inflateMenu(R.menu.menu_toolbat_songs)
-            }
-            PositionNavigation.ARTIST.position, PositionNavigation.ALBUM.position -> {
-                toolbar_main.menu.clear()
-                toolbar_main.inflateMenu(R.menu.menu_toolbar_artist_and_album)
-            }
-            PositionNavigation.FOLDER.position -> {
-                toolbar_main.menu.clear()
-                toolbar_main.inflateMenu(R.menu.menu_toolbar_folder)
-            }
-        }
-
-        return super.onPrepareOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.item_search_toolbar -> {
-                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show()
-            }
-            R.id.item_voice_toolbar -> {
-                Toast.makeText(this, "Voice", Toast.LENGTH_SHORT).show()
-            }
-            R.id.item_create_playlist -> {
-                functionToolbarPlaylist?.createNewPlaylist()
-            }
-            R.id.item_equalizer -> {
-                Toast.makeText(this, "Equalizer", Toast.LENGTH_SHORT).show()
-            }
-            R.id.item_sort -> {
-                Toast.makeText(this, "Sort", Toast.LENGTH_SHORT).show()
-            }
-            R.id.item_sufftle -> {
-                Toast.makeText(this, "Sufftle", Toast.LENGTH_SHORT).show()
-            }
-            R.id.item_add_to_home_screen -> {
-                Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show()
-            }
-
-
-        }
-        return super.onOptionsItemSelected(item)
-    }
+//    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+//        when (tabSelected) {
+//            PositionNavigation.PLAYLIST.position -> {
+//                toolbar_main.menu.clear()
+//                toolbar_main.inflateMenu(R.menu.menu_toolbar_playlist)
+//            }
+//            PositionNavigation.SONGS.position -> {
+//                toolbar_main.menu.clear()
+//                toolbar_main.inflateMenu(R.menu.menu_toolbat_songs)
+//            }
+//            PositionNavigation.ARTIST.position, PositionNavigation.ALBUM.position -> {
+//                toolbar_main.menu.clear()
+//                toolbar_main.inflateMenu(R.menu.menu_toolbar_artist_and_album)
+//            }
+//            PositionNavigation.FOLDER.position -> {
+//                toolbar_main.menu.clear()
+//                toolbar_main.inflateMenu(R.menu.menu_toolbar_folder)
+//            }
+//        }
+//
+//        return super.onPrepareOptionsMenu(menu)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.id.item_search_toolbar -> {
+//                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show()
+//            }
+//            R.id.item_voice_toolbar -> {
+//                Toast.makeText(this, "Voice", Toast.LENGTH_SHORT).show()
+//            }
+//            R.id.item_create_playlist -> {
+//                functionToolbarPlaylist?.createNewPlaylist()
+//            }
+//            R.id.item_equalizer -> {
+//                Toast.makeText(this, "Equalizer", Toast.LENGTH_SHORT).show()
+//            }
+//            R.id.item_sort -> {
+//                Toast.makeText(this, "Sort", Toast.LENGTH_SHORT).show()
+//            }
+//            R.id.item_sufftle -> {
+//                Toast.makeText(this, "Sufftle", Toast.LENGTH_SHORT).show()
+//            }
+//            R.id.item_add_to_home_screen -> {
+//                Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show()
+//            }
+//
+//
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
     override fun onBackPressed() {
-        if (drawLayout.isDrawerOpen(GravityCompat.START)) {
-            drawLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
+//        if (drawLayout.isDrawerOpen(GravityCompat.START)) {
+//            drawLayout.closeDrawer(GravityCompat.START)
+//        } else {
+//            super.onBackPressed()
+//        }
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
-        drawLayout.closeDrawer(GravityCompat.START)
+//        drawLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -130,11 +137,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false);
 
-        val toggle = ActionBarDrawerToggle(
-            this, drawLayout, toolbar_main, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-        drawLayout.addDrawerListener(toggle)
-        toggle.syncState()
+//        val toggle = ActionBarDrawerToggle(
+//            this, drawLayout, toolbar_main, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+//        )
+//        drawLayout.addDrawerListener(toggle)
+//        toggle.syncState()
 
         navigation_main.setNavigationItemSelectedListener(this)
     }

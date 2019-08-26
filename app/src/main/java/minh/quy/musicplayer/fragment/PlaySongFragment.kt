@@ -15,9 +15,9 @@ class PlaySongFragment : Fragment() {
 
     companion object {
         val EXTRA_POSITION = "extra.position"
-        fun newInstance(positin: Int): Fragment {
+        fun newInstance(positin: Int): PlaySongFragment {
             val bundle = Bundle()
-            val fragment = Fragment()
+            val fragment = PlaySongFragment()
             bundle.putInt(EXTRA_POSITION, positin)
             fragment.arguments = bundle
             return fragment
@@ -55,7 +55,8 @@ class PlaySongFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        img_ava_song.setImageResource(Utils.getDrawableIdDefaultImage(songPosition))
+        val defaultPositionImage  = Utils.getPositionDefaultImage(songPosition)
+        img_ava_song.setImageResource(Utils.getDrawableIdDefaultImage(defaultPositionImage))
 
     }
 }

@@ -35,7 +35,7 @@ class ArtistAdapter(val context: Context) : RecyclerView.Adapter<ArtistAdapter.V
         if (position < Constant.MAX_DEFAULT_COUNT) {
             currenImage = position + 1
         } else {
-            currenImage = Utils.getDefaultImage(position)
+            currenImage = Utils.getPositionDefaultImage(position)
         }
         holder.item.img_item_artist_fragment.setImageResource(
             Utils.getDrawableIdDefaultImage(

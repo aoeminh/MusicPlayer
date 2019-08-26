@@ -54,7 +54,7 @@ object Utils {
     }
 
     @JvmStatic
-    fun getDefaultImage(position: Int): Int {
+    fun getPositionDefaultImage(position: Int): Int {
         if (position % 7 == 0) {
             return 1
         } else {

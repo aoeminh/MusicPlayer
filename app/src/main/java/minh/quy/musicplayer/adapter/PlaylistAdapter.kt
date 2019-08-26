@@ -31,7 +31,7 @@ class PlaylistAdapter(var context: Context) : RecyclerView.Adapter<PlaylistAdapt
         if (position < MAX_DEFAULT_COUNT) {
             currenImage = position + 1
         } else {
-            currenImage = Utils.getDefaultImage(position)
+            currenImage = Utils.getPositionDefaultImage(position)
         }
         holder.item.ava_item_list_playlist.setImageResource(
             Utils.getDrawableIdDefaultImage(

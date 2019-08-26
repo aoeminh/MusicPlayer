@@ -35,7 +35,7 @@ class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.Vie
         if (position < Constant.MAX_DEFAULT_COUNT) {
             currenImage = position + 1
         } else {
-            currenImage = Utils.getDefaultImage(position)
+            currenImage = Utils.getPositionDefaultImage(position)
         }
         holder.item.img_item_album_list.setImageResource(
             Utils.getDrawableIdDefaultImage(
