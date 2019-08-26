@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_playlist.*
 import kotlinx.android.synthetic.main.popup_create_new_playlist.view.*
+import layout.HomeFragment
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.PlaylistAdapter
@@ -31,6 +32,8 @@ class PlaylistFragment : Fragment(), IPlaylistView, FunctionToolbarPlaylist {
     var playlists: MutableList<Playlist> = arrayListOf()
     var presenter: PlaylistPresenter? = null
     var contextPlaylist: Context? = null
+    var homeFragment: HomeFragment? = null
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (activity is MainActivity) {
@@ -41,19 +44,27 @@ class PlaylistFragment : Fragment(), IPlaylistView, FunctionToolbarPlaylist {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (parentFragment is HomeFragment) {
+            homeFragment = parentFragment as HomeFragment
+        }
+        homeFragment?.setFunctionPlaylist(this)
         presenter = PlaylistPresenter(this)
         presenter?.getAllPlaylist(mainActivity.musicDatabase)
-        mainActivity.setFunctionPlaylist(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_playlist, container, false)
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+
 
     }
 
@@ -67,10 +78,11 @@ class PlaylistFragment : Fragment(), IPlaylistView, FunctionToolbarPlaylist {
     }
 
     override fun onResponseInserPlaylist(isSuccess: Boolean) {
-        if(isSuccess){
-            Toast.makeText(contextPlaylist,"Creat new Playlist success",Toast.LENGTH_SHORT).show()
-        }else{
-            Toast.makeText(contextPlaylist,"Creat fail, please try again",Toast.LENGTH_SHORT).show()
+        if (isSuccess) {
+            Toast.makeText(contextPlaylist, "Creat new Playlist success", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(contextPlaylist, "Creat fail, please try again", Toast.LENGTH_SHORT)
+                .show()
         }
 
     }

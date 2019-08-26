@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fast_scroller.*
 import kotlinx.android.synthetic.main.fragment_songs.*
+import layout.HomeFragment
 import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.SongFragmentAdapter
+import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import minh.quy.musicplayer.model.Album
 import minh.quy.musicplayer.model.Song
 
@@ -27,6 +29,8 @@ class SongsFragment : Fragment(), OnItemCommonClick {
     var songlist: MutableList<Song> = arrayListOf()
     var adapterSong: SongFragmentAdapter? = null
     var albumList: MutableList<Album> = arrayListOf()
+    var homeFragment: HomeFragment? = null
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         contextSong = context
@@ -37,6 +41,10 @@ class SongsFragment : Fragment(), OnItemCommonClick {
         super.onCreate(savedInstanceState)
         if (activity is MainActivity) {
             mainActivity = activity as MainActivity
+        }
+
+        if (parentFragment is HomeFragment){
+            homeFragment = parentFragment as HomeFragment
         }
         songlist = mainActivity.songlist
         albumList = mainActivity.albumList
@@ -64,7 +72,8 @@ class SongsFragment : Fragment(), OnItemCommonClick {
         mainActivity.musicService?.playMusic()
         val fragment = PlaySongFragment.newInstance(postion)
         val transaction = mainActivity.fragmentManager?.beginTransaction()
-        transaction?.add(fragment,null)
+        transaction?.add(R.id.frame_main,fragment,null)
+        transaction?.addToBackStack(null)
         transaction?.commit()
 
     }

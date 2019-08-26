@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
+import android.util.Log
 import minh.quy.musicplayer.model.Song
 
 class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -30,10 +31,12 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return super.onStartCommand(intent, flags, startId)
+
     }
 
     override fun onPrepared(p0: MediaPlayer?) {
         mediaPlayer?.start()
+
     }
 
     override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
@@ -41,13 +44,21 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     override fun onCompletion(p0: MediaPlayer?) {
-
+        mediaPlayer?.reset()
+        mediaPlayer?.stop()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         mediaPlayer?.stop()
         mediaPlayer?.release()
         return super.onUnbind(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopSelf()
+
+        Log.d("minhnh","destroy")
     }
 
     fun initMediaPlayer() {
@@ -70,6 +81,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     fun playMusic() {
+        mediaPlayer?.stop()
         mediaPlayer?.reset()
         val songUri = Uri.parse(songList?.get(songPos)?.data)
         mediaPlayer?.setDataSource(applicationContext, songUri)

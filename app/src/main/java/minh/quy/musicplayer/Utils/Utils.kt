@@ -1,5 +1,10 @@
 package minh.quy.musicplayer.Utils
 
+import android.content.Context
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import jp.wasabeef.glide.transformations.BlurTransformation
 import minh.quy.musicplayer.R
 
 object Utils {
@@ -89,5 +94,23 @@ object Utils {
             }
         }
         return drawableId
+    }
+
+    @JvmStatic
+    fun loadBlurImageBanner(
+        context: Context,
+        width: Int,
+        height: Int,
+        url: Int,
+        view: ImageView
+    ) {
+        if (url == null) {
+            Glide.with(context).clear(view)
+        } else
+            Glide.with(context)
+                .asDrawable()
+                .load(url)
+                .apply(RequestOptions.bitmapTransform(BlurTransformation(50, 3)))
+                .into(view)
     }
 }

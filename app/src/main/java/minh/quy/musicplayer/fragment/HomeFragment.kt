@@ -42,21 +42,18 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     var functionToolbarPlaylist: FunctionToolbarPlaylist? = null
     var mainActivity: MainActivity? = null
     var mContext: Context? = null
-    var homeFragment: HomeFragment? = null
 
     override fun onAttachFragment(childFragment: Fragment?) {
         super.onAttachFragment(childFragment)
         mContext = context
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(activity is MainActivity){
+        if (activity is MainActivity) {
             mainActivity = activity as MainActivity
         }
 
-        if (parentFragment is HomeFragment){
-            homeFragment = parentFragment as HomeFragment
-        }
 
     }
 
@@ -173,7 +170,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     }
 
     fun initViewPager() {
-        bottomNavigationAdapter = BottomNavigationAdapter(activity!!.supportFragmentManager)
+        bottomNavigationAdapter = BottomNavigationAdapter(childFragmentManager)
         bottomNavigationAdapter?.addFragment(
             PlaylistFragment(),
             resources.getString(minh.quy.musicplayer.R.string.title_playlist)
