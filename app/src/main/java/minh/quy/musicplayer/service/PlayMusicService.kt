@@ -36,16 +36,19 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
 
     override fun onPrepared(p0: MediaPlayer?) {
         mediaPlayer?.start()
+        Log.d("minhnh", "onPrepared")
 
     }
 
     override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
+        Log.d("minhnh", "onError")
         return false
     }
 
     override fun onCompletion(p0: MediaPlayer?) {
-        mediaPlayer?.reset()
+        Log.d("minhnh", "onCompletion")
         mediaPlayer?.stop()
+        mediaPlayer?.reset()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
@@ -57,8 +60,6 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
     override fun onDestroy() {
         super.onDestroy()
         stopSelf()
-
-        Log.d("minhnh","destroy")
     }
 
     fun initMediaPlayer() {
@@ -81,9 +82,8 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     fun playMusic() {
-        mediaPlayer?.stop()
         mediaPlayer?.reset()
-        val songUri = Uri.parse(songList?.get(songPos)?.data)
+        val songUri = Uri.parse(songList.get(songPos).data)
         mediaPlayer?.setDataSource(applicationContext, songUri)
         mediaPlayer?.prepareAsync()
 

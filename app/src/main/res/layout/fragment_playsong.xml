@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#000"
-        android:orientation="vertical">
+        android:orientation="vertical"
+       >
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -18,7 +19,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
                 tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp"/>
+                tools:layout_editor_absoluteY="0dp" />
 
     </RelativeLayout>
 
@@ -74,9 +75,9 @@
     <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_60sdp"
+            android:layout_height="@dimen/_50sdp"
             android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="@dimen/_30sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:gravity="center"
             android:orientation="horizontal"
@@ -105,11 +106,21 @@
                     android:layout_height="0sp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="aaaaaaaaaaaaaaaaaaaa" />
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:text="aaaaaaaaaaaaaaaaaaaa"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_10sdp"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_artist_name_play_song"
                     style="@style/small_text_item"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_10sdp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -139,7 +150,9 @@
                 android:id="@+id/tv_realtime_song"
                 style="@style/title_text_item"
                 android:layout_width="@dimen/_40sdp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="00:00"/>
 
         <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/seekbar"
@@ -151,7 +164,9 @@
                 android:id="@+id/tv_total_time_song"
                 style="@style/title_text_item"
                 android:layout_width="@dimen/_40sdp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="00:00"/>
     </LinearLayout>
 
     <LinearLayout
@@ -159,6 +174,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_15sdp"
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -170,8 +186,9 @@
                 android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
+                    android:id="@+id/btn_repeat_play_song"
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
                     app:srcCompat="@drawable/ic_play_repeat_white" />
         </LinearLayout>
 
@@ -183,8 +200,9 @@
                 android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
+                    android:id="@+id/btn_previous_play_song"
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
                     app:srcCompat="@drawable/ic_play_previous_white" />
         </LinearLayout>
 
@@ -196,8 +214,9 @@
                 android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_50sdp"
-                    android:layout_height="@dimen/_50sdp"
+                    android:id="@+id/btn_play_and_pause_play_song"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
                     app:srcCompat="@drawable/ic_play_play_white" />
         </LinearLayout>
 
@@ -209,8 +228,9 @@
                 android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
+                    android:id="@+id/btn_next_play_song"
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
                     app:srcCompat="@drawable/ic_play_next_white" />
         </LinearLayout>
 
@@ -222,8 +242,9 @@
                 android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
+                    android:id="@+id/btn_suffle_play_song"
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
                     app:srcCompat="@drawable/ic_play_shuffle_white" />
         </LinearLayout>
 
