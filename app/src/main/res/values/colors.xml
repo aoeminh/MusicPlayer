@@ -23,4 +23,6 @@
     <color name="fastscroll__handleColor">#D6D5D5</color>
 
     <color name="scrim">#42000000</color>
+
+    <color name="white">#FFFFFF</color>
 </resources>

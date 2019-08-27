@@ -7,6 +7,8 @@
         android:layout_height="match_parent"
         android:background="#000"
         android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
        >
 
     <RelativeLayout
@@ -102,7 +104,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_song_name_play_song"
                     style="@style/title_text_item"
-                    android:layout_width="match_parent"
+                    android:layout_width="fill_parent"
                     android:layout_height="0sp"
                     android:layout_weight="1"
                     android:gravity="center"
@@ -112,7 +114,6 @@
                     android:scrollHorizontally="true"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:text="aaaaaaaaaaaaaaaaaaaa"
                     android:paddingStart="@dimen/_10sdp"
                     android:paddingEnd="@dimen/_10sdp"/>
 
@@ -189,7 +190,8 @@
                     android:id="@+id/btn_repeat_play_song"
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
-                    app:srcCompat="@drawable/ic_play_repeat_white" />
+                    app:srcCompat="@drawable/ic_play_repeat_white"
+                    />
         </LinearLayout>
 
         <LinearLayout
