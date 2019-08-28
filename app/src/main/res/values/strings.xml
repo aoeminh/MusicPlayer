@@ -33,5 +33,13 @@
     <!-- song fragment -->
     <string name="one_dot">•</string>
 
+    <!-- common -->
     <string name="tracks">tracks</string>
+
+    <!-- play song fragment -->
+    <string name="suffle_on">Suffle on</string>
+    <string name="suffle_off">Suffle off</string>
+    <string name="repeat_one">Repeat this song</string>
+    <string name="repeat_all">Repeat all song</string>
+    <string name="repeat_off">Repeat all off</string>
 </resources>

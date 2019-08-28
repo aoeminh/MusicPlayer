@@ -39,6 +39,10 @@ class MainActivity : BaseActivity() {
     var bottomNavigationAdapter: BottomNavigationAdapter? = null
     var functionToolbarPlaylist: FunctionToolbarPlaylist? = null
     var fragmentManager: FragmentManager? = null
+    var isRepeatOne = false
+    var isRepeatAll = true
+    var isSuffle = false
+    var currenRepeat = 0
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main

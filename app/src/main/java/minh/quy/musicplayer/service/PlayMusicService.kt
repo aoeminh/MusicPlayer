@@ -10,8 +10,10 @@ import android.os.PowerManager
 import android.util.Log
 import minh.quy.musicplayer.model.Song
 
-class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-    MediaPlayer.OnCompletionListener {
+class PlayMusicService : Service(), MediaPlayer.OnPreparedListener {
+    override fun onPrepared(p0: MediaPlayer?) {
+        mediaPlayer?.start()
+    }
 
     var binder: Binder = MusicBinder()
     var mediaPlayer: MediaPlayer? = null
@@ -34,19 +36,6 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
 
     }
 
-    override fun onPrepared(p0: MediaPlayer?) {
-        mediaPlayer?.start()
-    }
-
-    override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
-        return false
-    }
-
-    override fun onCompletion(p0: MediaPlayer?) {
-        mediaPlayer?.stop()
-        mediaPlayer?.reset()
-    }
-
     override fun onUnbind(intent: Intent?): Boolean {
         mediaPlayer?.stop()
         mediaPlayer?.release()
@@ -65,8 +54,6 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
             PowerManager.PARTIAL_WAKE_LOCK
         )
         mediaPlayer?.setOnPreparedListener(this)
-        mediaPlayer?.setOnCompletionListener(this)
-        mediaPlayer?.setOnErrorListener(this)
     }
 
     fun setSongs(songs: MutableList<Song>) {
