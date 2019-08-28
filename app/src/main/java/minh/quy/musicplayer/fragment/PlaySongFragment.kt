@@ -22,8 +22,7 @@ import kotlin.random.Random
 
 class PlaySongFragment : Fragment(),
     MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
-
-
+    
     enum class Repeat(val value: Int) {
         NONE(0),
         REPEAT_ONE(1),
@@ -101,7 +100,7 @@ class PlaySongFragment : Fragment(),
             }
             return
         }
-
+        // repeat all mode or normal mode
         songPosition++
         if (songPosition > mainActivity?.songlist!!.size - 1) {
             if (mainActivity!!.isRepeatAll) {
@@ -121,7 +120,6 @@ class PlaySongFragment : Fragment(),
         }
     }
 
-
     override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
 
     }
@@ -132,7 +130,6 @@ class PlaySongFragment : Fragment(),
 
     override fun onStopTrackingTouch(seekBar: SeekBar?) {
         mediaPlayer?.seekTo(seekBar!!.progress)
-
     }
 
     fun setDataForView() {
@@ -194,9 +191,7 @@ class PlaySongFragment : Fragment(),
                     R.color.colorAccent
                 )
             )
-
         }
-
     }
 
     private fun actionRepeat() {
@@ -325,5 +320,4 @@ class PlaySongFragment : Fragment(),
         super.setUserVisibleHint(isVisibleToUser)
         Log.d("minhnh", "" + isVisibleToUser)
     }
-
 }
