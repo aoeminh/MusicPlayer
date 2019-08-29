@@ -72,7 +72,7 @@ class SongsFragment : Fragment(), OnItemCommonClick {
         mainActivity.musicService?.playMusic()
         val fragment = PlaySongFragment.newInstance(postion)
         val transaction = mainActivity.fragmentManager?.beginTransaction()
-        transaction?.add(R.id.frame_main,fragment,null)
+        transaction?.replace(R.id.frame_main,fragment,null)
         transaction?.addToBackStack(null)
         transaction?.commit()
 

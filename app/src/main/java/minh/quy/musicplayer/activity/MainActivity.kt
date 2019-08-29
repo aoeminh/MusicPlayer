@@ -22,6 +22,7 @@ import minh.quy.musicplayer.R
 import minh.quy.musicplayer.adapter.BottomNavigationAdapter
 import minh.quy.musicplayer.fragment.*
 import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
+import minh.quy.musicplayer.sharepreferences.UserPreferences
 
 class MainActivity : BaseActivity() {
 
@@ -38,7 +39,7 @@ class MainActivity : BaseActivity() {
     var tabSelected: Int = 0
     var bottomNavigationAdapter: BottomNavigationAdapter? = null
     var functionToolbarPlaylist: FunctionToolbarPlaylist? = null
-    var fragmentManager: FragmentManager? = null
+    var fragmentManager: FragmentManager = supportFragmentManager
     var isRepeatOne = false
     var isRepeatAll = true
     var isSuffle = false
@@ -51,21 +52,32 @@ class MainActivity : BaseActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentManager = supportFragmentManager
-        val transaction = fragmentManager?.beginTransaction()
-        val homeFragment = HomeFragment()
-        transaction?.add(R.id.frame_main, homeFragment, null)
-        transaction?.commit()
+        addHomeFragment()
 
     }
 
 
     override fun onBackPressed() {
-        val count = fragmentManager?.backStackEntryCount
-        if (count!! > 0) {
-            fragmentManager?.popBackStack()
+        val count = fragmentManager.backStackEntryCount
+        if (count > 0) {
+            fragmentManager.popBackStack()
         } else {
             super.onBackPressed()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        userPreferences?.saveRepeatMode(currenRepeat)
+        userPreferences?.saveSuffleMode(isSuffle)
+    }
+
+    fun addHomeFragment(){
+        val transaction = fragmentManager.beginTransaction()
+        val homeFragment = HomeFragment()
+        transaction.add(R.id.frame_main, homeFragment, null)
+        transaction.commit()
+    }
+
 }

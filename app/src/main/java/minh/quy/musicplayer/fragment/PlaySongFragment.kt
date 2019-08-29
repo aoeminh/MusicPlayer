@@ -22,7 +22,7 @@ import kotlin.random.Random
 
 class PlaySongFragment : Fragment(),
     MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
-    
+
     enum class Repeat(val value: Int) {
         NONE(0),
         REPEAT_ONE(1),
@@ -90,7 +90,7 @@ class PlaySongFragment : Fragment(),
         mediaPlayer?.reset()
         Log.d("minhnh", "onCompletion")
 
-        // suffle mode
+        // suffle modepaus
         if (mainActivity!!.isSuffle) {
             songPosition = Random.nextInt(mainActivity?.songlist!!.size)
             mainActivity?.musicService?.setSongPosition(songPosition)
@@ -148,6 +148,7 @@ class PlaySongFragment : Fragment(),
             btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
         }
         initRepeatBtn()
+        initSuffleBtn()
         setBlurImageBackground()
         updateSeekbar()
     }
@@ -170,32 +171,18 @@ class PlaySongFragment : Fragment(),
     }
 
     private fun actionSuffle() {
-        Log.d("minhnh", "actionSuffle")
         if (mainActivity!!.isSuffle) {
-            Toast.makeText(mContext, getString(R.string.suffle_off), Toast.LENGTH_SHORT).show()
             mainActivity?.isSuffle = false
-            btn_suffle_play_song?.setImageResource(R.drawable.ic_play_shuffle_white)
-            btn_suffle_play_song?.setColorFilter(
-                ActivityCompat.getColor(
-                    mContext!!,
-                    R.color.white
-                )
-            )
+            Toast.makeText(mContext, getString(R.string.suffle_off), Toast.LENGTH_SHORT).show()
+            setSuffleOff()
         } else {
             Toast.makeText(mContext, getString(R.string.suffle_on), Toast.LENGTH_SHORT).show()
             mainActivity?.isSuffle = true
-            btn_suffle_play_song?.setImageResource(R.drawable.ic_play_shuffle_white)
-            btn_suffle_play_song?.setColorFilter(
-                ActivityCompat.getColor(
-                    mContext!!,
-                    R.color.colorAccent
-                )
-            )
+            setSuffleOn()
         }
     }
 
     private fun actionRepeat() {
-        Log.d("minhnh", "actionSuffle")
         if (mainActivity?.currenRepeat == Repeat.NONE.value) {
             repeatOne()
         } else if (mainActivity?.currenRepeat == Repeat.REPEAT_ONE.value) {
@@ -259,38 +246,80 @@ class PlaySongFragment : Fragment(),
         if (mediaPlayer!!.isPlaying) {
             btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_play_white)
             mediaPlayer?.pause()
+            handler.removeCallbacks(runnable)
         } else {
             btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
             mediaPlayer?.start()
+            handler.postDelayed(runnable, 500)
         }
     }
 
     fun initRepeatBtn() {
         if (mainActivity?.currenRepeat == Repeat.REPEAT_ONE.value) {
-            btn_repeat_play_song.setImageResource(R.drawable.ic_play_repeat_one_white)
-            btn_repeat_play_song.setColorFilter(
-                ActivityCompat.getColor(
-                    mContext!!,
-                    R.color.colorAccent
-                )
-            )
+            setImageRepeatOneMode()
         } else if (mainActivity?.currenRepeat == Repeat.REPEAT_ALL.value) {
-            btn_repeat_play_song.setImageResource(R.drawable.ic_play_repeat_white)
-            btn_repeat_play_song.setColorFilter(
-                ActivityCompat.getColor(
-                    mContext!!,
-                    R.color.colorAccent
-                )
-            )
+            setImageRepeatAllMode()
         } else {
-            btn_repeat_play_song.setImageResource(R.drawable.ic_play_repeat_white)
-            btn_repeat_play_song.setColorFilter(
-                ActivityCompat.getColor(
-                    mContext!!,
-                    R.color.white
-                )
-            )
+            setImageNoRepeatMode()
         }
+    }
+
+    fun setImageRepeatOneMode() {
+        btn_repeat_play_song.setImageResource(R.drawable.ic_play_repeat_one_white)
+        btn_repeat_play_song.setColorFilter(
+            ActivityCompat.getColor(
+                mContext!!,
+                R.color.colorAccent
+            )
+        )
+    }
+
+    fun setImageRepeatAllMode() {
+        btn_repeat_play_song.setImageResource(R.drawable.ic_play_repeat_white)
+        btn_repeat_play_song.setColorFilter(
+            ActivityCompat.getColor(
+                mContext!!,
+                R.color.colorAccent
+            )
+        )
+    }
+
+    fun setImageNoRepeatMode() {
+        btn_repeat_play_song.setImageResource(R.drawable.ic_play_repeat_white)
+        btn_repeat_play_song.setColorFilter(
+            ActivityCompat.getColor(
+                mContext!!,
+                R.color.white
+            )
+        )
+    }
+
+    fun initSuffleBtn() {
+        if (mainActivity!!.isSuffle) {
+            setSuffleOn()
+        } else {
+            setSuffleOff()
+        }
+    }
+
+    fun setSuffleOn() {
+        btn_suffle_play_song?.setImageResource(R.drawable.ic_play_shuffle_white)
+        btn_suffle_play_song?.setColorFilter(
+            ActivityCompat.getColor(
+                mContext!!,
+                R.color.colorAccent
+            )
+        )
+    }
+
+    fun setSuffleOff() {
+        btn_suffle_play_song?.setImageResource(R.drawable.ic_play_shuffle_white)
+        btn_suffle_play_song?.setColorFilter(
+            ActivityCompat.getColor(
+                mContext!!,
+                R.color.white
+            )
+        )
     }
 
     fun playSong() {
@@ -304,11 +333,24 @@ class PlaySongFragment : Fragment(),
         updateSeekbar()
     }
 
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(runnable)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handler.postDelayed(runnable, 500)
+    }
+
     fun updateSeekbar() {
         val currentPos = mediaPlayer?.currentPosition
         tv_realtime_song?.text = Utils.convertSongDuration(currentPos!!.toLong())
         seekbar?.progress = currentPos
-        handler.postDelayed(runnable, 500)
+        if (isVisible) {
+            handler.postDelayed(runnable, 500)
+        }
+        Log.d("minhnh", "updateSeekbar")
     }
 
     var handler = Handler()
