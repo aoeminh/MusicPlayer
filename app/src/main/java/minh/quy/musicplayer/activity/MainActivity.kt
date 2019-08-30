@@ -54,6 +54,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         addHomeFragment()
 
+
     }
 
 
@@ -78,6 +79,10 @@ class MainActivity : BaseActivity() {
         val homeFragment = HomeFragment()
         transaction.add(R.id.frame_main, homeFragment, null)
         transaction.commit()
+    }
+
+    fun getRepeatAndSuffleMode(){
+        currenRepeat = UserPreferences.getInstance().sa
     }
 
 }

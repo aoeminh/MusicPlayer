@@ -4,40 +4,39 @@ import android.content.Context
 import android.content.SharedPreferences
 import kotlin.coroutines.coroutineContext
 
+const val PREFERENT_NAME = "music.preferent"
+const val EXTRA_REPEAT = "extra.repeat"
+const val EXTRA_SUFFLE = "extra.suffle"
 class UserPreferences() {
 
     companion object {
-        val PREFERENT_NAME = "music.preferent"
-        val EXTRA_REPEAT = "extra.repeat"
-        val EXTRA_SUFFLE = "extra.suffle"
         var sharedPreferences: SharedPreferences? = null
         var instance: UserPreferences? = null
+
         fun getInstance(context: Context): UserPreferences? {
             if (instance == null) {
                 instance = UserPreferences()
 
             }
             if (sharedPreferences == null) {
-                sharedPreferences =
-                    context.getSharedPreferences(PREFERENT_NAME, Context.MODE_PRIVATE)
+                sharedPreferences = context.getSharedPreferences(PREFERENT_NAME, Context.MODE_PRIVATE)
             }
             return instance
         }
-
-        fun getEdittor(): SharedPreferences.Editor? {
-            return sharedPreferences?.edit()
-        }
-
     }
 
-    fun saveRepeatMode(repeatMode: Int) {
-        getEdittor()?.putInt(EXTRA_REPEAT, repeatMode)
+    fun getEdittor(): SharedPreferences.Editor? {
+        return sharedPreferences?.edit()
     }
 
-    fun saveSuffleMode(isSuffle: Boolean) {
-        getEdittor()?.putBoolean(EXTRA_SUFFLE, isSuffle)
-    }
+    fun saveRepeatMode(repeatMode: Int) = getEdittor()?.putInt(EXTRA_REPEAT, repeatMode)
 
+    fun saveSuffleMode(isSuffle: Boolean) = getEdittor()?.putBoolean(EXTRA_SUFFLE, isSuffle)
+
+
+    fun getRepeaMode(): Int {
+        return
+    }
 
 
 }
