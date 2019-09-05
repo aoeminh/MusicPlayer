@@ -58,6 +58,9 @@ class ArtistFragment : Fragment() {
         fast_scroller?.setRecyclerView(rv_artist_fragment)
     }
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+    }
     fun hideScrollBar() {
         Handler().postDelayed({
             fast_scroller?.visibility = View.GONE

@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import kotlin.coroutines.coroutineContext
 
-const val PREFERENT_NAME = "music.preferent"
-const val EXTRA_REPEAT = "extra.repeat"
+const val PREFERENT_NAME = "s                "
+const val EXTRA_REPEAT = "extra.repeat "
 const val EXTRA_SUFFLE = "extra.suffle"
 class UserPreferences() {
 
@@ -34,9 +34,7 @@ class UserPreferences() {
     fun saveSuffleMode(isSuffle: Boolean) = getEdittor()?.putBoolean(EXTRA_SUFFLE, isSuffle)
 
 
-    fun getRepeaMode(): Int {
-        return
-    }
+
 
 
 }

@@ -5,24 +5,24 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.layout_main_content.*
+
 import layout.HomeFragment
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.Utils.RequestPermission
 import minh.quy.musicplayer.adapter.BottomNavigationAdapter
 import minh.quy.musicplayer.fragment.*
 import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import minh.quy.musicplayer.sharepreferences.UserPreferences
+import java.lang.ref.WeakReference
 
 class MainActivity : BaseActivity() {
 
@@ -53,10 +53,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addHomeFragment()
-
-
     }
-
 
     override fun onBackPressed() {
         val count = fragmentManager.backStackEntryCount
@@ -74,15 +71,15 @@ class MainActivity : BaseActivity() {
         userPreferences?.saveSuffleMode(isSuffle)
     }
 
-    fun addHomeFragment(){
+    fun addHomeFragment() {
         val transaction = fragmentManager.beginTransaction()
         val homeFragment = HomeFragment()
         transaction.add(R.id.frame_main, homeFragment, null)
         transaction.commit()
     }
 
-    fun getRepeatAndSuffleMode(){
-        currenRepeat = UserPreferences.getInstance().sa
+    fun getRepeatAndSuffleMode() {
+
     }
 
 }

@@ -42,4 +42,7 @@
     <string name="repeat_one">Repeat this song</string>
     <string name="repeat_all">Repeat all song</string>
     <string name="repeat_off">Repeat all off</string>
+    <string name="creat_new_playlist_success">Creat new Playlist success</string>
+    <string name="create_playlist_fail">Create fail, please try again</string>
+
 </resources>

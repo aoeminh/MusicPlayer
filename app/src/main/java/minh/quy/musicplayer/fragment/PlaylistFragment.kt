@@ -79,9 +79,9 @@ class PlaylistFragment : Fragment(), IPlaylistView, FunctionToolbarPlaylist {
 
     override fun onResponseInserPlaylist(isSuccess: Boolean) {
         if (isSuccess) {
-            Toast.makeText(contextPlaylist, "Creat new Playlist success", Toast.LENGTH_SHORT).show()
+            Toast.makeText(contextPlaylist, getString(R.string.creat_new_playlist_success), Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(contextPlaylist, "Creat fail, please try again", Toast.LENGTH_SHORT)
+            Toast.makeText(contextPlaylist, getString(R.string.create_playlist_fail), Toast.LENGTH_SHORT)
                 .show()
         }
 

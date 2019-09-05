@@ -1,14 +1,19 @@
 package minh.quy.musicplayer.activity
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
+import android.os.Message
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import minh.quy.musicplayer.Utils.RequestPermission
 import minh.quy.musicplayer.database.MusicDatabase
@@ -17,6 +22,7 @@ import minh.quy.musicplayer.model.Artist
 import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.service.PlayMusicService
 import minh.quy.musicplayer.service.PlayMusicService.MusicBinder
+import java.lang.ref.WeakReference
 import java.util.*
 
 
@@ -30,6 +36,7 @@ abstract class BaseActivity : AppCompatActivity() {
     var musicService: PlayMusicService? = null
     var playIntent: Intent? = null
     var musicBound = false
+    var context: Context? = null
 
     private val musicConnection = object : ServiceConnection {
 
@@ -53,12 +60,24 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
+        context = this
         musicDatabase = MusicDatabase.getInstanceDatabase(this)
-        RequestPermission.requestPermision(this)
-        songlist = scanDeviceForMp3Files()
-        getAllAlbum()
-        getAllArtist()
         startService()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.size > 0) {
+            if (grantResults[0] == 0) {
+                songlist = scanDeviceForMp3Files()
+                getAllAlbum()
+                getAllArtist()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -66,7 +85,7 @@ abstract class BaseActivity : AppCompatActivity() {
         unbindService(musicConnection)
     }
 
-    private fun scanDeviceForMp3Files(): ArrayList<Song> {
+    fun scanDeviceForMp3Files(): ArrayList<Song> {
         val songs = arrayListOf<Song>()
         val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
         val projection = arrayOf(
@@ -100,7 +119,16 @@ abstract class BaseActivity : AppCompatActivity() {
                     val dateAdded = cursor.getString(8).toLong()
                     cursor.moveToNext()
                     if (path != null && path.endsWith(".mp3")) {
-                        val song = Song(title, artist, artistId, albumId, albumName, songDuration, dateAdded, path)
+                        val song = Song(
+                            title,
+                            artist,
+                            artistId,
+                            albumId,
+                            albumName,
+                            songDuration,
+                            dateAdded,
+                            path
+                        )
                         songs.add(song)
                     }
                 }
@@ -113,7 +141,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return songs
     }
 
-    private fun getAllArtist() {
+    fun getAllArtist() {
         for (i in 0 until songlist.size) {
             val song = songlist[i]
             var exist = false
@@ -142,7 +170,7 @@ abstract class BaseActivity : AppCompatActivity() {
         Log.d("MinhNQ", " size + " + artistList.size)
     }
 
-    private fun getAllAlbum() {
+    fun getAllAlbum() {
         for (i in 0 until songlist.size) {
             val song = songlist[i]
             var exist = false
@@ -170,13 +198,14 @@ abstract class BaseActivity : AppCompatActivity() {
 
         }
         Log.d("MinhNQ", " size + " + albumList.size)
+
     }
 
     fun startService() {
         if (playIntent == null) {
             playIntent = Intent(this, PlayMusicService::class.java)
         }
-        bindService(playIntent,musicConnection, Context.BIND_AUTO_CREATE)
+        bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
         startService(playIntent)
     }
 }

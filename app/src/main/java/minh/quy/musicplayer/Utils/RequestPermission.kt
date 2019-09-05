@@ -6,6 +6,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
+import android.os.Message
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.*
@@ -13,7 +15,7 @@ import androidx.core.content.ContextCompat.*
 class RequestPermission {
 
 
-    companion object{
+    companion object {
         val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123
         @JvmStatic
         fun showDialog(
