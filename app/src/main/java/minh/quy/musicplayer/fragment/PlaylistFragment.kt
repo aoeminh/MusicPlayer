@@ -25,22 +25,13 @@ import minh.quy.musicplayer.model.Playlist
 import minh.quy.musicplayer.presenter.PlaylistPresenter
 
 
-class PlaylistFragment : Fragment(), IPlaylistView, FunctionToolbarPlaylist {
+class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist {
 
     var adapterPlaylist: PlaylistAdapter? = null
-    lateinit var mainActivity: MainActivity
     var playlists: MutableList<Playlist> = arrayListOf()
     var presenter: PlaylistPresenter? = null
-    var contextPlaylist: Context? = null
     var homeFragment: HomeFragment? = null
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (activity is MainActivity) {
-            mainActivity = activity as MainActivity
-        }
-        contextPlaylist = context
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,8 +55,11 @@ class PlaylistFragment : Fragment(), IPlaylistView, FunctionToolbarPlaylist {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+    }
 
-
+    override fun onResume() {
+        super.onResume()
+        Log.d("MinhNQ", "onResume PlaylistFragment")
     }
 
     override fun onResponseAllPlaylist(liveData: LiveData<MutableList<Playlist>>?) {
@@ -79,9 +73,9 @@ class PlaylistFragment : Fragment(), IPlaylistView, FunctionToolbarPlaylist {
 
     override fun onResponseInserPlaylist(isSuccess: Boolean) {
         if (isSuccess) {
-            Toast.makeText(contextPlaylist, getString(R.string.creat_new_playlist_success), Toast.LENGTH_SHORT).show()
+            Toast.makeText(contextBase, getString(R.string.creat_new_playlist_success), Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(contextPlaylist, getString(R.string.create_playlist_fail), Toast.LENGTH_SHORT)
+            Toast.makeText(contextBase, getString(R.string.create_playlist_fail), Toast.LENGTH_SHORT)
                 .show()
         }
 
@@ -101,8 +95,8 @@ class PlaylistFragment : Fragment(), IPlaylistView, FunctionToolbarPlaylist {
 
     fun initRecyclerView() {
         rv_playlist.apply {
-            layoutManager = LinearLayoutManager(contextPlaylist, RecyclerView.VERTICAL, false)
-            adapterPlaylist = PlaylistAdapter(contextPlaylist!!)
+            layoutManager = LinearLayoutManager(contextBase, RecyclerView.VERTICAL, false)
+            adapterPlaylist = PlaylistAdapter(contextBase!!)
             adapterPlaylist?.addPlaylists(playlists)
             adapter = adapterPlaylist
 
@@ -110,20 +104,18 @@ class PlaylistFragment : Fragment(), IPlaylistView, FunctionToolbarPlaylist {
     }
 
     fun showPopupCreatePlaylist() {
-        val alertDialogBuilder = AlertDialog.Builder(contextPlaylist!!)
+        val alertDialogBuilder = AlertDialog.Builder(contextBase!!)
         val dialogView = layoutInflater.inflate(R.layout.popup_create_new_playlist, null)
         alertDialogBuilder.setView(dialogView)
         val alertDialog = alertDialogBuilder.create()
         dialogView.btn_create_playlist.setOnClickListener {
             if (!dialogView.edt_name_playlist.text.toString().isEmpty()) {
                 presenter?.inserNewPlaylist(Playlist(dialogView.edt_name_playlist.text.toString()))
-//                musicDatabase?.getPlaylistDAO()?.insertPlaylist(Playlist(dialogView.edt_name_playlist.text.toString()))
                 Log.d("MinhNQ", " insert playlist")
                 alertDialog.dismiss()
             } else {
-                Toast.makeText(contextPlaylist, "Enter playlist name", Toast.LENGTH_SHORT).show()
+                Toast.makeText(contextBase, "Enter playlist name", Toast.LENGTH_SHORT).show()
             }
-
         }
 
         dialogView.btn_cancle_playlist.setOnClickListener { alertDialog.dismiss() }

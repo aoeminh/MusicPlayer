@@ -11,28 +11,22 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fast_scroller.*
 import kotlinx.android.synthetic.main.fragment_album.*
-import kotlinx.android.synthetic.main.fragment_songs.*
 import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.AlbumAdapter
 import minh.quy.musicplayer.decoration.ItemAlbumDecoration
 
-class AlbumFragment : Fragment() {
+class AlbumFragment : BaseFragment() {
 
     var alBumAdater: AlbumAdapter? = null
-    lateinit var alBumContext: Context
-    var mainActivity: MainActivity? = null
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        alBumContext = context!!
-        if(activity is MainActivity){
-            mainActivity = activity as MainActivity
-        }
-    }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_album, container, false)
         return view
     }
@@ -43,11 +37,11 @@ class AlbumFragment : Fragment() {
 
     }
 
-    fun initRecyclerView(){
+    fun initRecyclerView() {
         rv_album_list.apply {
-            layoutManager = GridLayoutManager(alBumContext,2,RecyclerView.VERTICAL,false)
-            alBumAdater = AlbumAdapter(alBumContext)
-            alBumAdater?.addAlbumList(mainActivity!!.albumList)
+            layoutManager = GridLayoutManager(contextBase, 2, RecyclerView.VERTICAL, false)
+            alBumAdater = AlbumAdapter(contextBase!!)
+            alBumAdater?.addAlbumList(mainActivity.albumList)
             adapter = alBumAdater
             addItemDecoration(ItemAlbumDecoration(40))
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -74,6 +68,11 @@ class AlbumFragment : Fragment() {
 
     fun showScrollBar() {
         fast_scroller?.visibility = View.VISIBLE
+    }
+
+    fun getAlbumList() {
+        mainActivity.getAllAlbum()
+        alBumAdater?.addAlbumList(mainActivity.albumList)
     }
 
 }

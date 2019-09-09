@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -75,6 +76,11 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         initViewPager()
         addTablayoutAction()
         setToolbar()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("minhnh1", "onResume home")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -266,7 +272,6 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             }
 
             MainActivity.PositionNavigation.SONGS.position -> {
-                mainActivity?.songlist = mainActivity?.scanDeviceForMp3Files()!!
                 tabSelected = MainActivity.PositionNavigation.SONGS.position
                 toolbar_main.inflateMenu(minh.quy.musicplayer.R.menu.menu_toolbat_songs)
                 tab.setIcon(minh.quy.musicplayer.R.drawable.songs_selected_home)
@@ -277,7 +282,6 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             }
 
             MainActivity.PositionNavigation.ARTIST.position -> {
-                mainActivity?.getAllArtist()
                 tabSelected = MainActivity.PositionNavigation.ARTIST.position
                 tab.setIcon(minh.quy.musicplayer.R.drawable.artist_selected_home)
                 tablayout_main.setTabTextColors(
@@ -287,7 +291,6 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             }
 
             MainActivity.PositionNavigation.ALBUM.position -> {
-                mainActivity?.getAllAlbum()
                 tabSelected = MainActivity.PositionNavigation.ALBUM.position
                 tab.setIcon(minh.quy.musicplayer.R.drawable.album_selected_home)
                 tablayout_main.setTabTextColors(

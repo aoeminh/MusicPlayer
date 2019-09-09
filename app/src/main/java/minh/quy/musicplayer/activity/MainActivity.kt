@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
@@ -53,6 +54,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addHomeFragment()
+        Log.d("minhnh","onCreate")
     }
 
     override fun onBackPressed() {
@@ -74,7 +76,7 @@ class MainActivity : BaseActivity() {
     fun addHomeFragment() {
         val transaction = fragmentManager.beginTransaction()
         val homeFragment = HomeFragment()
-        transaction.add(R.id.frame_main, homeFragment, null)
+        transaction.replace(R.id.frame_main, homeFragment, null)
         transaction.commit()
     }
 

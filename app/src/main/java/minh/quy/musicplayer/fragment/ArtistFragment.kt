@@ -16,21 +16,15 @@ import minh.quy.musicplayer.R
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.ArtistAdapter
 
-class ArtistFragment : Fragment() {
+class ArtistFragment : BaseFragment() {
 
     var artistAdapter: ArtistAdapter? = null
-    lateinit var artisFragmenttContext: Context
-    var mainActivity: MainActivity? = null
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        artisFragmenttContext = context!!
-        if (activity is MainActivity) {
-            mainActivity = activity as MainActivity
-        }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_artist, container, false)
         return view
     }
@@ -38,9 +32,9 @@ class ArtistFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         rv_artist_fragment.apply {
-            layoutManager = LinearLayoutManager(artisFragmenttContext, RecyclerView.VERTICAL, false)
-            artistAdapter = ArtistAdapter(artisFragmenttContext)
-            artistAdapter?.addArtistList(mainActivity!!.artistList)
+            layoutManager = LinearLayoutManager(contextBase, RecyclerView.VERTICAL, false)
+            artistAdapter = ArtistAdapter(contextBase!!)
+            artistAdapter?.addArtistList(mainActivity.artistList)
             adapter = artistAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
@@ -58,9 +52,6 @@ class ArtistFragment : Fragment() {
         fast_scroller?.setRecyclerView(rv_artist_fragment)
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-    }
     fun hideScrollBar() {
         Handler().postDelayed({
             fast_scroller?.visibility = View.GONE
@@ -71,4 +62,8 @@ class ArtistFragment : Fragment() {
         fast_scroller?.visibility = View.VISIBLE
     }
 
+    fun getartistList() {
+        mainActivity.getAllArtist()
+        artistAdapter?.addArtistList(mainActivity.artistList)
+    }
 }

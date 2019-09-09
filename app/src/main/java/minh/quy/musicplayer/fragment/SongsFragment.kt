@@ -1,14 +1,20 @@
 package minh.quy.musicplayer.fragment
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,31 +33,14 @@ import minh.quy.musicplayer.model.Album
 import minh.quy.musicplayer.model.Song
 import java.util.jar.Manifest
 
-class SongsFragment : Fragment(), OnItemCommonClick {
+class SongsFragment : BaseFragment(), OnItemCommonClick {
 
-    lateinit var mainActivity: MainActivity
-    var contextSong: Context? = null
     var songlist: MutableList<Song> = arrayListOf()
     var adapterSong: SongFragmentAdapter? = null
-    var albumList: MutableList<Album> = arrayListOf()
-    var homeFragment: HomeFragment? = null
-    var isAllowPermission = false
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        contextSong = context
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (activity is MainActivity) {
-            mainActivity = activity as MainActivity
-        }
-
-        if (parentFragment is HomeFragment) {
-            homeFragment = parentFragment as HomeFragment
-        }
+        songlist = mainActivity.songlist
     }
 
     override fun onCreateView(
@@ -68,7 +57,6 @@ class SongsFragment : Fragment(), OnItemCommonClick {
         super.onViewCreated(view, savedInstanceState)
         Log.d("MinhNQ", songlist.size.toString())
         songlist = mainActivity.songlist
-        albumList = mainActivity.albumList
         initRecyclerview()
     }
 
@@ -85,36 +73,21 @@ class SongsFragment : Fragment(), OnItemCommonClick {
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        if(isVisibleToUser){
-            requestPermission()
+        if (isVisibleToUser) {
+            getSongFromStorage()
         }
     }
 
-    fun isHavePermission() = ActivityCompat.checkSelfPermission(
-        mainActivity.context!!,
-        android.Manifest.permission.READ_EXTERNAL_STORAGE
-    ) == PackageManager.PERMISSION_GRANTED
 
-    fun requestPermission() {
-        if (isHavePermission()) {
-            songlist = mainActivity.scanDeviceForMp3Files()
-        } else {
-            ActivityCompat
-                .requestPermissions(
-                    mainActivity.context as Activity,
-                    arrayOf(
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ),
-                    RequestPermission.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
-                )
-        }
+    fun getSongFromStorage(){
+        songlist = mainActivity.scanDeviceForMp3Files()
+        adapterSong?.setlistSong(songlist)
     }
 
     fun initRecyclerview() {
         rv_song_fragment.apply {
-            layoutManager = LinearLayoutManager(contextSong, RecyclerView.VERTICAL, false)
-            adapterSong = SongFragmentAdapter(contextSong!!)
+            layoutManager = LinearLayoutManager(contextBase, RecyclerView.VERTICAL, false)
+            adapterSong = SongFragmentAdapter(contextBase!!)
             adapterSong?.setlistSong(songlist)
             adapterSong?.setOnItemClick(this@SongsFragment)
             adapter = adapterSong

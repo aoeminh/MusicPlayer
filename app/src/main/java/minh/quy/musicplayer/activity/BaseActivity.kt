@@ -45,7 +45,6 @@ abstract class BaseActivity : AppCompatActivity() {
             //get service
             musicService = binder.service
             //pass list
-            musicService?.setSongs(songlist)
             musicBound = true
         }
 
@@ -62,28 +61,17 @@ abstract class BaseActivity : AppCompatActivity() {
         setContentView(getLayoutId())
         context = this
         musicDatabase = MusicDatabase.getInstanceDatabase(this)
+        songlist = scanDeviceForMp3Files()
+        getAllAlbum()
+        getAllArtist()
         startService()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.size > 0) {
-            if (grantResults[0] == 0) {
-                songlist = scanDeviceForMp3Files()
-                getAllAlbum()
-                getAllArtist()
-            }
-        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unbindService(musicConnection)
     }
+
 
     fun scanDeviceForMp3Files(): ArrayList<Song> {
         val songs = arrayListOf<Song>()
@@ -154,20 +142,17 @@ abstract class BaseActivity : AppCompatActivity() {
                     exist = true
                     artist.songs.add(song)
                     artist.songCount += 1
-                    Log.d("MinhNQ", "exist + " + song.artistId)
                     break@artist
                 } else {
                     exist = false
                 }
             }
-            Log.d("MinhNQ", " not exist + " + song.artistId)
             if (!exist) {
                 val songs: MutableList<Song> = arrayListOf()
                 songs.add(song)
                 artistList.add(Artist(song.artistId, song.artistName, 1, songs))
             }
         }
-        Log.d("MinhNQ", " size + " + artistList.size)
     }
 
     fun getAllAlbum() {
