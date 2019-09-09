@@ -2,11 +2,11 @@ package minh.quy.musicplayer.sharepreferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import kotlin.coroutines.coroutineContext
 
-const val PREFERENT_NAME = "s                "
+const val PREFERENT_NAME = "music.preferent"
 const val EXTRA_REPEAT = "extra.repeat "
 const val EXTRA_SUFFLE = "extra.suffle"
+
 class UserPreferences() {
 
     companion object {
@@ -29,12 +29,17 @@ class UserPreferences() {
         return sharedPreferences?.edit()
     }
 
-    fun saveRepeatMode(repeatMode: Int) = getEdittor()?.putInt(EXTRA_REPEAT, repeatMode)
+    fun saveRepeatMode(repeatMode: Int){
+        getEdittor()?.putInt(EXTRA_REPEAT, repeatMode)?.commit()
+    }
 
-    fun saveSuffleMode(isSuffle: Boolean) = getEdittor()?.putBoolean(EXTRA_SUFFLE, isSuffle)
+    fun saveSuffleMode(isSuffle: Boolean) {
+        getEdittor()?.putBoolean(EXTRA_SUFFLE, isSuffle)?.commit()
+    }
 
+    fun getRepeatMode(): Int = sharedPreferences!!.getInt(EXTRA_REPEAT, 0)
 
-
+    fun getSuffleMode(): Boolean = sharedPreferences!!.getBoolean(EXTRA_SUFFLE,false)
 
 
 }

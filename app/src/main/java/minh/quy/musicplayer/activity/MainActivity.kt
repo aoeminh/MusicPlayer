@@ -1,29 +1,16 @@
 package minh.quy.musicplayer.activity
 
-import android.annotation.SuppressLint
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager
-import com.google.android.material.navigation.NavigationView
-
 import layout.HomeFragment
 import minh.quy.musicplayer.R
-import minh.quy.musicplayer.Utils.RequestPermission
 import minh.quy.musicplayer.adapter.BottomNavigationAdapter
-import minh.quy.musicplayer.fragment.*
+import minh.quy.musicplayer.fragment.PlaySongFragment
 import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import minh.quy.musicplayer.sharepreferences.UserPreferences
-import java.lang.ref.WeakReference
 
 class MainActivity : BaseActivity() {
 
@@ -36,10 +23,6 @@ class MainActivity : BaseActivity() {
         FOLDER(4),
     }
 
-
-    var tabSelected: Int = 0
-    var bottomNavigationAdapter: BottomNavigationAdapter? = null
-    var functionToolbarPlaylist: FunctionToolbarPlaylist? = null
     var fragmentManager: FragmentManager = supportFragmentManager
     var isRepeatOne = false
     var isRepeatAll = true
@@ -53,8 +36,9 @@ class MainActivity : BaseActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getRepeatAndSuffleMode()
         addHomeFragment()
-        Log.d("minhnh","onCreate")
+        Log.d("minhnh", "onCreate")
     }
 
     override fun onBackPressed() {
@@ -68,9 +52,7 @@ class MainActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        val userPreferences = UserPreferences.getInstance(applicationContext)
-        userPreferences?.saveRepeatMode(currenRepeat)
-        userPreferences?.saveSuffleMode(isSuffle)
+        saveRepeatAndSuffleMode()
     }
 
     fun addHomeFragment() {
@@ -80,8 +62,28 @@ class MainActivity : BaseActivity() {
         transaction.commit()
     }
 
-    fun getRepeatAndSuffleMode() {
+    fun saveRepeatAndSuffleMode() {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        userPreferences?.saveRepeatMode(currenRepeat)
+        userPreferences?.saveSuffleMode(isSuffle)
+    }
 
+    fun getRepeatAndSuffleMode() {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        currenRepeat = userPreferences!!.getRepeatMode()
+        isSuffle = userPreferences.getSuffleMode()
+        setRepeatMode()
+    }
+
+    fun setRepeatMode() {
+        if (currenRepeat == PlaySongFragment.Repeat.REPEAT_ONE.value) {
+            isRepeatOne = true
+        } else if (currenRepeat == PlaySongFragment.Repeat.REPEAT_ALL.value) {
+            isRepeatAll = true
+        } else {
+            isRepeatOne = false
+            isRepeatAll = false
+        }
     }
 
 }

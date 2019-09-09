@@ -61,6 +61,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
     }
 
     override fun onItemClick(postion: Int) {
+        mainActivity.musicService?.setSongs(songlist)
         mainActivity.musicService?.setSongPosition(postion)
         mainActivity.musicService?.playMusic()
         val fragment = PlaySongFragment.newInstance(postion)

@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_playsong.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.activity.MainActivity
+import minh.quy.musicplayer.main
 import kotlin.random.Random
 
 
@@ -89,6 +90,13 @@ class PlaySongFragment : Fragment(),
         mediaPlayer?.stop()
         mediaPlayer?.reset()
         Log.d("minhnh", "onCompletion")
+
+        //repeat one mode
+        if(mainActivity!!.isRepeatOne){
+            mainActivity?.musicService?.mediaPlayer?.isLooping = true
+            playSong()
+            return
+        }
 
         // suffle modepaus
         if (mainActivity!!.isSuffle) {
@@ -326,9 +334,6 @@ class PlaySongFragment : Fragment(),
         mainActivity?.musicService?.playMusic()
         if (seekbar != null) {
             seekbar.progress = 0
-        }
-        if (mainActivity!!.isRepeatOne) {
-            mediaPlayer?.isLooping = true
         }
         updateSeekbar()
     }
