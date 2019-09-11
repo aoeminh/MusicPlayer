@@ -7,6 +7,7 @@ import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
@@ -17,12 +18,11 @@ import kotlinx.android.synthetic.main.fragment_playsong.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.activity.MainActivity
-import minh.quy.musicplayer.main
 import kotlin.random.Random
 
 
 class PlaySongFragment : Fragment(),
-    MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+    MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
 
     enum class Repeat(val value: Int) {
         NONE(0),
@@ -41,11 +41,20 @@ class PlaySongFragment : Fragment(),
         }
     }
 
+    val LIMIT_Y_DIFFERENT_TOUCH = 300
+    val LIMIT_X_PREVIOUS_SONG = 50
+    val LIMIT_X_NEXT_SONG = -50
+
     var mainActivity: MainActivity? = null
     var mContext: Context? = null
     var mediaPlayer: MediaPlayer? = null
     var songPosition = 0
     var drawableIdDefaulImage = 0
+    var isDown = false
+    var downXPostion = 0
+    var upXPosition = 0
+    var downYPostion = 0
+    var upYPosition = 0
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -72,6 +81,7 @@ class PlaySongFragment : Fragment(),
     ): View? {
         val view =
             inflater.inflate(R.layout.fragment_playsong, container, false)
+        view.setOnTouchListener(this)
         return view
     }
 
@@ -92,7 +102,7 @@ class PlaySongFragment : Fragment(),
         Log.d("minhnh", "onCompletion")
 
         //repeat one mode
-        if(mainActivity!!.isRepeatOne){
+        if (mainActivity!!.isRepeatOne) {
             mainActivity?.musicService?.mediaPlayer?.isLooping = true
             playSong()
             return
@@ -140,8 +150,40 @@ class PlaySongFragment : Fragment(),
         mediaPlayer?.seekTo(seekBar!!.progress)
     }
 
+    override fun onTouch(view: View?, motionEvent: MotionEvent?): Boolean {
+
+
+        if (motionEvent?.action == MotionEvent.ACTION_DOWN) {
+            if (!isDown) {
+                downXPostion = motionEvent.x.toInt()
+                downYPostion = motionEvent.y.toInt()
+                isDown = true
+            }
+            return true
+        }
+
+
+        if (motionEvent?.action == MotionEvent.ACTION_UP) {
+            isDown = false
+            upXPosition = motionEvent.x.toInt()
+            upYPosition = motionEvent.y.toInt()
+            if (Math.abs(upYPosition.minus(downYPostion)) < LIMIT_Y_DIFFERENT_TOUCH) {
+                if ((downXPostion.minus(upXPosition)) > LIMIT_X_PREVIOUS_SONG) {
+                    actionPrevious()
+                    return true
+                }
+
+                if ((downXPostion.minus(upXPosition)) <= LIMIT_X_NEXT_SONG) {
+                    actionNext()
+                    return true
+                }
+            }
+        }
+
+        return true
+    }
+
     fun setDataForView() {
-        Log.d("minhnh", "setDataForView")
         val defaultPositionImage = Utils.getPositionDefaultImage(songPosition)
         drawableIdDefaulImage = Utils.getDrawableIdDefaultImage(defaultPositionImage)
         img_ava_song.setImageResource(drawableIdDefaulImage)
@@ -355,7 +397,6 @@ class PlaySongFragment : Fragment(),
         if (isVisible) {
             handler.postDelayed(runnable, 500)
         }
-        Log.d("minhnh", "updateSeekbar")
     }
 
     var handler = Handler()
@@ -365,6 +406,5 @@ class PlaySongFragment : Fragment(),
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        Log.d("minhnh", "" + isVisibleToUser)
     }
 }
