@@ -1,28 +1,21 @@
 package minh.quy.musicplayer.activity
 
-import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
-import android.os.Handler
 import android.os.IBinder
-import android.os.Message
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import minh.quy.musicplayer.Utils.RequestPermission
 import minh.quy.musicplayer.database.MusicDatabase
 import minh.quy.musicplayer.model.Album
 import minh.quy.musicplayer.model.Artist
 import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.service.PlayMusicService
 import minh.quy.musicplayer.service.PlayMusicService.MusicBinder
-import java.lang.ref.WeakReference
 import java.util.*
 
 
@@ -32,7 +25,7 @@ abstract class BaseActivity : AppCompatActivity() {
     var songlist: MutableList<Song> = arrayListOf()
     var albumList: MutableList<Album> = arrayListOf()
     var artistList: MutableList<Artist> = arrayListOf()
-
+    var songsQueueList: MutableList<Song> = arrayListOf()
     var musicService: PlayMusicService? = null
     var playIntent: Intent? = null
     var musicBound = false
@@ -134,7 +127,7 @@ abstract class BaseActivity : AppCompatActivity() {
             val song = songlist[i]
             var exist = false
             if (artistList.size == 0) {
-                artistList.add(Artist(song.artistId, song.artistName, 0))
+                artistList.add(Artist(song.artistId, song.artistName!!, 0))
             }
             artist@ for (j in 0 until artistList.size) {
                 val artist = artistList[j]
@@ -150,7 +143,7 @@ abstract class BaseActivity : AppCompatActivity() {
             if (!exist) {
                 val songs: MutableList<Song> = arrayListOf()
                 songs.add(song)
-                artistList.add(Artist(song.artistId, song.artistName, 1, songs))
+                artistList.add(Artist(song.artistId, song.artistName!!, 1, songs))
             }
         }
     }
@@ -160,7 +153,7 @@ abstract class BaseActivity : AppCompatActivity() {
             val song = songlist[i]
             var exist = false
             if (albumList.size == 0) {
-                albumList.add(Album(song.albumId, song.albumName, 0))
+                albumList.add(Album(song.albumId, song.albumName!!, 0))
             }
             album@ for (j in 0 until albumList.size) {
                 val album = albumList[j]
@@ -178,7 +171,7 @@ abstract class BaseActivity : AppCompatActivity() {
             if (!exist) {
                 val songs: MutableList<Song> = arrayListOf()
                 songs.add(song)
-                albumList.add(Album(song.albumId, song.albumName, 1, songs))
+                albumList.add(Album(song.albumId, song.albumName!!, 1, songs))
             }
 
         }

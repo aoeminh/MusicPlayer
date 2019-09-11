@@ -18,11 +18,14 @@ import kotlinx.android.synthetic.main.fragment_playsong.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.activity.MainActivity
+import minh.quy.musicplayer.model.Song
 import kotlin.random.Random
 
 
 class PlaySongFragment : Fragment(),
-    MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
+    MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener,
+    BottomSheetFragment.OnClickItemBottomSheet {
+
 
     enum class Repeat(val value: Int) {
         NONE(0),
@@ -183,6 +186,11 @@ class PlaySongFragment : Fragment(),
         return true
     }
 
+    override fun onClickItemBottomSheet(song: Song) {
+
+        setDataForView()
+    }
+
     fun setDataForView() {
         val defaultPositionImage = Utils.getPositionDefaultImage(songPosition)
         drawableIdDefaulImage = Utils.getDrawableIdDefaultImage(defaultPositionImage)
@@ -218,6 +226,19 @@ class PlaySongFragment : Fragment(),
         btn_repeat_play_song.setOnClickListener { view -> actionRepeat() }
         seekbar.setOnSeekBarChangeListener(this)
         btn_suffle_play_song.setOnClickListener { view -> actionSuffle() }
+        img_song_queue.setOnClickListener { view -> actionShowQueue() }
+    }
+
+    private fun actionShowQueue() {
+        showSongQueue()
+    }
+
+    fun showSongQueue(){
+        val bottomSheetFragment = BottomSheetFragment.newInstance()
+        bottomSheetFragment.setOnClickBottomSheet(this)
+        mainActivity?.songsQueueList?.clear()
+        mainActivity?.songsQueueList?.addAll(mainActivity!!.songlist)
+        bottomSheetFragment.show(mainActivity?.fragmentManager,"")
     }
 
     private fun actionSuffle() {
@@ -404,7 +425,5 @@ class PlaySongFragment : Fragment(),
         updateSeekbar()
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-    }
+
 }

@@ -34,14 +34,14 @@ class SongFragmentAdapter(var context: Context) :
         holder.item.tv_artist.text = songList.get(position).artistName
         holder.item.tv_song_duration.text =
             Utils.convertSongDuration(songList.get(position).duration.toLong())
-        holder.item.img_item_song_fragment.clipToOutline = true
+        holder.item.img_item_bottom_fragment.clipToOutline = true
         holder.setOnclickItem()
         if (position < MAX_DEFAULT_COUNT) {
             currenImage = position + 1
         } else {
             currenImage = Utils.getPositionDefaultImage(position)
         }
-        holder.item.img_item_song_fragment.setImageResource(
+        holder.item.img_item_bottom_fragment.setImageResource(
             Utils.getDrawableIdDefaultImage(
                 currenImage
             )
@@ -50,7 +50,7 @@ class SongFragmentAdapter(var context: Context) :
 
 
     override fun getSectionTitle(position: Int): String {
-        return songList[position].songName.substring(0, 1)
+        return songList[position].songName!!.substring(0, 1)
     }
 
     fun setlistSong(songs: MutableList<Song>) {

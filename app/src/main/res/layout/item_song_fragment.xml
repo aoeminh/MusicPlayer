@@ -7,7 +7,7 @@
         android:layout_margin="@dimen/_7sdp">
 
     <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_item_song_fragment"
+            android:id="@+id/img_item_bottom_fragment"
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
             android:scaleType="fitXY"
@@ -17,12 +17,12 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/ctl_song_descrition"
+            android:id="@+id/ctl_bottom_descrition"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/img_item_song_fragment"
-            app:layout_constraintTop_toTopOf="@+id/img_item_song_fragment"
-            app:layout_constraintBottom_toBottomOf="@+id/img_item_song_fragment"
+            app:layout_constraintStart_toEndOf="@+id/img_item_bottom_fragment"
+            app:layout_constraintTop_toTopOf="@+id/img_item_bottom_fragment"
+            app:layout_constraintBottom_toBottomOf="@+id/img_item_bottom_fragment"
             android:layout_marginStart="@dimen/_10sdp"
             app:layout_constraintEnd_toStartOf="@+id/img_option_item_song"
             android:layout_marginEnd="@dimen/_8sdp">
@@ -77,8 +77,8 @@
             android:id="@+id/img_option_item_song"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="@+id/img_item_song_fragment"
-            app:layout_constraintBottom_toBottomOf="@+id/img_item_song_fragment"
+            app:layout_constraintTop_toTopOf="@+id/img_item_bottom_fragment"
+            app:layout_constraintBottom_toBottomOf="@+id/img_item_bottom_fragment"
             app:layout_constraintEnd_toEndOf="parent"
             android:src="@drawable/ic_items_dots"
             />
