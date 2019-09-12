@@ -11,6 +11,9 @@ import minh.quy.musicplayer.adapter.BottomNavigationAdapter
 import minh.quy.musicplayer.fragment.PlaySongFragment
 import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import minh.quy.musicplayer.sharepreferences.UserPreferences
+import android.content.Intent
+
+
 
 class MainActivity : BaseActivity() {
 
@@ -46,7 +49,10 @@ class MainActivity : BaseActivity() {
         if (count > 0) {
             fragmentManager.popBackStack()
         } else {
-            super.onBackPressed()
+            val homeIntent = Intent(Intent.ACTION_MAIN)
+            homeIntent.addCategory(Intent.CATEGORY_HOME)
+            homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(homeIntent)
         }
     }
 

@@ -22,7 +22,10 @@
     <color name="fastscroll__bubbleColor">#2198F3</color>
     <color name="fastscroll__handleColor">#D6D5D5</color>
 
+    <!-- common color -->
     <color name="scrim">#42000000</color>
-
     <color name="white">#FFFFFF</color>
+
+    <!-- text selected -->
+    <color name="text_selected">#3F69CA</color>
 </resources>

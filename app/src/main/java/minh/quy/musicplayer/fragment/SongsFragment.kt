@@ -2,9 +2,7 @@ package minh.quy.musicplayer.fragment
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -17,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fast_scroller.*
@@ -40,7 +39,8 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        songlist = mainActivity.songlist
+        songlist.addAll(mainActivity.songlist)
+        registUpdateSongSelected()
     }
 
     override fun onCreateView(
@@ -56,40 +56,47 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("MinhNQ", songlist.size.toString())
-        songlist = mainActivity.songlist
+        songlist.clear()
+        songlist.addAll(mainActivity.songlist)
         initRecyclerview()
     }
 
     override fun onItemClick(postion: Int) {
-        mainActivity.musicService?.setSongs(songlist)
-        mainActivity.musicService?.setSongPosition(postion)
-        mainActivity.musicService?.playMusic()
+        playSong(postion)
+        gotoPlaySongFragment(postion)
+        setSongQueue()
+        setSongSelected(songlist[postion].songId!!)
+    }
+
+    fun setSongSelected(songId: String){
+        for(i in 0 until songlist.size){
+            songlist[i].isSelected = songlist[i].songId.equals(songId)
+        }
+        adapterSong?.notifyDataSetChanged()
+
+    }
+    fun setSongQueue(){
+        mainActivity.songsQueueList.clear()
+        mainActivity.songsQueueList.addAll(songlist)
+    }
+    fun gotoPlaySongFragment(postion: Int){
         val fragment = PlaySongFragment.newInstance(postion)
         val transaction = mainActivity.fragmentManager.beginTransaction()
         transaction.replace(R.id.frame_main, fragment, null)
         transaction.addToBackStack(null)
         transaction.commit()
-
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser) {
-            getSongFromStorage()
-        }
-    }
-
-
-    fun getSongFromStorage(){
-        songlist = mainActivity.scanDeviceForMp3Files()
-        adapterSong?.setlistSong(songlist)
+    fun playSong(postion: Int){
+        mainActivity.musicService?.setSongs(songlist)
+        mainActivity.musicService?.setSongPosition(postion)
+        mainActivity.musicService?.playMusic()
     }
 
     fun initRecyclerview() {
         rv_song_fragment.apply {
             layoutManager = LinearLayoutManager(contextBase, RecyclerView.VERTICAL, false)
-            adapterSong = SongFragmentAdapter(contextBase!!)
-            adapterSong?.setlistSong(songlist)
+            adapterSong = SongFragmentAdapter(contextBase!!,songlist)
             adapterSong?.setOnItemClick(this@SongsFragment)
             adapter = adapterSong
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -116,6 +123,20 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
 
     fun showScrollBar() {
         fast_scroller?.visibility = View.VISIBLE
+    }
+
+
+    fun registUpdateSongSelected() {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                intent?.let {
+                    setSongSelected(it.getStringExtra(PlaySongFragment.EXTRA_SONG_ID)!!)
+                }
+            }
+        }
+        LocalBroadcastManager.getInstance(context!!)
+            .registerReceiver(receiver, IntentFilter(PlaySongFragment.ACTION_UPDATE_SONG))
+
     }
 
 }

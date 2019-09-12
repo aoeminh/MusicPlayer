@@ -55,6 +55,8 @@ abstract class BaseActivity : AppCompatActivity() {
         context = this
         musicDatabase = MusicDatabase.getInstanceDatabase(this)
         songlist = scanDeviceForMp3Files()
+        songsQueueList.clear()
+        songsQueueList.addAll(songlist)
         getAllAlbum()
         getAllArtist()
         startService()
@@ -78,7 +80,8 @@ abstract class BaseActivity : AppCompatActivity() {
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.DATE_ADDED
+            MediaStore.Audio.Media.DATE_ADDED,
+            MediaStore.Audio.Media._ID
 
         )
         val sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC"
@@ -98,6 +101,7 @@ abstract class BaseActivity : AppCompatActivity() {
                     val albumName = cursor.getString(6)
                     val albumId = cursor.getString(7).toLong()
                     val dateAdded = cursor.getString(8).toLong()
+                    val id = cursor.getString(9)
                     cursor.moveToNext()
                     if (path != null && path.endsWith(".mp3")) {
                         val song = Song(
@@ -108,7 +112,8 @@ abstract class BaseActivity : AppCompatActivity() {
                             albumName,
                             songDuration,
                             dateAdded,
-                            path
+                            path,
+                            id
                         )
                         songs.add(song)
                     }

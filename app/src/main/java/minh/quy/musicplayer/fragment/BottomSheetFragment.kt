@@ -1,21 +1,23 @@
 package minh.quy.musicplayer.fragment
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.bottom_sheet_fragment.*
 import minh.quy.musicplayer.R
-import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.BottomSheetAdapter
-import minh.quy.musicplayer.model.Song
 
-class BottomSheetFragment() : BottomSheetDialogFragment(),OnItemCommonClick {
+class BottomSheetFragment() : BottomSheetDialogFragment(),
+    BottomSheetAdapter.IFunctionBottomFragment {
 
     companion object {
         fun newInstance(): BottomSheetFragment {
@@ -33,6 +35,7 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),OnItemCommonClick {
         if (activity is MainActivity) {
             mainActivity = activity as MainActivity
         }
+        registUpdateSongSelected()
     }
 
     override fun onCreateView(
@@ -47,23 +50,56 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),OnItemCommonClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = BottomSheetAdapter(context!!, mainActivity!!.songsQueueList)
+        mAdapter?.setOnItemCommonClick(this)
         rv_list_bottom_sheet.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = mAdapter
         }
+
     }
 
-    override fun onItemClick(postion: Int) {
-        onClickItemBottomSheet?.onClickItemBottomSheet(mainActivity!!.songsQueueList[postion])
+    override fun chooseSong(position: Int) {
+        onClickItemBottomSheet?.onClickItemBottomSheet(position)
+        mAdapter?.notifyDataSetChanged()
+
     }
 
-    fun setOnClickBottomSheet(onClickItemBottomSheet: OnClickItemBottomSheet){
+    override fun deleteSong(position: Int) {
+        if (!mainActivity!!.songsQueueList.get(position).isSelected) {
+            mainActivity?.songsQueueList?.removeAt(position)
+            mAdapter?.notifyItemRemoved(position)
+        }
+    }
+
+
+    fun setOnClickBottomSheet(onClickItemBottomSheet: OnClickItemBottomSheet) {
         this.onClickItemBottomSheet = onClickItemBottomSheet
     }
 
     interface OnClickItemBottomSheet {
-        fun onClickItemBottomSheet(song: Song)
+        fun onClickItemBottomSheet(position: Int)
     }
 
+    fun setSongSelected(songId: String) {
+        for (i in 0 until mainActivity?.songsQueueList!!.size) {
+            mainActivity?.songsQueueList!![i].isSelected =
+                mainActivity?.songsQueueList!![i].songId.equals(songId)
+        }
+        mAdapter?.notifyDataSetChanged()
+    }
+
+
+    fun registUpdateSongSelected() {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                intent?.let {
+                    setSongSelected(it.getStringExtra(PlaySongFragment.EXTRA_SONG_ID)!!)
+                }
+            }
+        }
+        LocalBroadcastManager.getInstance(context!!)
+            .registerReceiver(receiver, IntentFilter(PlaySongFragment.ACTION_UPDATE_SONG))
+
+    }
 
 }

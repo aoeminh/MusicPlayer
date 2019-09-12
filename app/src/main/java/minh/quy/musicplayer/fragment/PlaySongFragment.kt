@@ -1,6 +1,7 @@
 package minh.quy.musicplayer.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +15,7 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.android.synthetic.main.fragment_playsong.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
@@ -35,6 +37,8 @@ class PlaySongFragment : Fragment(),
 
     companion object {
         val EXTRA_POSITION = "extra.position"
+        val EXTRA_SONG_ID = "extra.song.id"
+        val ACTION_UPDATE_SONG = "action.update.song"
         fun newInstance(positin: Int): PlaySongFragment {
             val bundle = Bundle()
             val fragment = PlaySongFragment()
@@ -113,7 +117,7 @@ class PlaySongFragment : Fragment(),
 
         // suffle modepaus
         if (mainActivity!!.isSuffle) {
-            songPosition = Random.nextInt(mainActivity?.songlist!!.size)
+            songPosition = Random.nextInt(mainActivity?.songsQueueList!!.size)
             mainActivity?.musicService?.setSongPosition(songPosition)
             playSong()
             if (isVisible) {
@@ -123,7 +127,7 @@ class PlaySongFragment : Fragment(),
         }
         // repeat all mode or normal mode
         songPosition++
-        if (songPosition > mainActivity?.songlist!!.size - 1) {
+        if (songPosition > mainActivity?.songsQueueList!!.size - 1) {
             if (mainActivity!!.isRepeatAll) {
                 songPosition = 0
                 mainActivity?.musicService?.setSongPosition(songPosition)
@@ -171,12 +175,12 @@ class PlaySongFragment : Fragment(),
             upXPosition = motionEvent.x.toInt()
             upYPosition = motionEvent.y.toInt()
             if (Math.abs(upYPosition.minus(downYPostion)) < LIMIT_Y_DIFFERENT_TOUCH) {
-                if ((downXPostion.minus(upXPosition)) > LIMIT_X_PREVIOUS_SONG) {
+                if ((upXPosition.minus(downXPostion)) > LIMIT_X_PREVIOUS_SONG) {
                     actionPrevious()
                     return true
                 }
 
-                if ((downXPostion.minus(upXPosition)) <= LIMIT_X_NEXT_SONG) {
+                if ((upXPosition.minus(downXPostion)) <= LIMIT_X_NEXT_SONG) {
                     actionNext()
                     return true
                 }
@@ -186,20 +190,23 @@ class PlaySongFragment : Fragment(),
         return true
     }
 
-    override fun onClickItemBottomSheet(song: Song) {
-
+    override fun onClickItemBottomSheet(position: Int) {
+        songPosition = position
+        mainActivity?.musicService?.setSongPosition(position)
+        playSong()
         setDataForView()
+
     }
 
     fun setDataForView() {
         val defaultPositionImage = Utils.getPositionDefaultImage(songPosition)
         drawableIdDefaulImage = Utils.getDrawableIdDefaultImage(defaultPositionImage)
         img_ava_song.setImageResource(drawableIdDefaulImage)
-        tv_song_name_play_song.text = mainActivity?.songlist?.get(songPosition)?.songName
+        tv_song_name_play_song.text = mainActivity?.songsQueueList?.get(songPosition)?.songName
         tv_song_name_play_song.isSelected
-        tv_artist_name_play_song.text = mainActivity?.songlist?.get(songPosition)?.artistName
+        tv_artist_name_play_song.text = mainActivity?.songsQueueList?.get(songPosition)?.artistName
         tv_total_time_song.text =
-            Utils.convertSongDuration(mainActivity?.songlist?.get(songPosition)?.duration!!.toLong())
+            Utils.convertSongDuration(mainActivity?.songsQueueList?.get(songPosition)?.duration!!.toLong())
 
         seekbar.max = mainActivity?.musicService?.mediaPlayer!!.duration
         if (mediaPlayer!!.isPlaying) {
@@ -233,12 +240,10 @@ class PlaySongFragment : Fragment(),
         showSongQueue()
     }
 
-    fun showSongQueue(){
+    fun showSongQueue() {
         val bottomSheetFragment = BottomSheetFragment.newInstance()
         bottomSheetFragment.setOnClickBottomSheet(this)
-        mainActivity?.songsQueueList?.clear()
-        mainActivity?.songsQueueList?.addAll(mainActivity!!.songlist)
-        bottomSheetFragment.show(mainActivity?.fragmentManager,"")
+        bottomSheetFragment.show(mainActivity?.fragmentManager, "")
     }
 
     private fun actionSuffle() {
@@ -302,11 +307,11 @@ class PlaySongFragment : Fragment(),
     }
 
     private fun actionNext() {
-        if (songPosition < mainActivity?.songlist!!.size - 1) {
+        if (songPosition < mainActivity?.songsQueueList!!.size - 1) {
             mainActivity?.musicService?.setSongPosition(songPosition + 1)
             songPosition++
         } else {
-            mainActivity?.musicService?.setSongPosition(mainActivity?.songlist!!.size - 1)
+            mainActivity?.musicService?.setSongPosition(mainActivity?.songsQueueList!!.size - 1)
         }
         btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
         playSong()
@@ -394,6 +399,7 @@ class PlaySongFragment : Fragment(),
     }
 
     fun playSong() {
+        mainActivity?.songsQueueList!!.get(songPosition).songId?.let { setSongSelected(it) }
         mainActivity?.musicService?.playMusic()
         if (seekbar != null) {
             seekbar.progress = 0
@@ -425,5 +431,23 @@ class PlaySongFragment : Fragment(),
         updateSeekbar()
     }
 
+    fun setSongSelected(songId: String) {
+        mainActivity?.songsQueueList?.forEach {
+            it.isSelected = false
+        }
+        for (i in 0 until mainActivity!!.songsQueueList.size) {
+            mainActivity?.songsQueueList!![i].isSelected =
+                mainActivity!!.songsQueueList[i].songId.equals(songId)
+        }
+        updateSongSelected(songId)
+
+    }
+
+    fun updateSongSelected(songId: String) {
+        val intent = Intent(ACTION_UPDATE_SONG)
+        intent.putExtra(EXTRA_SONG_ID, songId)
+        LocalBroadcastManager.getInstance(mainActivity!!.applicationContext).sendBroadcast(intent)
+
+    }
 
 }

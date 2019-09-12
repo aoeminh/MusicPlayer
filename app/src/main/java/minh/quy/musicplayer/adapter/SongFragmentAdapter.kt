@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider
 import kotlinx.android.synthetic.main.item_song_fragment.view.*
@@ -13,10 +14,9 @@ import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.model.Song
 
-class SongFragmentAdapter(var context: Context) :
+class SongFragmentAdapter(var context: Context, var songList: MutableList<Song>) :
     RecyclerView.Adapter<SongFragmentAdapter.ViewHolder>(), SectionTitleProvider {
 
-    var songList: MutableList<Song> = arrayListOf()
     var currenImage = 1
     lateinit var onItemCommonClick: OnItemCommonClick
 
@@ -30,10 +30,50 @@ class SongFragmentAdapter(var context: Context) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.item.tv_song_name.text = songList.get(position).songName
-        holder.item.tv_artist.text = songList.get(position).artistName
+        val song = songList.get(position)
+        if (song.isSelected) {
+            holder.item.tv_song_name.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.text_selected
+                )
+            )
+            holder.item.tv_artist.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.text_selected
+                )
+            )
+            holder.item.tv_song_duration.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.text_selected
+                )
+            )
+        } else {
+            holder.item.tv_song_name.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_text
+                )
+            )
+            holder.item.tv_artist.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_text
+                )
+            )
+            holder.item.tv_song_duration.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_text
+                )
+            )
+        }
+        holder.item.tv_song_name.text = song.songName
+        holder.item.tv_artist.text = song.artistName
         holder.item.tv_song_duration.text =
-            Utils.convertSongDuration(songList.get(position).duration.toLong())
+            Utils.convertSongDuration(song.duration.toLong())
         holder.item.img_item_bottom_fragment.clipToOutline = true
         holder.setOnclickItem()
         if (position < MAX_DEFAULT_COUNT) {
