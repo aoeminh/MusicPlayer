@@ -191,11 +191,12 @@ class PlaySongFragment : Fragment(),
     }
 
     override fun onClickItemBottomSheet(position: Int) {
-        songPosition = position
-        mainActivity?.musicService?.setSongPosition(position)
-        playSong()
-        setDataForView()
-
+        if(!mainActivity!!.songsQueueList[position].isSelected){
+            songPosition = position
+            mainActivity?.musicService?.setSongPosition(position)
+            playSong()
+            setDataForView()
+        }
     }
 
     fun setDataForView() {

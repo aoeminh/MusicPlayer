@@ -62,7 +62,9 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
     }
 
     override fun onItemClick(postion: Int) {
-        playSong(postion)
+        if(!songlist[postion].isSelected){
+            playSong(postion)
+        }
         gotoPlaySongFragment(postion)
         setSongQueue()
         setSongSelected(songlist[postion].songId!!)
