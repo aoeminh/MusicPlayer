@@ -6,27 +6,17 @@
     android:layout_height="@dimen/_40sdp"
     android:layout_margin="@dimen/_7sdp">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_play_playback"
-        android:layout_width="@dimen/_20sdp"
-        android:layout_height="@dimen/_20sdp"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/bg_item_song_fragment"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_menu_white_24dp"/>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ctl_playback"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/img_play_playback"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="@dimen/_10sdp"
-        app:layout_constraintEnd_toStartOf="@+id/img_delete_item_song"
+        app:layout_constraintEnd_toStartOf="@+id/img_play_playback"
         android:layout_marginEnd="@dimen/_8sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -54,6 +44,19 @@
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_play_playback"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_item_song_fragment"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/ctl_playback"
+        app:layout_constraintEnd_toStartOf="@+id/img_delete_item_song"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_menu_white_24dp"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_delete_item_song"

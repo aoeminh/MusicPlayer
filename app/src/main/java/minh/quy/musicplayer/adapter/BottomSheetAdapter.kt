@@ -57,7 +57,7 @@ class BottomSheetAdapter(var context: Context, var list: MutableList<Song>) :
         }
         holder.itemView.tv_song_name.text = list[position].songName
         holder.itemView.tv_artist.text = list[position].artistName
-        holder.itemView.ctl_bottom_descrition.setOnClickListener {
+        holder.itemView.ctl_playback.setOnClickListener {
             functionBottomFragmen?.chooseSong(position)
         }
         holder.itemView.img_delete_item_song.setOnClickListener {

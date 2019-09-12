@@ -74,14 +74,14 @@ class SongFragmentAdapter(var context: Context, var songList: MutableList<Song>)
         holder.item.tv_artist.text = song.artistName
         holder.item.tv_song_duration.text =
             Utils.convertSongDuration(song.duration.toLong())
-        holder.item.img_item_bottom_fragment.clipToOutline = true
+        holder.item.img_play_playback.clipToOutline = true
         holder.setOnclickItem()
         if (position < MAX_DEFAULT_COUNT) {
             currenImage = position + 1
         } else {
             currenImage = Utils.getPositionDefaultImage(position)
         }
-        holder.item.img_item_bottom_fragment.setImageResource(
+        holder.item.img_play_playback.setImageResource(
             Utils.getDrawableIdDefaultImage(
                 currenImage
             )
