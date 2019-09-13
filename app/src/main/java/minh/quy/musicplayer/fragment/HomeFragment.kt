@@ -50,7 +50,6 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     var functionToolbarPlaylist: FunctionToolbarPlaylist? = null
     var mainActivity: MainActivity? = null
     var mContext: Context? = null
-    var currentSongId = ""
     var receiver: BroadcastReceiver? = null
 
     override fun onAttachFragment(childFragment: Fragment?) {
@@ -79,7 +78,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setSongSelected(currentSongId)
+        setSongSelected(mainActivity?.currenSongId)
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -172,7 +171,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     fun gotoPlaySongFragment() {
         for (i in 0 until mainActivity!!.songsQueueList.size) {
-            if (mainActivity!!.songsQueueList[i].songId.equals(currentSongId)) {
+            if (mainActivity!!.songsQueueList[i].songId.equals(mainActivity?.currenSongId)) {
                 val fragment = PlaySongFragment.newInstance(i)
                 val transaction = mainActivity!!.fragmentManager.beginTransaction()
                 transaction.replace(R.id.frame_main, fragment, null)
@@ -414,8 +413,8 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     }
 
 
-    private fun setSongSelected(songId: String) {
-        currentSongId = songId
+    private fun setSongSelected(songId: String?) {
+        mainActivity?.currenSongId = songId
         mainActivity?.songsQueueList?.forEach {
             if (it.songId == songId) {
                 setDataForBottomPlayback(it)
@@ -426,11 +425,14 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     private fun setDataForBottomPlayback(song: Song) {
         tv_song_name_playback?.text = song.songName
         tv_artist_playback?.text = song.artistName
-        if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
-            img_play_playback?.setImageResource(R.drawable.ic_pause_blue_24dp)
-        } else {
-            img_play_playback?.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
+        mainActivity?.musicService?.mediaPlayer?.let {
+            if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
+                img_play_playback?.setImageResource(R.drawable.ic_pause_blue_24dp)
+            } else {
+                img_play_playback?.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
+            }
         }
+
     }
 
     fun actionBtnPlay() {

@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 const val PREFERENT_NAME = "music.preferent"
 const val EXTRA_REPEAT = "extra.repeat "
 const val EXTRA_SUFFLE = "extra.suffle"
+const val EXTRA_SONG_ID = "extra.song.id"
 
 class UserPreferences() {
 
@@ -41,5 +42,10 @@ class UserPreferences() {
 
     fun getSuffleMode(): Boolean = sharedPreferences!!.getBoolean(EXTRA_SUFFLE,false)
 
+    fun saveSongId(songId: String){
+        getEdittor()?.putString(EXTRA_SONG_ID,songId)?.commit()
+    }
+
+    fun getSongId(): String? = sharedPreferences?.getString(EXTRA_SONG_ID,"")
 
 }

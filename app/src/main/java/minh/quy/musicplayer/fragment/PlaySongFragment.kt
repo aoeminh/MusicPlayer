@@ -453,10 +453,10 @@ class PlaySongFragment : Fragment(),
     fun registItemBottomClick() {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                val songId = intent?.getStringExtra(BottomSheetFragment.EXTRA_SONG_ID)
-                songId?.let {
+                mainActivity?.currenSongId = intent?.getStringExtra(BottomSheetFragment.EXTRA_SONG_ID)
+                mainActivity?.currenSongId?.let {
                     for (i in 0 until mainActivity?.songsQueueList?.size!!) {
-                        if (mainActivity?.songsQueueList!![i].songId.equals(songId)) {
+                        if (mainActivity?.songsQueueList!![i].songId.equals(mainActivity?.currenSongId)) {
                             songPosition = i
                         }
                     }

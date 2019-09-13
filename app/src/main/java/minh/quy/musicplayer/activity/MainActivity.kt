@@ -14,7 +14,6 @@ import minh.quy.musicplayer.sharepreferences.UserPreferences
 import android.content.Intent
 
 
-
 class MainActivity : BaseActivity() {
 
 
@@ -31,6 +30,7 @@ class MainActivity : BaseActivity() {
     var isRepeatAll = true
     var isSuffle = false
     var currenRepeat = 0
+    var currenSongId: String? = null
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -40,7 +40,9 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getRepeatAndSuffleMode()
+        currenSongId = getSongId()
         addHomeFragment()
+
         Log.d("minhnh", "onCreate")
     }
 
@@ -59,6 +61,7 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         saveRepeatAndSuffleMode()
+        saveSongId()
     }
 
     fun addHomeFragment() {
@@ -72,6 +75,17 @@ class MainActivity : BaseActivity() {
         val userPreferences = UserPreferences.getInstance(applicationContext)
         userPreferences?.saveRepeatMode(currenRepeat)
         userPreferences?.saveSuffleMode(isSuffle)
+
+    }
+
+    fun saveSongId() {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        userPreferences?.saveSongId(currenSongId!!)
+    }
+
+    fun getSongId(): String? {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        return userPreferences?.getSongId()
     }
 
     fun getRepeatAndSuffleMode() {
