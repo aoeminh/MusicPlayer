@@ -7,8 +7,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activity.MainActivity"
-        android:background="@drawable/background3"
+        android:background="@drawable/background2"
         tools:openDrawer="start">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_transparent"/>
 
     <include layout="@layout/layout_main_content"/>
 
@@ -20,7 +24,7 @@
             android:fitsSystemWindows="true"
             app:menu="@menu/menu_navigation"
             app:itemTextColor="@color/color_text"
-            android:background="@drawable/background3"
+            android:background="@drawable/background2"
             app:headerLayout="@layout/header_navigation"
             >
 

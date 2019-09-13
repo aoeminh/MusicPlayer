@@ -38,7 +38,7 @@ class SongFragmentAdapter(var context: Context, var songList: MutableList<Song>)
                     R.color.text_selected
                 )
             )
-            holder.item.tv_artist.setTextColor(
+            holder.item.tv_artist_playback.setTextColor(
                 ContextCompat.getColor(
                     context,
                     R.color.text_selected
@@ -57,7 +57,7 @@ class SongFragmentAdapter(var context: Context, var songList: MutableList<Song>)
                     R.color.color_text
                 )
             )
-            holder.item.tv_artist.setTextColor(
+            holder.item.tv_artist_playback.setTextColor(
                 ContextCompat.getColor(
                     context,
                     R.color.color_text
@@ -71,7 +71,7 @@ class SongFragmentAdapter(var context: Context, var songList: MutableList<Song>)
             )
         }
         holder.item.tv_song_name.text = song.songName
-        holder.item.tv_artist.text = song.artistName
+        holder.item.tv_artist_playback.text = song.artistName
         holder.item.tv_song_duration.text =
             Utils.convertSongDuration(song.duration.toLong())
         holder.item.img_play_playback.clipToOutline = true

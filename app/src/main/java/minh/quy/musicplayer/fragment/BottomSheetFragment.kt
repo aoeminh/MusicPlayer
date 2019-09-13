@@ -20,6 +20,8 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
     BottomSheetAdapter.IFunctionBottomFragment {
 
     companion object {
+        val ACITON_ITEM_BOTTOM_CLICK = "action.item.bottom.click"
+        val EXTRA_SONG_ID = "action.song.id"
         fun newInstance(): BottomSheetFragment {
             val fragment = BottomSheetFragment()
             return fragment
@@ -28,7 +30,6 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
 
     var mAdapter: BottomSheetAdapter? = null
     var mainActivity: MainActivity? = null
-    var onClickItemBottomSheet: OnClickItemBottomSheet? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,8 +59,14 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregistUpdateSongSelected()
+    }
     override fun chooseSong(position: Int) {
-        onClickItemBottomSheet?.onClickItemBottomSheet(position)
+        val intent = Intent(ACITON_ITEM_BOTTOM_CLICK)
+        intent.putExtra(EXTRA_SONG_ID, mainActivity?.songsQueueList?.get(position)?.songId)
+        LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
         mAdapter?.notifyDataSetChanged()
 
     }
@@ -69,15 +76,6 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
             mainActivity?.songsQueueList?.removeAt(position)
             mAdapter?.notifyItemRemoved(position)
         }
-    }
-
-
-    fun setOnClickBottomSheet(onClickItemBottomSheet: OnClickItemBottomSheet) {
-        this.onClickItemBottomSheet = onClickItemBottomSheet
-    }
-
-    interface OnClickItemBottomSheet {
-        fun onClickItemBottomSheet(position: Int)
     }
 
     fun setSongSelected(songId: String) {
@@ -90,16 +88,21 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
 
 
     fun registUpdateSongSelected() {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                intent?.let {
-                    setSongSelected(it.getStringExtra(PlaySongFragment.EXTRA_SONG_ID)!!)
-                }
-            }
-        }
         LocalBroadcastManager.getInstance(context!!)
             .registerReceiver(receiver, IntentFilter(PlaySongFragment.ACTION_UPDATE_SONG))
 
+    }
+
+    fun unregistUpdateSongSelected(){
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver)
+    }
+
+    val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            intent?.let {
+                setSongSelected(it.getStringExtra(PlaySongFragment.EXTRA_SONG_ID)!!)
+            }
+        }
     }
 
 }

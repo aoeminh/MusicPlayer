@@ -2,7 +2,10 @@ package layout
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
@@ -24,8 +27,12 @@ import minh.quy.musicplayer.fragment.*
 import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.navigation.NavigationView
+import kotlinx.android.synthetic.main.bottom_playback.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import minh.quy.musicplayer.R
+import minh.quy.musicplayer.model.Song
 
 
 class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener {
@@ -43,6 +50,8 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     var functionToolbarPlaylist: FunctionToolbarPlaylist? = null
     var mainActivity: MainActivity? = null
     var mContext: Context? = null
+    var currentSongId = ""
+    lateinit var receiver: BroadcastReceiver
 
     override fun onAttachFragment(childFragment: Fragment?) {
         super.onAttachFragment(childFragment)
@@ -54,7 +63,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         if (activity is MainActivity) {
             mainActivity = activity as MainActivity
         }
-
+        registerUpdatePlayback()
 
     }
 
@@ -68,6 +77,11 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         return view1
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setSongSelected(currentSongId)
+    }
+
     @TargetApi(Build.VERSION_CODES.M)
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -76,11 +90,17 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         initViewPager()
         addTablayoutAction()
         setToolbar()
+        setActionPlayback()
     }
 
     override fun onResume() {
         super.onResume()
         Log.d("minhnh1", "onResume home")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unRegisterUpdatePlayback()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -112,7 +132,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            minh.quy.musicplayer.R.id.item_search_toolbar -> {
+            R.id.item_search_toolbar -> {
                 Toast.makeText(activity, "Search", Toast.LENGTH_SHORT).show()
             }
             minh.quy.musicplayer.R.id.item_voice_toolbar -> {
@@ -142,6 +162,26 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         drawLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    fun setActionPlayback() {
+        ctl_playback?.setOnClickListener { view -> gotoPlaySongFragment() }
+        img_play_playback?.setOnClickListener { view -> actionBtnPlay() }
+        img_song_queue_playback?.setOnClickListener { view -> showSongQueue() }
+    }
+
+    fun gotoPlaySongFragment() {
+        for (i in 0 until mainActivity!!.songsQueueList.size) {
+            if (mainActivity!!.songsQueueList[i].songId.equals(currentSongId)) {
+                val fragment = PlaySongFragment.newInstance(i)
+                val transaction = mainActivity!!.fragmentManager.beginTransaction()
+                transaction.replace(R.id.frame_main, fragment, null)
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
+        }
+
+
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -338,5 +378,70 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     fun setFunctionPlaylist(functionToolbarPlaylist: FunctionToolbarPlaylist) {
         this.functionToolbarPlaylist = functionToolbarPlaylist
     }
+
+    fun registerUpdatePlayback() {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                intent?.let {
+                    when (intent.action) {
+                        PlaySongFragment.ACTION_UPDATE_SONG -> setSongSelected(
+                            it.getStringExtra(
+                                PlaySongFragment.EXTRA_SONG_ID
+                            )!!
+                        )
+
+                        BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK -> setSongSelected(
+                            it.getStringExtra(
+                                BottomSheetFragment.EXTRA_SONG_ID
+                            )!!
+                        )
+                    }
+                }
+            }
+        }
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(PlaySongFragment.ACTION_UPDATE_SONG)
+        intentFilter.addAction(BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK)
+        LocalBroadcastManager.getInstance(context!!)
+            .registerReceiver(receiver, intentFilter)
+    }
+
+    fun unRegisterUpdatePlayback() {
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver)
+
+    }
+
+
+    private fun setSongSelected(songId: String) {
+        currentSongId = songId
+        mainActivity?.songsQueueList?.forEach {
+            if (it.songId == songId) {
+                setDataForBottomPlayback(it)
+            }
+        }
+    }
+
+    private fun setDataForBottomPlayback(song: Song) {
+        tv_song_name_playback?.text = song.songName
+        tv_artist_playback?.text = song.artistName
+        img_play_playback?.setImageResource(R.drawable.ic_pause_blue_24dp)
+
+    }
+
+    fun actionBtnPlay() {
+        if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
+            img_play_playback.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
+            mainActivity?.musicService?.mediaPlayer?.pause()
+        } else {
+            img_play_playback.setImageResource(R.drawable.ic_pause_blue_24dp)
+            mainActivity?.musicService?.mediaPlayer?.start()
+        }
+    }
+
+    fun showSongQueue() {
+        val bottomSheetFragment = BottomSheetFragment.newInstance()
+        bottomSheetFragment.show(mainActivity?.fragmentManager, "")
+    }
+
 
 }

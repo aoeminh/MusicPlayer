@@ -36,6 +36,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
 
     var songlist: MutableList<Song> = arrayListOf()
     var adapterSong: SongFragmentAdapter? = null
+    lateinit var receiver: BroadcastReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,27 +62,35 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
         initRecyclerview()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregistUpdateSongSelected()
+    }
+
     override fun onItemClick(postion: Int) {
-        if(!songlist[postion].isSelected){
+        if (!songlist[postion].isSelected) {
             playSong(postion)
         }
         gotoPlaySongFragment(postion)
         setSongQueue()
         setSongSelected(songlist[postion].songId!!)
+        updateSongSelected((songlist[postion].songId!!))
     }
 
-    fun setSongSelected(songId: String){
-        for(i in 0 until songlist.size){
+    fun setSongSelected(songId: String) {
+        for (i in 0 until songlist.size) {
             songlist[i].isSelected = songlist[i].songId.equals(songId)
         }
         adapterSong?.notifyDataSetChanged()
 
     }
-    fun setSongQueue(){
+
+    fun setSongQueue() {
         mainActivity.songsQueueList.clear()
         mainActivity.songsQueueList.addAll(songlist)
     }
-    fun gotoPlaySongFragment(postion: Int){
+
+    fun gotoPlaySongFragment(postion: Int) {
         val fragment = PlaySongFragment.newInstance(postion)
         val transaction = mainActivity.fragmentManager.beginTransaction()
         transaction.replace(R.id.frame_main, fragment, null)
@@ -89,7 +98,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
         transaction.commit()
     }
 
-    fun playSong(postion: Int){
+    fun playSong(postion: Int) {
         mainActivity.musicService?.setSongs(songlist)
         mainActivity.musicService?.setSongPosition(postion)
         mainActivity.musicService?.playMusic()
@@ -98,7 +107,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
     fun initRecyclerview() {
         rv_song_fragment.apply {
             layoutManager = LinearLayoutManager(contextBase, RecyclerView.VERTICAL, false)
-            adapterSong = SongFragmentAdapter(contextBase!!,songlist)
+            adapterSong = SongFragmentAdapter(contextBase!!, songlist)
             adapterSong?.setOnItemClick(this@SongsFragment)
             adapter = adapterSong
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -132,12 +141,40 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 intent?.let {
-                    setSongSelected(it.getStringExtra(PlaySongFragment.EXTRA_SONG_ID)!!)
+                    when (intent.action) {
+                        PlaySongFragment.ACTION_UPDATE_SONG -> setSongSelected(
+                            it.getStringExtra(
+                                PlaySongFragment.EXTRA_SONG_ID
+                            )!!
+                        )
+
+                        BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK -> setSongSelected(
+                            it.getStringExtra(
+                                BottomSheetFragment.EXTRA_SONG_ID
+                            )!!
+                        )
+                    }
                 }
             }
         }
+
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(PlaySongFragment.ACTION_UPDATE_SONG)
+        intentFilter.addAction(BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK)
         LocalBroadcastManager.getInstance(context!!)
-            .registerReceiver(receiver, IntentFilter(PlaySongFragment.ACTION_UPDATE_SONG))
+            .registerReceiver(receiver, intentFilter)
+
+    }
+
+    fun unregistUpdateSongSelected() {
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver)
+    }
+
+
+    fun updateSongSelected(songId: String) {
+        val intent = Intent(PlaySongFragment.ACTION_UPDATE_SONG)
+        intent.putExtra(PlaySongFragment.EXTRA_SONG_ID, songId)
+        LocalBroadcastManager.getInstance(mainActivity.applicationContext).sendBroadcast(intent)
 
     }
 

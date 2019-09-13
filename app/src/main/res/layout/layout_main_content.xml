@@ -37,6 +37,7 @@
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+        <include layout="@layout/bottom_playback"/>
         <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tablayout_main"
                 android:layout_width="match_parent"

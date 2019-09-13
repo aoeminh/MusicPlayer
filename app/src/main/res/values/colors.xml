@@ -5,7 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="color_text">#FFFFFF</color>
     <color name="transparent">#00ffffff</color>
-    <color name="background_tablayout">#0a1d1b</color>
+    <color name="background_tablayout">#000a1d1b</color>
     <color name="playlist_tab_selected">#d23b4c</color>
     <color name="songs_tab_selected">#ee980e</color>
     <color name="folder_tab_selected">#b7ac08</color>
@@ -25,7 +25,8 @@
     <!-- common color -->
     <color name="scrim">#42000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="black_transparent">#400A0101</color>
 
     <!-- text selected -->
-    <color name="text_selected">#3F69CA</color>
+    <color name="text_selected">#1E88E5</color>
 </resources>

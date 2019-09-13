@@ -1,7 +1,9 @@
 package minh.quy.musicplayer.fragment
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -25,8 +27,7 @@ import kotlin.random.Random
 
 
 class PlaySongFragment : Fragment(),
-    MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener,
-    BottomSheetFragment.OnClickItemBottomSheet {
+    MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
 
 
     enum class Repeat(val value: Int) {
@@ -62,6 +63,7 @@ class PlaySongFragment : Fragment(),
     var upXPosition = 0
     var downYPostion = 0
     var upYPosition = 0
+    lateinit var receiver: BroadcastReceiver
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -78,6 +80,7 @@ class PlaySongFragment : Fragment(),
             songPosition = arguments!!.getInt(EXTRA_POSITION)
         }
         mediaPlayer = mainActivity?.musicService?.mediaPlayer
+        registItemBottomClick()
 
     }
 
@@ -118,7 +121,6 @@ class PlaySongFragment : Fragment(),
         // suffle modepaus
         if (mainActivity!!.isSuffle) {
             songPosition = Random.nextInt(mainActivity?.songsQueueList!!.size)
-            mainActivity?.musicService?.setSongPosition(songPosition)
             playSong()
             if (isVisible) {
                 setDataForView()
@@ -130,14 +132,12 @@ class PlaySongFragment : Fragment(),
         if (songPosition > mainActivity?.songsQueueList!!.size - 1) {
             if (mainActivity!!.isRepeatAll) {
                 songPosition = 0
-                mainActivity?.musicService?.setSongPosition(songPosition)
                 playSong()
                 if (isVisible) {
                     setDataForView()
                 }
             }
         } else {
-            mainActivity?.musicService?.setSongPosition(songPosition)
             playSong()
             if (isVisible) {
                 setDataForView()
@@ -190,28 +190,19 @@ class PlaySongFragment : Fragment(),
         return true
     }
 
-    override fun onClickItemBottomSheet(position: Int) {
-        if(!mainActivity!!.songsQueueList[position].isSelected){
-            songPosition = position
-            mainActivity?.musicService?.setSongPosition(position)
-            playSong()
-            setDataForView()
-        }
-    }
-
     fun setDataForView() {
         val defaultPositionImage = Utils.getPositionDefaultImage(songPosition)
         drawableIdDefaulImage = Utils.getDrawableIdDefaultImage(defaultPositionImage)
-        img_ava_song.setImageResource(drawableIdDefaulImage)
-        tv_song_name_play_song.text = mainActivity?.songsQueueList?.get(songPosition)?.songName
-        tv_song_name_play_song.isSelected
-        tv_artist_name_play_song.text = mainActivity?.songsQueueList?.get(songPosition)?.artistName
-        tv_total_time_song.text =
+        img_ava_song?.setImageResource(drawableIdDefaulImage)
+        tv_song_name_play_song?.text = mainActivity?.songsQueueList?.get(songPosition)?.songName
+        tv_song_name_play_song?.isSelected
+        tv_artist_name_play_song?.text = mainActivity?.songsQueueList?.get(songPosition)?.artistName
+        tv_total_time_song?.text =
             Utils.convertSongDuration(mainActivity?.songsQueueList?.get(songPosition)?.duration!!.toLong())
 
-        seekbar.max = mainActivity?.musicService?.mediaPlayer!!.duration
+        seekbar?.max = mainActivity?.musicService?.mediaPlayer!!.duration
         if (mediaPlayer!!.isPlaying) {
-            btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
+            btn_play_and_pause_play_song?.setImageResource(R.drawable.ic_play_pause_white)
         }
         initRepeatBtn()
         initSuffleBtn()
@@ -224,7 +215,15 @@ class PlaySongFragment : Fragment(),
         activity?.getWindowManager()?.getDefaultDisplay()?.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
         val width = displayMetrics.widthPixels
-        Utils.loadBlurImageBanner(activity!!, width, height, drawableIdDefaulImage, img_background)
+        activity?.let {
+            Utils.loadBlurImageBanner(
+                activity!!,
+                width,
+                height,
+                drawableIdDefaulImage,
+                img_background
+            )
+        }
     }
 
     fun setAction() {
@@ -243,7 +242,6 @@ class PlaySongFragment : Fragment(),
 
     fun showSongQueue() {
         val bottomSheetFragment = BottomSheetFragment.newInstance()
-        bottomSheetFragment.setOnClickBottomSheet(this)
         bottomSheetFragment.show(mainActivity?.fragmentManager, "")
     }
 
@@ -362,8 +360,8 @@ class PlaySongFragment : Fragment(),
     }
 
     fun setImageNoRepeatMode() {
-        btn_repeat_play_song.setImageResource(R.drawable.ic_play_repeat_white)
-        btn_repeat_play_song.setColorFilter(
+        btn_repeat_play_song?.setImageResource(R.drawable.ic_play_repeat_white)
+        btn_repeat_play_song?.setColorFilter(
             ActivityCompat.getColor(
                 mContext!!,
                 R.color.white
@@ -400,6 +398,7 @@ class PlaySongFragment : Fragment(),
     }
 
     fun playSong() {
+        mainActivity?.musicService?.setSongPosition(songPosition)
         mainActivity?.songsQueueList!!.get(songPosition).songId?.let { setSongSelected(it) }
         mainActivity?.musicService?.playMusic()
         if (seekbar != null) {
@@ -451,4 +450,23 @@ class PlaySongFragment : Fragment(),
 
     }
 
+    fun registItemBottomClick() {
+        receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                val songId = intent?.getStringExtra(BottomSheetFragment.EXTRA_SONG_ID)
+                songId?.let {
+                    for (i in 0 until mainActivity?.songsQueueList?.size!!) {
+                        if (mainActivity?.songsQueueList!![i].songId.equals(songId)) {
+                            songPosition = i
+                        }
+                    }
+                }
+                setDataForView()
+                playSong()
+            }
+        }
+
+        val intentFilter = IntentFilter(BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver, intentFilter)
+    }
 }

@@ -18,7 +18,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener {
     var binder: Binder = MusicBinder()
     var mediaPlayer: MediaPlayer? = null
     var songList: MutableList<Song> = arrayListOf()
-    var songPos: Int = 0
+    var songPos: Int? = null
 
     override fun onBind(p0: Intent?): IBinder? {
         return this.binder
@@ -67,10 +67,11 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener {
 
     fun playMusic() {
         mediaPlayer?.reset()
-        val songUri = Uri.parse(songList.get(songPos).data)
-        mediaPlayer?.setDataSource(applicationContext, songUri)
-        mediaPlayer?.prepare()
-
+        songPos?.run {
+            val songUri = Uri.parse(songList.get(songPos!!).data)
+            mediaPlayer?.setDataSource(applicationContext, songUri)
+            mediaPlayer?.prepare()
+        }
     }
 
     inner class MusicBinder : Binder() {

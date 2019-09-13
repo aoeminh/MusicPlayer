@@ -35,7 +35,7 @@ class BottomSheetAdapter(var context: Context, var list: MutableList<Song>) :
                     R.color.text_selected
                 )
             )
-            holder.itemView.tv_artist.setTextColor(
+            holder.itemView.tv_artist_playback.setTextColor(
                 ContextCompat.getColor(
                     context,
                     R.color.text_selected
@@ -48,7 +48,7 @@ class BottomSheetAdapter(var context: Context, var list: MutableList<Song>) :
                     R.color.color_text
                 )
             )
-            holder.itemView.tv_artist.setTextColor(
+            holder.itemView.tv_artist_playback.setTextColor(
                 ContextCompat.getColor(
                     context,
                     R.color.color_text
@@ -56,11 +56,11 @@ class BottomSheetAdapter(var context: Context, var list: MutableList<Song>) :
             )
         }
         holder.itemView.tv_song_name.text = list[position].songName
-        holder.itemView.tv_artist.text = list[position].artistName
+        holder.itemView.tv_artist_playback.text = list[position].artistName
         holder.itemView.ctl_playback.setOnClickListener {
             functionBottomFragmen?.chooseSong(position)
         }
-        holder.itemView.img_delete_item_song.setOnClickListener {
+        holder.itemView.img_song_queue_playback.setOnClickListener {
             functionBottomFragmen?.deleteSong(position)
         }
 
