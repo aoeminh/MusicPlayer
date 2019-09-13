@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/item_audiobooke"
+            android:icon="@drawable/audiobooks_icon"
+            android:title="@string/title_audio_book"/>
+
+    <item
+            android:id="@+id/item_ringtone_cutter"
+            android:icon="@drawable/ringtone_icon"
+            android:title="@string/title_ringtone_cutter"/>
+
+    <item
+            android:id="@+id/item_theme"
+            android:icon="@drawable/themes_ham"
+            android:title="@string/title_theme"/>
+
+    <item
+            android:id="@+id/item_genres"
+            android:icon="@drawable/genre_ham"
+            android:title="@string/title_genres"/>
+
+    <item
+            android:id="@+id/item_sleep_timer"
+            android:icon="@drawable/sleep_timer_ham"
+            android:title="@string/title_sleep_timer"/>
+
+    <item
+            android:id="@+id/item_setting"
+            android:icon="@drawable/settings_ham"
+            android:title="@string/title_setting"/>
+    <item
+            android:id="@+id/item_equalizer"
+            android:icon="@drawable/equalizer_ham"
+            android:title="@string/title_equalizer"/>
+
+</menu>

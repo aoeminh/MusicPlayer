@@ -2,14 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:weightSum="5"
+              android:layout_height="@dimen/_60sdp"
+              android:layout_margin="@dimen/_7sdp"
         >
 
-
-    <Ci
-            android:layout_width="0dp"
-            android:layout_height="70sp"
-            android:layout_weight="1"
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ava_item_list_playlist"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="match_parent"
             />
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_name_item_list_playlist"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingStart="@dimen/_10sdp"
+            android:layout_weight="1"
+            style="@style/title_text_item"
+            android:gravity="center_vertical"
+            />
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_option_item_list_playlist"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_items_dots"
+            android:layout_gravity="center"/>
 </LinearLayout>

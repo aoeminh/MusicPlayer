@@ -3,4 +3,30 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="color_text">#FFFFFF</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="background_tablayout">#000a1d1b</color>
+    <color name="playlist_tab_selected">#d23b4c</color>
+    <color name="songs_tab_selected">#ee980e</color>
+    <color name="folder_tab_selected">#b7ac08</color>
+    <color name="album_tab_selected">#338c60</color>
+    <color name="artist_tab_selected">#850eee</color>
+    <color name="white_transparent">#26FFFFFF</color>
+
+    <!-- popup create playlist -->
+    <color name="color_popup_create_playlist">#2196F3</color>
+    <color name="background_popup_create_playlist">#FFFFFF</color>
+
+    <!-- toolbar -->
+    <color name="color_toolbar">#E2E2E2</color>
+    <color name="fastscroll__bubbleColor">#2198F3</color>
+    <color name="fastscroll__handleColor">#D6D5D5</color>
+
+    <!-- common color -->
+    <color name="scrim">#42000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black_transparent">#400A0101</color>
+
+    <!-- text selected -->
+    <color name="text_selected">#1E88E5</color>
 </resources>

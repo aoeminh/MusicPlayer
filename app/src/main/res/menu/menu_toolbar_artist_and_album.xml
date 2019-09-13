@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+            android:id="@+id/item_search_toolbar"
+            android:icon="@drawable/ic_mnu_search"
+            android:title="Search"
+            app:showAsAction="ifRoom"/>
+    <item
+            android:id="@+id/item_voice_toolbar"
+            android:icon="@drawable/ic_mic_toolbar"
+            app:showAsAction="ifRoom"
+            android:title="Voice"/>
+
+    <item
+            android:id="@+id/item_equalizer"
+            app:showAsAction="withText"
+            android:title="@string/equalizer"/>
+
+    <item
+            android:id="@+id/item_sort"
+            app:showAsAction="withText"
+            android:title="@string/sort_by"/>
+</menu>

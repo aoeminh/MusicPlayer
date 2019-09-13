@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_40sdp"
+    android:layout_margin="@dimen/_7sdp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_play_playback"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_item_song_fragment"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_menu_white_24dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ctl_playback"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/img_play_playback"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="@dimen/_10sdp"
+        app:layout_constraintEnd_toStartOf="@+id/img_song_queue_playback"
+        android:layout_marginEnd="@dimen/_8sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_song_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Songname"
+            android:maxLines="1"
+            android:ellipsize="end"
+            style="@style/title_text_item"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_artist_playback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@+id/tv_song_name"
+            app:layout_constraintStart_toStartOf="@+id/tv_song_name"
+            android:text="unknow"
+            style="@style/small_text_item"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_song_queue_playback"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        app:layout_constraintTop_toTopOf="@+id/img_play_playback"
+        app:layout_constraintBottom_toBottomOf="@+id/img_play_playback"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_close_assisstant"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

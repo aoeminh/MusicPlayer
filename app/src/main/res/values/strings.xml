@@ -1,6 +1,53 @@
 <resources>
-    <string name="app_name">MusicPlayer</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="app_name">Music Player</string>
+    <string name="title_audio_book">Audiobooks</string>
+    <string name="title_ringtone_cutter">Ringtone Cutter</string>
+    <string name="title_genres">Genres</string>
+    <string name="title_theme">Theme</string>
+    <string name="title_sleep_timer">Sleep Timer</string>
+    <string name="title_setting">Setting</string>
+    <string name="title_equalizer">Equalizer</string>
+    <string name="title_playlist">Playlist</string>
+    <string name="title_songs">Songs</string>
+    <string name="title_artist">Artist</string>
+    <string name="title_album">Album</string>
+    <string name="title_folder">Folder</string>
+
+    <!--menu item -->
+    <string name="title_search_item">Search</string>
+    <string name="title_voice_item">Voice</string>
+    <string name="create_new_playlist">Create New Playlist</string>
+    <string name="equalizer">Equalizer</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sufftle">Sufftle</string>
+    <string name="add_to_home_screen">Add to Home screen</string>
+
+    <!-- popup create new playlist -->
+    <string name="text_btn_cancel">Cancel</string>
+    <string name="text_btn_create">Create New</string>
+    <string name="text_name_playlist">Name:</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
+
+
+    <!-- song fragment -->
+    <string name="one_dot">•</string>
+    <string name="permission_necessary">Permissin is necessary!</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="not_have_permission">You don\'t have permission</string>
+
+    <!-- common -->
+    <string name="tracks">tracks</string>
+
+
+    <!-- play song fragment -->
+    <string name="suffle_on">Suffle on</string>
+    <string name="suffle_off">Suffle off</string>
+    <string name="repeat_one">Repeat this song</string>
+    <string name="repeat_all">Repeat all song</string>
+    <string name="repeat_off">Repeat all off</string>
+    <string name="creat_new_playlist_success">Creat new Playlist success</string>
+    <string name="create_playlist_fail">Create fail, please try again</string>
+
 </resources>
