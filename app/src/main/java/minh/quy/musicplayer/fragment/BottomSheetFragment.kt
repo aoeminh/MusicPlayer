@@ -30,7 +30,7 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
 
     var mAdapter: BottomSheetAdapter? = null
     var mainActivity: MainActivity? = null
-
+    var receiver: BroadcastReceiver? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (activity is MainActivity) {
@@ -74,7 +74,7 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
     override fun deleteSong(position: Int) {
         if (!mainActivity!!.songsQueueList.get(position).isSelected) {
             mainActivity?.songsQueueList?.removeAt(position)
-            mAdapter?.notifyItemRemoved(position)
+            mAdapter?.notifyDataSetChanged()
         }
     }
 
@@ -88,21 +88,25 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
 
 
     fun registUpdateSongSelected() {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                intent?.let {
+                    setSongSelected(it.getStringExtra(PlaySongFragment.EXTRA_SONG_ID)!!)
+                }
+            }
+        }
+
         LocalBroadcastManager.getInstance(context!!)
             .registerReceiver(receiver, IntentFilter(PlaySongFragment.ACTION_UPDATE_SONG))
 
     }
 
     fun unregistUpdateSongSelected(){
-        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver)
-    }
-
-    val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            intent?.let {
-                setSongSelected(it.getStringExtra(PlaySongFragment.EXTRA_SONG_ID)!!)
-            }
+        receiver?.let {
+            LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver!!)
         }
     }
+
+
 
 }

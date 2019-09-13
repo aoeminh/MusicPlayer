@@ -63,7 +63,7 @@ class PlaySongFragment : Fragment(),
     var upXPosition = 0
     var downYPostion = 0
     var upYPosition = 0
-    lateinit var receiver: BroadcastReceiver
+    var receiver: BroadcastReceiver? =null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -467,6 +467,12 @@ class PlaySongFragment : Fragment(),
         }
 
         val intentFilter = IntentFilter(BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK)
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver, intentFilter)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!, intentFilter)
+    }
+
+    fun unregistUpdateSongSelected() {
+        receiver?.let {
+            LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver!!)
+        }
     }
 }

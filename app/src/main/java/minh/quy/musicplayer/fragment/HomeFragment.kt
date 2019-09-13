@@ -51,7 +51,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     var mainActivity: MainActivity? = null
     var mContext: Context? = null
     var currentSongId = ""
-    lateinit var receiver: BroadcastReceiver
+    var receiver: BroadcastReceiver? = null
 
     override fun onAttachFragment(childFragment: Fragment?) {
         super.onAttachFragment(childFragment)
@@ -407,7 +407,9 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     }
 
     fun unRegisterUpdatePlayback() {
-        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver)
+        receiver?.let {
+            LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver!!)
+        }
 
     }
 
@@ -424,8 +426,11 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     private fun setDataForBottomPlayback(song: Song) {
         tv_song_name_playback?.text = song.songName
         tv_artist_playback?.text = song.artistName
-        img_play_playback?.setImageResource(R.drawable.ic_pause_blue_24dp)
-
+        if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
+            img_play_playback?.setImageResource(R.drawable.ic_pause_blue_24dp)
+        } else {
+            img_play_playback?.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
+        }
     }
 
     fun actionBtnPlay() {

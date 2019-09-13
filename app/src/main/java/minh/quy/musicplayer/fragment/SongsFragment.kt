@@ -36,7 +36,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
 
     var songlist: MutableList<Song> = arrayListOf()
     var adapterSong: SongFragmentAdapter? = null
-    lateinit var receiver: BroadcastReceiver
+    var receiver: BroadcastReceiver? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -167,7 +167,9 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
     }
 
     fun unregistUpdateSongSelected() {
-        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver)
+        receiver?.let {
+            LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver!!)
+        }
     }
 
 
