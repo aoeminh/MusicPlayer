@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_playsong.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.activity.MainActivity
+import minh.quy.musicplayer.service.PlayMusicService
 import kotlin.random.Random
 
 
@@ -466,17 +467,26 @@ class PlaySongFragment : Fragment(),
     fun registItemBottomClick() {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                mainActivity?.currenSongId =
-                    intent?.getStringExtra(BottomSheetFragment.EXTRA_SONG_ID)
-                mainActivity?.currenSongId?.let {
-                    for (i in 0 until mainActivity?.songsQueueList?.size!!) {
-                        if (mainActivity?.songsQueueList!![i].songId.equals(mainActivity?.currenSongId)) {
-                            songPosition = i
+                when(intent?.action){
+                    BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK -> {
+                        mainActivity?.currenSongId =
+                            intent?.getStringExtra(BottomSheetFragment.EXTRA_SONG_ID)
+                        mainActivity?.currenSongId?.let {
+                            for (i in 0 until mainActivity?.songsQueueList?.size!!) {
+                                if (mainActivity?.songsQueueList!![i].songId.equals(mainActivity?.currenSongId)) {
+                                    songPosition = i
+                                }
+                            }
                         }
+                        setDataForView()
+                        playSong()
+                    }
+                    PlayMusicService.ACTION_UPDATE_VIEW -> {
+                        songPosition = mainActivity?.musicService?.songPos!!
+                        setDataForView()
                     }
                 }
-                setDataForView()
-                playSong()
+
             }
         }
 

@@ -8,17 +8,61 @@ import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import minh.quy.musicplayer.model.Song
+import kotlin.random.Random
 
-class PlayMusicService : Service(), MediaPlayer.OnPreparedListener {
+class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
     override fun onPrepared(p0: MediaPlayer?) {
         mediaPlayer?.start()
+    }
+
+    override fun onCompletion(p0: MediaPlayer?) {
+        mediaPlayer?.stop()
+        mediaPlayer?.reset()
+        Log.d("minhnh", "onCompletion")
+
+        //repeat one mode
+        if (isRepeatOne) {
+            mediaPlayer?.isLooping = true
+            playMusic()
+            return
+        }
+
+        // suffle modepaus
+        if (isSuffle) {
+            songPos = Random.nextInt(songList.size)
+            playMusic()
+            return
+        }
+        // repeat all mode or normal mode
+        songPos++
+        if (songPos > songList.size - 1) {
+            if (isRepeatAll) {
+                songPos = 0
+                playMusic()
+            }
+        } else {
+            playMusic()
+        }
+    }
+
+    companion object{
+        val ACTION_UPDATE_VIEW = "action.update.view"
+        val EXTRA_SONG_ID = "extra.song.id"
     }
 
     var binder: Binder = MusicBinder()
     var mediaPlayer: MediaPlayer? = null
     var songList: MutableList<Song> = arrayListOf()
-    var songPos: Int? = null
+    var songPos: Int = 0
+    var isRepeatOne = false
+    var isRepeatAll = true
+    var isSuffle = false
+    var currenRepeat = 0
+    var currenSongId: String? = null
+    var currentDuration: Long? = 0
+    var isFirstPlay = true
 
     override fun onBind(p0: Intent?): IBinder? {
         return this.binder
@@ -54,6 +98,9 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener {
             PowerManager.PARTIAL_WAKE_LOCK
         )
         mediaPlayer?.setOnPreparedListener(this)
+        mediaPlayer?.setOnCompletionListener(this)
+
+
     }
 
     fun setSongs(songs: MutableList<Song>) {
@@ -67,15 +114,24 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener {
 
     fun playMusic() {
         mediaPlayer?.reset()
-        songPos?.run {
-            val songUri = Uri.parse(songList.get(songPos!!).data)
+        songPos.run {
+            val songUri = Uri.parse(songList.get(songPos).data)
             mediaPlayer?.setDataSource(applicationContext, songUri)
             mediaPlayer?.prepare()
         }
+        sendBroadcastUpdateView(songPos)
     }
 
     inner class MusicBinder : Binder() {
         internal val service: PlayMusicService
             get() = this@PlayMusicService
     }
+
+    fun sendBroadcastUpdateView(position: Int){
+        val intent = Intent(ACTION_UPDATE_VIEW)
+        intent.putExtra(EXTRA_SONG_ID,songList[position].songId)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+    }
+
+
 }
