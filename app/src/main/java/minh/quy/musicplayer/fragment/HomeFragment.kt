@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -79,6 +80,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setSongSelected(mainActivity?.currenSongId)
+
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -170,15 +172,14 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     }
 
     fun gotoPlaySongFragment() {
-        for (i in 0 until mainActivity!!.songsQueueList.size) {
-            if (mainActivity!!.songsQueueList[i].songId.equals(mainActivity?.currenSongId)) {
-                val fragment = PlaySongFragment.newInstance(i)
-                val transaction = mainActivity!!.fragmentManager.beginTransaction()
-                transaction.replace(R.id.frame_main, fragment, null)
-                transaction.addToBackStack(null)
-                transaction.commit()
-            }
+        if (mainActivity?.musicService?.songList!!.size <= 0) {
+            mainActivity?.musicService?.songList!!.addAll(mainActivity!!.songsQueueList)
         }
+        val fragment = PlaySongFragment.newInstance(getSongPositon())
+        val transaction = mainActivity!!.fragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_main, fragment, null)
+        transaction.addToBackStack(null)
+        transaction.commit()
 
 
     }
@@ -436,6 +437,14 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     }
 
     fun actionBtnPlay() {
+        if (mainActivity?.musicService?.songList!!.size <= 0) {
+            mainActivity?.musicService?.songList!!.addAll(mainActivity!!.songsQueueList)
+        }
+        if (mainActivity!!.isFirstPlay) {
+            mainActivity?.musicService?.setSongPosition(getSongPositon())
+            mainActivity?.musicService?.playMusic()
+            mainActivity!!.isFirstPlay =false
+        }
         if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
             img_play_playback.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
             mainActivity?.musicService?.mediaPlayer?.pause()
@@ -450,5 +459,13 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         bottomSheetFragment.show(mainActivity?.fragmentManager, "")
     }
 
+    fun getSongPositon(): Int {
+        for (i in 0 until mainActivity!!.songsQueueList.size) {
+            if (mainActivity!!.songsQueueList[i].songId.equals(mainActivity?.currenSongId)) {
+                return i
+            }
+        }
+        return 0
+    }
 
 }

@@ -31,6 +31,8 @@ class MainActivity : BaseActivity() {
     var isSuffle = false
     var currenRepeat = 0
     var currenSongId: String? = null
+    var currentDuration: Long? = 0
+    var isFirstPlay = true
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -41,9 +43,9 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         getRepeatAndSuffleMode()
         currenSongId = getSongId()
+        currentDuration = getSongDuration()
+        setSongSelected(currenSongId!!)
         addHomeFragment()
-
-        Log.d("minhnh", "onCreate")
     }
 
     override fun onBackPressed() {
@@ -62,6 +64,13 @@ class MainActivity : BaseActivity() {
         super.onDestroy()
         saveRepeatAndSuffleMode()
         saveSongId()
+        saveSongDuration()
+    }
+
+    fun setSongSelected(songId: String) {
+        for (i in 0 until songsQueueList.size) {
+            songsQueueList[i].isSelected = songlist[i].songId.equals(songId)
+        }
     }
 
     fun addHomeFragment() {
@@ -86,6 +95,20 @@ class MainActivity : BaseActivity() {
     fun getSongId(): String? {
         val userPreferences = UserPreferences.getInstance(applicationContext)
         return userPreferences?.getSongId()
+    }
+
+    fun getSongDuration(): Long? {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        return userPreferences?.getSongDuration()
+    }
+
+    fun saveSongDuration() {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        if (musicService?.mediaPlayer?.duration!! < 0) {
+            userPreferences?.saveSongDuration(0)
+        } else {
+            userPreferences?.saveSongDuration(musicService?.mediaPlayer?.currentPosition!!.toLong())
+        }
     }
 
     fun getRepeatAndSuffleMode() {

@@ -7,6 +7,7 @@ const val PREFERENT_NAME = "music.preferent"
 const val EXTRA_REPEAT = "extra.repeat "
 const val EXTRA_SUFFLE = "extra.suffle"
 const val EXTRA_SONG_ID = "extra.song.id"
+const val EXTRA_SONG_DURATION = "extra.song.duration"
 
 class UserPreferences() {
 
@@ -47,5 +48,11 @@ class UserPreferences() {
     }
 
     fun getSongId(): String? = sharedPreferences?.getString(EXTRA_SONG_ID,"")
+
+    fun saveSongDuration(duration: Long){
+        getEdittor()?.putLong(EXTRA_SONG_DURATION,duration)?.commit()
+    }
+
+    fun getSongDuration(): Long? = sharedPreferences?.getLong(EXTRA_SONG_DURATION,0)
 
 }

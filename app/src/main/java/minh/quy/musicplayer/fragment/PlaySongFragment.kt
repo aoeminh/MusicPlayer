@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.fragment_playsong.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.activity.MainActivity
-import minh.quy.musicplayer.model.Song
 import kotlin.random.Random
 
 
@@ -63,7 +62,7 @@ class PlaySongFragment : Fragment(),
     var upXPosition = 0
     var downYPostion = 0
     var upYPosition = 0
-    var receiver: BroadcastReceiver? =null
+    var receiver: BroadcastReceiver? = null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -80,7 +79,9 @@ class PlaySongFragment : Fragment(),
             songPosition = arguments!!.getInt(EXTRA_POSITION)
         }
         mediaPlayer = mainActivity?.musicService?.mediaPlayer
+        mediaPlayer?.setOnCompletionListener(this)
         registItemBottomClick()
+
 
     }
 
@@ -97,9 +98,6 @@ class PlaySongFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mediaPlayer?.setOnCompletionListener(this)
-        isVisible
-        Log.d("minhnh", "" + isVisible)
         if (isVisible) {
             setDataForView()
         }
@@ -191,6 +189,13 @@ class PlaySongFragment : Fragment(),
     }
 
     fun setDataForView() {
+        if (mainActivity!!.isFirstPlay) {
+            mainActivity?.musicService?.setSongPosition(songPosition)
+            mainActivity?.musicService?.playMusic()
+            mediaPlayer?.seekTo(mainActivity?.currentDuration!!.toInt())
+            btn_play_and_pause_play_song?.setImageResource(R.drawable.ic_play_pause_white)
+        }
+        mainActivity!!.isFirstPlay = false
         val defaultPositionImage = Utils.getPositionDefaultImage(songPosition)
         drawableIdDefaulImage = Utils.getDrawableIdDefaultImage(defaultPositionImage)
         img_ava_song?.setImageResource(drawableIdDefaulImage)
@@ -201,6 +206,7 @@ class PlaySongFragment : Fragment(),
             Utils.convertSongDuration(mainActivity?.songsQueueList?.get(songPosition)?.duration!!.toLong())
 
         seekbar?.max = mainActivity?.musicService?.mediaPlayer!!.duration
+        Log.d("minhse", seekbar?.max.toString())
         if (mediaPlayer!!.isPlaying) {
             btn_play_and_pause_play_song?.setImageResource(R.drawable.ic_play_pause_white)
         }
@@ -340,8 +346,8 @@ class PlaySongFragment : Fragment(),
     }
 
     fun setImageRepeatOneMode() {
-        btn_repeat_play_song.setImageResource(R.drawable.ic_play_repeat_one_white)
-        btn_repeat_play_song.setColorFilter(
+        btn_repeat_play_song?.setImageResource(R.drawable.ic_play_repeat_one_white)
+        btn_repeat_play_song?.setColorFilter(
             ActivityCompat.getColor(
                 mContext!!,
                 R.color.colorAccent
@@ -350,8 +356,8 @@ class PlaySongFragment : Fragment(),
     }
 
     fun setImageRepeatAllMode() {
-        btn_repeat_play_song.setImageResource(R.drawable.ic_play_repeat_white)
-        btn_repeat_play_song.setColorFilter(
+        btn_repeat_play_song?.setImageResource(R.drawable.ic_play_repeat_white)
+        btn_repeat_play_song?.setColorFilter(
             ActivityCompat.getColor(
                 mContext!!,
                 R.color.colorAccent
@@ -418,10 +424,17 @@ class PlaySongFragment : Fragment(),
     }
 
     fun updateSeekbar() {
-        val currentPos = mediaPlayer?.currentPosition
-        tv_realtime_song?.text = Utils.convertSongDuration(currentPos!!.toLong())
-        seekbar?.progress = currentPos
-        if (isVisible) {
+        var currentPos = mediaPlayer?.currentPosition
+        if (currentPos!! < 0) {
+            currentPos = mainActivity?.currentDuration!!.toInt()
+            tv_realtime_song?.text = Utils.convertSongDuration(mainActivity?.currentDuration!!)
+            seekbar?.progress = currentPos
+        } else {
+            tv_realtime_song?.text = Utils.convertSongDuration(currentPos.toLong())
+            seekbar?.progress = currentPos
+        }
+
+        if (isVisible ) {
             handler.postDelayed(runnable, 500)
         }
     }
@@ -453,7 +466,8 @@ class PlaySongFragment : Fragment(),
     fun registItemBottomClick() {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                mainActivity?.currenSongId = intent?.getStringExtra(BottomSheetFragment.EXTRA_SONG_ID)
+                mainActivity?.currenSongId =
+                    intent?.getStringExtra(BottomSheetFragment.EXTRA_SONG_ID)
                 mainActivity?.currenSongId?.let {
                     for (i in 0 until mainActivity?.songsQueueList?.size!!) {
                         if (mainActivity?.songsQueueList!![i].songId.equals(mainActivity?.currenSongId)) {
