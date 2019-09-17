@@ -79,6 +79,13 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mainActivity?.musicService?.let { mainActivity?.musicService?.songPos?.let { position ->
+            mainActivity?.musicService?.songList?.get(
+                position
+            )?.let { song -> setDataForBottomPlayback(song) }
+
+        } }
+
 
     }
 
@@ -384,13 +391,12 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
                 when (intent?.action) {
                     PlayMusicService.ACTION_UPDATE_VIEW -> {
                         setSongSelected(mainActivity?.musicService?.songPos!!)
-                        mainActivity?.musicService?.songList?.get(mainActivity?.musicService?.songPos!!)?.let {
-                            setDataForBottomPlayback(it)
+                        setDataForBottomPlayback(mainActivity?.musicService?.songList?.get(getSongPositon())!!)
+
                         }
                     }
                 }
             }
-        }
 
         val intentFilter = IntentFilter()
         intentFilter.addAction(PlayMusicService.ACTION_UPDATE_VIEW)
@@ -411,8 +417,9 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
 
     private fun setDataForBottomPlayback(song: Song) {
-        tv_song_name_playback?.text = song.songName
         tv_artist_playback?.text = song.artistName
+        tv_song_name_playback?.text = song.songName
+
         mainActivity?.musicService?.mediaPlayer?.let {
             if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
                 img_play_playback?.setImageResource(R.drawable.ic_pause_blue_24dp)
@@ -447,8 +454,8 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     }
 
     fun getSongPositon(): Int {
-        for (i in 0 until mainActivity!!.songsQueueList.size) {
-            if (mainActivity!!.songsQueueList[i].songId.equals(mainActivity?.currenSongId)) {
+        for (i in 0 until mainActivity!!.musicService?.songList?.size!!) {
+            if (mainActivity!!.musicService?.songList!![i].songId.equals(mainActivity?.musicService?.currenSongId)) {
                 return i
             }
         }

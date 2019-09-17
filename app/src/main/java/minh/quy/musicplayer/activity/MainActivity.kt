@@ -42,9 +42,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getRepeatAndSuffleMode()
-        currenSongId = getSongId()
         currentDuration = getSongDuration()
-        setSongSelected(currenSongId!!)
         addHomeFragment()
     }
 
@@ -67,12 +65,6 @@ class MainActivity : BaseActivity() {
         saveSongDuration()
     }
 
-    fun setSongSelected(songId: String) {
-        for (i in 0 until songsQueueList.size) {
-            songsQueueList[i].isSelected = songlist[i].songId.equals(songId)
-        }
-    }
-
     fun addHomeFragment() {
         val transaction = fragmentManager.beginTransaction()
         val homeFragment = HomeFragment()
@@ -89,13 +81,10 @@ class MainActivity : BaseActivity() {
 
     fun saveSongId() {
         val userPreferences = UserPreferences.getInstance(applicationContext)
-        userPreferences?.saveSongId(currenSongId!!)
+        userPreferences?.saveSongId(musicService?.currenSongId!!)
     }
 
-    fun getSongId(): String? {
-        val userPreferences = UserPreferences.getInstance(applicationContext)
-        return userPreferences?.getSongId()
-    }
+
 
     fun getSongDuration(): Long? {
         val userPreferences = UserPreferences.getInstance(applicationContext)

@@ -52,8 +52,8 @@ open class BaseFragment : Fragment() {
         if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
             mainActivity.songlist = mainActivity.scanDeviceForMp3Files()
-            mainActivity.songsQueueList.clear()
-            mainActivity.songsQueueList.addAll(mainActivity.songlist)
+            mainActivity.musicService?.songList?.clear()
+            mainActivity.musicService?.songList?.addAll(mainActivity.songlist)
             mainActivity.getAllArtist()
             mainActivity.getAllAlbum()
 

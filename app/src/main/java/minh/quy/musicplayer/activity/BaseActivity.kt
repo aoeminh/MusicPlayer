@@ -17,6 +17,7 @@ import minh.quy.musicplayer.model.Artist
 import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.service.PlayMusicService
 import minh.quy.musicplayer.service.PlayMusicService.MusicBinder
+import minh.quy.musicplayer.sharepreferences.UserPreferences
 import java.util.*
 
 
@@ -26,12 +27,10 @@ abstract class BaseActivity : AppCompatActivity() {
     var songlist: MutableList<Song> = arrayListOf()
     var albumList: MutableList<Album> = arrayListOf()
     var artistList: MutableList<Artist> = arrayListOf()
-    var songsQueueList: MutableList<Song> = arrayListOf()
     var musicService: PlayMusicService? = null
     var playIntent: Intent? = null
     var musicBound = false
     var context: Context? = null
-    var currenSongId: String? = null
 
     private val musicConnection = object : ServiceConnection {
 
@@ -41,9 +40,12 @@ abstract class BaseActivity : AppCompatActivity() {
             musicService = binder.service
             musicService?.songList?.clear()
             musicService?.songList?.addAll(songlist)
+            musicBound = true
+            musicService?.currenSongId = getSongId()
             sendBroadcastUpdateView()
             //pass list
-            musicBound = true
+
+
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -197,7 +199,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun sendBroadcastUpdateView(){
         val intent = Intent(PlayMusicService.ACTION_UPDATE_VIEW)
-        intent.putExtra(PlayMusicService.EXTRA_SONG_ID,currenSongId)
+        intent.putExtra(PlayMusicService.EXTRA_SONG_ID,musicService?.currenSongId)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+    }
+
+    fun getSongId(): String? {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        return userPreferences?.getSongId()
     }
 }

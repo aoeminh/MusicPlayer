@@ -43,7 +43,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
         super.onCreate(savedInstanceState)
         songlist.addAll(mainActivity.songlist)
         registUpdateView()
-        updateSongSelected(mainActivity.currenSongId!!)
+//        updateSongSelected(mainActivity.musicService?.currenSongId!!)
     }
 
     override fun onCreateView(

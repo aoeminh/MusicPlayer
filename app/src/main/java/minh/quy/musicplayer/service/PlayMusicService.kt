@@ -119,6 +119,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
             mediaPlayer?.setDataSource(applicationContext, songUri)
             mediaPlayer?.prepare()
             songList[songPos].isSelected = true
+            currenSongId = songList[songPos].songId
         }
 
         sendBroadcastUpdateView(songPos)
