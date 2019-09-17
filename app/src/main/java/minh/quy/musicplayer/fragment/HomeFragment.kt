@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.bottom_playback.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.model.Song
+import minh.quy.musicplayer.service.PlayMusicService
 
 
 class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener {
@@ -63,8 +64,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         if (activity is MainActivity) {
             mainActivity = activity as MainActivity
         }
-        registerUpdatePlayback()
-
+        registUpdateView()
     }
 
     override fun onCreateView(
@@ -79,7 +79,6 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setSongSelected(mainActivity?.currenSongId)
 
     }
 
@@ -173,7 +172,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     fun gotoPlaySongFragment() {
         if (mainActivity?.musicService?.songList!!.size <= 0) {
-            mainActivity?.musicService?.songList!!.addAll(mainActivity!!.songsQueueList)
+            mainActivity?.musicService?.songList!!.addAll(mainActivity!!.musicService?.songList!!)
         }
         val fragment = PlaySongFragment.newInstance(getSongPositon())
         val transaction = mainActivity!!.fragmentManager.beginTransaction()
@@ -379,31 +378,23 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         this.functionToolbarPlaylist = functionToolbarPlaylist
     }
 
-    fun registerUpdatePlayback() {
-        val receiver = object : BroadcastReceiver() {
+    fun registUpdateView() {
+        receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                intent?.let {
-                    when (intent.action) {
-                        PlaySongFragment.ACTION_UPDATE_SONG -> setSongSelected(
-                            it.getStringExtra(
-                                PlaySongFragment.EXTRA_SONG_ID
-                            )!!
-                        )
-
-                        BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK -> setSongSelected(
-                            it.getStringExtra(
-                                BottomSheetFragment.EXTRA_SONG_ID
-                            )!!
-                        )
+                when (intent?.action) {
+                    PlayMusicService.ACTION_UPDATE_VIEW -> {
+                        setSongSelected(mainActivity?.musicService?.songPos!!)
+                        mainActivity?.musicService?.songList?.get(mainActivity?.musicService?.songPos!!)?.let {
+                            setDataForBottomPlayback(it)
+                        }
                     }
                 }
             }
         }
+
         val intentFilter = IntentFilter()
-        intentFilter.addAction(PlaySongFragment.ACTION_UPDATE_SONG)
-        intentFilter.addAction(BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK)
-        LocalBroadcastManager.getInstance(context!!)
-            .registerReceiver(receiver, intentFilter)
+        intentFilter.addAction(PlayMusicService.ACTION_UPDATE_VIEW)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!, intentFilter)
     }
 
     fun unRegisterUpdatePlayback() {
@@ -414,14 +405,10 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     }
 
 
-    private fun setSongSelected(songId: String?) {
-        mainActivity?.currenSongId = songId
-        mainActivity?.songsQueueList?.forEach {
-            if (it.songId == songId) {
-                setDataForBottomPlayback(it)
-            }
-        }
+    fun setSongSelected(position: Int) {
+        mainActivity?.musicService?.songList!![position].isSelected = true
     }
+
 
     private fun setDataForBottomPlayback(song: Song) {
         tv_song_name_playback?.text = song.songName
@@ -438,7 +425,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     fun actionBtnPlay() {
         if (mainActivity?.musicService?.songList!!.size <= 0) {
-            mainActivity?.musicService?.songList!!.addAll(mainActivity!!.songsQueueList)
+            mainActivity?.musicService?.songList!!.addAll(mainActivity!!.musicService?.songList!!)
         }
         if (mainActivity!!.isFirstPlay) {
             mainActivity?.musicService?.setSongPosition(getSongPositon())

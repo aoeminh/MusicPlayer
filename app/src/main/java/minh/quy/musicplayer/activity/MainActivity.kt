@@ -30,7 +30,7 @@ class MainActivity : BaseActivity() {
     var isRepeatAll = true
     var isSuffle = false
     var currenRepeat = 0
-    var currenSongId: String? = null
+
     var currentDuration: Long? = 0
     var isFirstPlay = true
 

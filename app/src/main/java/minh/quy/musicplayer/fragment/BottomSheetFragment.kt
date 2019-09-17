@@ -15,6 +15,8 @@ import kotlinx.android.synthetic.main.bottom_sheet_fragment.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.BottomSheetAdapter
+import minh.quy.musicplayer.main
+import minh.quy.musicplayer.service.PlayMusicService
 
 class BottomSheetFragment() : BottomSheetDialogFragment(),
     BottomSheetAdapter.IFunctionBottomFragment {
@@ -50,7 +52,7 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mAdapter = BottomSheetAdapter(context!!, mainActivity!!.songsQueueList)
+        mAdapter = BottomSheetAdapter(context!!, mainActivity!!.musicService?.songList!!)
         mAdapter?.setOnItemCommonClick(this)
         rv_list_bottom_sheet.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -64,25 +66,20 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
         unregistUpdateSongSelected()
     }
     override fun chooseSong(position: Int) {
-        val intent = Intent(ACITON_ITEM_BOTTOM_CLICK)
-        intent.putExtra(EXTRA_SONG_ID, mainActivity?.songsQueueList?.get(position)?.songId)
-        LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
+        playSong(position)
         mAdapter?.notifyDataSetChanged()
 
     }
 
     override fun deleteSong(position: Int) {
-        if (!mainActivity!!.songsQueueList.get(position).isSelected) {
-            mainActivity?.songsQueueList?.removeAt(position)
+        if (!mainActivity!!.musicService?.songList?.get(position)?.isSelected!!) {
+            mainActivity?.musicService?.songList?.removeAt(position)
             mAdapter?.notifyDataSetChanged()
         }
     }
 
-    fun setSongSelected(songId: String) {
-        for (i in 0 until mainActivity?.songsQueueList!!.size) {
-            mainActivity?.songsQueueList!![i].isSelected =
-                mainActivity?.songsQueueList!![i].songId.equals(songId)
-        }
+    fun setSongSelected(position: Int) {
+        mainActivity?.musicService?.songList!![position].isSelected = true
         mAdapter?.notifyDataSetChanged()
     }
 
@@ -90,14 +87,14 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
     fun registUpdateSongSelected() {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                intent?.let {
-                    setSongSelected(it.getStringExtra(PlaySongFragment.EXTRA_SONG_ID)!!)
-                }
+               when(intent?.action){
+                   PlayMusicService.ACTION_UPDATE_VIEW -> setSongSelected(mainActivity?.musicService?.songPos!!)
+               }
             }
         }
 
         LocalBroadcastManager.getInstance(context!!)
-            .registerReceiver(receiver, IntentFilter(PlaySongFragment.ACTION_UPDATE_SONG))
+            .registerReceiver(receiver, IntentFilter(PlayMusicService.ACTION_UPDATE_VIEW))
 
     }
 
@@ -107,6 +104,10 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
         }
     }
 
+    fun playSong(postion: Int) {
+        mainActivity?.musicService?.setSongPosition(postion)
+        mainActivity?.musicService?.playMusic()
+    }
 
 
 }

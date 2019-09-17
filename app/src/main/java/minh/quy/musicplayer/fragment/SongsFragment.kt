@@ -30,18 +30,20 @@ import minh.quy.musicplayer.adapter.SongFragmentAdapter
 import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import minh.quy.musicplayer.model.Album
 import minh.quy.musicplayer.model.Song
+import minh.quy.musicplayer.service.PlayMusicService
 import java.util.jar.Manifest
 
 class SongsFragment : BaseFragment(), OnItemCommonClick {
 
     var songlist: MutableList<Song> = arrayListOf()
     var adapterSong: SongFragmentAdapter? = null
-    var receiver: BroadcastReceiver? =null
+    var receiver: BroadcastReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         songlist.addAll(mainActivity.songlist)
-        registUpdateSongSelected()
+        registUpdateView()
+        updateSongSelected(mainActivity.currenSongId!!)
     }
 
     override fun onCreateView(
@@ -86,8 +88,8 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
     }
 
     fun setSongQueue() {
-        mainActivity.songsQueueList.clear()
-        mainActivity.songsQueueList.addAll(songlist)
+        mainActivity.musicService?.songList?.clear()
+        mainActivity.musicService?.songList?.addAll(songlist)
     }
 
     fun gotoPlaySongFragment(postion: Int) {
@@ -136,34 +138,23 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
         fast_scroller?.visibility = View.VISIBLE
     }
 
-
-    fun registUpdateSongSelected() {
-        val receiver = object : BroadcastReceiver() {
+    fun registUpdateView() {
+        receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                intent?.let {
-                    when (intent.action) {
-                        PlaySongFragment.ACTION_UPDATE_SONG -> setSongSelected(
-                            it.getStringExtra(
-                                PlaySongFragment.EXTRA_SONG_ID
-                            )!!
-                        )
+                when (intent?.action) {
+                    PlayMusicService.ACTION_UPDATE_VIEW -> {
+                        setSongSelected( intent.getStringExtra(
+                            PlayMusicService.EXTRA_SONG_ID
+                        )!!)
 
-                        BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK -> setSongSelected(
-                            it.getStringExtra(
-                                BottomSheetFragment.EXTRA_SONG_ID
-                            )!!
-                        )
                     }
                 }
             }
         }
 
         val intentFilter = IntentFilter()
-        intentFilter.addAction(PlaySongFragment.ACTION_UPDATE_SONG)
-        intentFilter.addAction(BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK)
-        LocalBroadcastManager.getInstance(context!!)
-            .registerReceiver(receiver, intentFilter)
-
+        intentFilter.addAction(PlayMusicService.ACTION_UPDATE_VIEW)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!, intentFilter)
     }
 
     fun unregistUpdateSongSelected() {

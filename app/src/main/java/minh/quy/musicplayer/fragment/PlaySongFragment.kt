@@ -23,11 +23,9 @@ import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.service.PlayMusicService
-import kotlin.random.Random
 
 
-class PlaySongFragment : Fragment(),
-    MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
+class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
 
 
     enum class Repeat(val value: Int) {
@@ -80,8 +78,7 @@ class PlaySongFragment : Fragment(),
             songPosition = arguments!!.getInt(EXTRA_POSITION)
         }
         mediaPlayer = mainActivity?.musicService?.mediaPlayer
-        mediaPlayer?.setOnCompletionListener(this)
-        registItemBottomClick()
+        registUpdateView()
 
 
     }
@@ -103,45 +100,6 @@ class PlaySongFragment : Fragment(),
             setDataForView()
         }
         setAction()
-    }
-
-    override fun onCompletion(p0: MediaPlayer?) {
-        mediaPlayer?.stop()
-        mediaPlayer?.reset()
-        Log.d("minhnh", "onCompletion")
-
-        //repeat one mode
-        if (mainActivity!!.isRepeatOne) {
-            mainActivity?.musicService?.mediaPlayer?.isLooping = true
-            playSong()
-            return
-        }
-
-        // suffle modepaus
-        if (mainActivity!!.isSuffle) {
-            songPosition = Random.nextInt(mainActivity?.songsQueueList!!.size)
-            playSong()
-            if (isVisible) {
-                setDataForView()
-            }
-            return
-        }
-        // repeat all mode or normal mode
-        songPosition++
-        if (songPosition > mainActivity?.songsQueueList!!.size - 1) {
-            if (mainActivity!!.isRepeatAll) {
-                songPosition = 0
-                playSong()
-                if (isVisible) {
-                    setDataForView()
-                }
-            }
-        } else {
-            playSong()
-            if (isVisible) {
-                setDataForView()
-            }
-        }
     }
 
     override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
@@ -200,11 +158,13 @@ class PlaySongFragment : Fragment(),
         val defaultPositionImage = Utils.getPositionDefaultImage(songPosition)
         drawableIdDefaulImage = Utils.getDrawableIdDefaultImage(defaultPositionImage)
         img_ava_song?.setImageResource(drawableIdDefaulImage)
-        tv_song_name_play_song?.text = mainActivity?.songsQueueList?.get(songPosition)?.songName
+        tv_song_name_play_song?.text =
+            mainActivity?.musicService?.songList?.get(songPosition)?.songName
         tv_song_name_play_song?.isSelected
-        tv_artist_name_play_song?.text = mainActivity?.songsQueueList?.get(songPosition)?.artistName
+        tv_artist_name_play_song?.text =
+            mainActivity?.musicService?.songList?.get(songPosition)?.artistName
         tv_total_time_song?.text =
-            Utils.convertSongDuration(mainActivity?.songsQueueList?.get(songPosition)?.duration!!.toLong())
+            Utils.convertSongDuration(mainActivity?.musicService?.songList?.get(songPosition)?.duration!!.toLong())
 
         seekbar?.max = mainActivity?.musicService?.mediaPlayer!!.duration
         Log.d("minhse", seekbar?.max.toString())
@@ -313,11 +273,11 @@ class PlaySongFragment : Fragment(),
     }
 
     private fun actionNext() {
-        if (songPosition < mainActivity?.songsQueueList!!.size - 1) {
+        if (songPosition < mainActivity?.musicService?.songList!!.size - 1) {
             mainActivity?.musicService?.setSongPosition(songPosition + 1)
             songPosition++
         } else {
-            mainActivity?.musicService?.setSongPosition(mainActivity?.songsQueueList!!.size - 1)
+            mainActivity?.musicService?.setSongPosition(mainActivity?.musicService?.songList!!.size - 1)
         }
         btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
         playSong()
@@ -406,7 +366,7 @@ class PlaySongFragment : Fragment(),
 
     fun playSong() {
         mainActivity?.musicService?.setSongPosition(songPosition)
-        mainActivity?.songsQueueList!!.get(songPosition).songId?.let { setSongSelected(it) }
+        mainActivity?.musicService?.songList!!.get(songPosition).songId?.let { setSongSelected(it) }
         mainActivity?.musicService?.playMusic()
         if (seekbar != null) {
             seekbar.progress = 0
@@ -435,7 +395,7 @@ class PlaySongFragment : Fragment(),
             seekbar?.progress = currentPos
         }
 
-        if (isVisible ) {
+        if (isVisible) {
             handler.postDelayed(runnable, 500)
         }
     }
@@ -446,12 +406,12 @@ class PlaySongFragment : Fragment(),
     }
 
     fun setSongSelected(songId: String) {
-        mainActivity?.songsQueueList?.forEach {
+        mainActivity?.musicService?.songList?.forEach {
             it.isSelected = false
         }
-        for (i in 0 until mainActivity!!.songsQueueList.size) {
-            mainActivity?.songsQueueList!![i].isSelected =
-                mainActivity!!.songsQueueList[i].songId.equals(songId)
+        for (i in 0 until mainActivity!!.musicService?.songList!!.size) {
+            mainActivity?.musicService?.songList!![i].isSelected =
+                mainActivity!!.musicService?.songList!![i].songId.equals(songId)
         }
         updateSongSelected(songId)
 
@@ -464,33 +424,20 @@ class PlaySongFragment : Fragment(),
 
     }
 
-    fun registItemBottomClick() {
+    fun registUpdateView() {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                when(intent?.action){
-                    BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK -> {
-                        mainActivity?.currenSongId =
-                            intent?.getStringExtra(BottomSheetFragment.EXTRA_SONG_ID)
-                        mainActivity?.currenSongId?.let {
-                            for (i in 0 until mainActivity?.songsQueueList?.size!!) {
-                                if (mainActivity?.songsQueueList!![i].songId.equals(mainActivity?.currenSongId)) {
-                                    songPosition = i
-                                }
-                            }
-                        }
-                        setDataForView()
-                        playSong()
-                    }
+                when (intent?.action) {
                     PlayMusicService.ACTION_UPDATE_VIEW -> {
                         songPosition = mainActivity?.musicService?.songPos!!
                         setDataForView()
                     }
                 }
-
             }
         }
 
-        val intentFilter = IntentFilter(BottomSheetFragment.ACITON_ITEM_BOTTOM_CLICK)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(PlayMusicService.ACTION_UPDATE_VIEW)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!, intentFilter)
     }
 

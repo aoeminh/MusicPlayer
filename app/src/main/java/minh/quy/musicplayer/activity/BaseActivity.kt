@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import minh.quy.musicplayer.database.MusicDatabase
 import minh.quy.musicplayer.model.Album
 import minh.quy.musicplayer.model.Artist
@@ -30,6 +31,7 @@ abstract class BaseActivity : AppCompatActivity() {
     var playIntent: Intent? = null
     var musicBound = false
     var context: Context? = null
+    var currenSongId: String? = null
 
     private val musicConnection = object : ServiceConnection {
 
@@ -37,6 +39,9 @@ abstract class BaseActivity : AppCompatActivity() {
             val binder = service as MusicBinder
             //get service
             musicService = binder.service
+            musicService?.songList?.clear()
+            musicService?.songList?.addAll(songlist)
+            sendBroadcastUpdateView()
             //pass list
             musicBound = true
         }
@@ -55,8 +60,6 @@ abstract class BaseActivity : AppCompatActivity() {
         context = this
         musicDatabase = MusicDatabase.getInstanceDatabase(this)
         songlist = scanDeviceForMp3Files()
-        songsQueueList.clear()
-        songsQueueList.addAll(songlist)
         getAllAlbum()
         getAllArtist()
         startService()
@@ -190,5 +193,11 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
         startService(playIntent)
+    }
+
+    fun sendBroadcastUpdateView(){
+        val intent = Intent(PlayMusicService.ACTION_UPDATE_VIEW)
+        intent.putExtra(PlayMusicService.EXTRA_SONG_ID,currenSongId)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 }

@@ -118,7 +118,9 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
             val songUri = Uri.parse(songList.get(songPos).data)
             mediaPlayer?.setDataSource(applicationContext, songUri)
             mediaPlayer?.prepare()
+            songList[songPos].isSelected = true
         }
+
         sendBroadcastUpdateView(songPos)
     }
 
