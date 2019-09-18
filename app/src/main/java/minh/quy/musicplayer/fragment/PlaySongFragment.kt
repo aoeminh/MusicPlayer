@@ -102,6 +102,10 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         setAction()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregistUpdateSongSelected()
+    }
     override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
 
     }
@@ -203,6 +207,11 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         seekbar.setOnSeekBarChangeListener(this)
         btn_suffle_play_song.setOnClickListener { view -> actionSuffle() }
         img_song_queue.setOnClickListener { view -> actionShowQueue() }
+        img_back_play_song_fragment.setOnClickListener{ view -> actionBack()}
+    }
+
+    private fun actionBack() {
+        fragmentManager?.popBackStack()
     }
 
     private fun actionShowQueue() {
@@ -346,16 +355,6 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         )
     }
 
-    fun playSong() {
-        mainActivity?.musicService?.setSongPosition(songPosition)
-        mainActivity?.musicService?.songList!!.get(songPosition).songId?.let { setSongSelected(it) }
-        mainActivity?.musicService?.playMusic()
-        if (seekbar != null) {
-            seekbar.progress = 0
-        }
-        updateSeekbar()
-    }
-
     override fun onPause() {
         super.onPause()
         handler.removeCallbacks(runnable)
@@ -396,7 +395,6 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
                 mainActivity!!.musicService?.songList!![i].songId.equals(songId)
         }
         updateSongSelected(songId)
-
     }
 
     fun updateSongSelected(songId: String) {

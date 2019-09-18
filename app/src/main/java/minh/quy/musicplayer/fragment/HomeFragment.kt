@@ -183,11 +183,14 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         }
         val fragment = PlaySongFragment.newInstance(getSongPositon())
         val transaction = mainActivity!!.fragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.fragment_enter,
+            R.anim.fragment_exit,R.anim.fragment_enter,
+            R.anim.fragment_exit
+        )
         transaction.replace(R.id.frame_main, fragment, null)
         transaction.addToBackStack(null)
         transaction.commit()
-
-
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
