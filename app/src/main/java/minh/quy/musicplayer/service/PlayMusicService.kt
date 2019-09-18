@@ -14,7 +14,8 @@ import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.sharepreferences.UserPreferences
 import kotlin.random.Random
 
-class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
+class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
+    MediaPlayer.OnCompletionListener {
     override fun onPrepared(p0: MediaPlayer?) {
         mediaPlayer?.start()
     }
@@ -49,7 +50,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
         }
     }
 
-    companion object{
+    companion object {
         val ACTION_UPDATE_VIEW = "action.update.view"
         val EXTRA_SONG_ID = "extra.song.id"
     }
@@ -64,7 +65,6 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
     var currenRepeat = 0
     var currenSongId: String? = null
     var currentDuration: Long? = 0
-    var isFirstPlay = true
 
     override fun onBind(p0: Intent?): IBinder? {
         return this.binder
@@ -137,9 +137,9 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
             get() = this@PlayMusicService
     }
 
-    fun sendBroadcastUpdateView(position: Int){
+    fun sendBroadcastUpdateView(position: Int) {
         val intent = Intent(ACTION_UPDATE_VIEW)
-        intent.putExtra(EXTRA_SONG_ID,songList[position].songId)
+        intent.putExtra(EXTRA_SONG_ID, songList[position].songId)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
@@ -167,7 +167,6 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
 
-
     fun getRepeatAndSuffleMode() {
         val userPreferences = UserPreferences.getInstance(applicationContext)
         currenRepeat = userPreferences!!.getRepeatMode()
@@ -186,6 +185,43 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
         }
     }
 
-    
+    fun actionNext() {
+        if (isSuffle) {
+            songPos = Random.nextInt(songList.size)
+        } else {
+            if (songPos < songList.size - 1) {
+                songPos++
+            } else {
+                songPos = 0
+            }
+        }
+
+        playMusic()
+    }
+
+    fun actionBtnPlay() {
+        if (mediaPlayer!!.isPlaying) {
+            mediaPlayer?.pause()
+        } else {
+            mediaPlayer?.start()
+        }
+        sendBroadcastUpdateView(songPos)
+    }
+
+    fun actionPrevious() {
+        if (isSuffle) {
+            songPos = Random.nextInt(songList.size)
+        } else {
+            if (songPos == 0) {
+                songPos = songList.size - 1
+            } else {
+                songPos--
+            }
+        }
+        playMusic()
+//        btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
+//        playSong()
+//        setDataForView()
+    }
 
 }

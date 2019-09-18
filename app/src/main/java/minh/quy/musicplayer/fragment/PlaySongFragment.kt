@@ -170,6 +170,8 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         Log.d("minhse", seekbar?.max.toString())
         if (mediaPlayer!!.isPlaying) {
             btn_play_and_pause_play_song?.setImageResource(R.drawable.ic_play_pause_white)
+        }else{
+            btn_play_and_pause_play_song?.setImageResource(R.drawable.ic_play_play_white)
         }
         initRepeatBtn()
         initSuffleBtn()
@@ -260,43 +262,20 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     }
 
     private fun actionPrevious() {
-        if (songPosition == 0) {
-            songPosition = 0
-            mainActivity?.musicService?.setSongPosition(songPosition)
-        } else {
-            mainActivity?.musicService?.setSongPosition(songPosition - 1)
-            songPosition--
-        }
-        btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
-        playSong()
-        setDataForView()
+        mainActivity?.musicService?.actionPrevious()
     }
 
     private fun actionNext() {
-        if(mainActivity?.musicService!!.isRepeatAll){
-
-        }
-        if (songPosition < mainActivity?.musicService?.songList!!.size - 1) {
-            mainActivity?.musicService?.setSongPosition(songPosition + 1)
-            songPosition++
-        } else {
-            mainActivity?.musicService?.setSongPosition(0)
-        }
-        btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
-        playSong()
-        setDataForView()
+        mainActivity?.musicService?.actionNext()
     }
 
     fun actionBtnPlay() {
         if (mediaPlayer!!.isPlaying) {
-            btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_play_white)
-            mediaPlayer?.pause()
             handler.removeCallbacks(runnable)
         } else {
-            btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
-            mediaPlayer?.start()
             handler.postDelayed(runnable, 500)
         }
+        mainActivity?.musicService?.actionBtnPlay()
     }
 
     fun initRepeatBtn() {

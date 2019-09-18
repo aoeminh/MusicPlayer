@@ -108,7 +108,7 @@ abstract class BaseActivity : AppCompatActivity() {
                     val dateAdded = cursor.getString(8).toLong()
                     val id = cursor.getString(9)
                     cursor.moveToNext()
-                    if (path != null && path.endsWith(".mp3")) {
+                    if (path != null && path.endsWith(".mp3") && songDuration > 30000) {
                         val song = Song(
                             title,
                             artist,
