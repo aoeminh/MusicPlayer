@@ -26,12 +26,6 @@ class MainActivity : BaseActivity() {
     }
 
     var fragmentManager: FragmentManager = supportFragmentManager
-    var isRepeatOne = false
-    var isRepeatAll = true
-    var isSuffle = false
-    var currenRepeat = 0
-
-    var currentDuration: Long? = 0
     var isFirstPlay = true
 
     override fun getLayoutId(): Int {
@@ -41,8 +35,6 @@ class MainActivity : BaseActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getRepeatAndSuffleMode()
-        currentDuration = getSongDuration()
         addHomeFragment()
     }
 
@@ -60,9 +52,8 @@ class MainActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        saveRepeatAndSuffleMode()
-        saveSongId()
         saveSongDuration()
+
     }
 
     fun addHomeFragment() {
@@ -72,49 +63,12 @@ class MainActivity : BaseActivity() {
         transaction.commit()
     }
 
-    fun saveRepeatAndSuffleMode() {
-        val userPreferences = UserPreferences.getInstance(applicationContext)
-        userPreferences?.saveRepeatMode(currenRepeat)
-        userPreferences?.saveSuffleMode(isSuffle)
-
-    }
-
-    fun saveSongId() {
-        val userPreferences = UserPreferences.getInstance(applicationContext)
-        userPreferences?.saveSongId(musicService?.currenSongId!!)
-    }
-
-
-
-    fun getSongDuration(): Long? {
-        val userPreferences = UserPreferences.getInstance(applicationContext)
-        return userPreferences?.getSongDuration()
-    }
-
     fun saveSongDuration() {
         val userPreferences = UserPreferences.getInstance(applicationContext)
         if (musicService?.mediaPlayer?.duration!! < 0) {
             userPreferences?.saveSongDuration(0)
         } else {
             userPreferences?.saveSongDuration(musicService?.mediaPlayer?.currentPosition!!.toLong())
-        }
-    }
-
-    fun getRepeatAndSuffleMode() {
-        val userPreferences = UserPreferences.getInstance(applicationContext)
-        currenRepeat = userPreferences!!.getRepeatMode()
-        isSuffle = userPreferences.getSuffleMode()
-        setRepeatMode()
-    }
-
-    fun setRepeatMode() {
-        if (currenRepeat == PlaySongFragment.Repeat.REPEAT_ONE.value) {
-            isRepeatOne = true
-        } else if (currenRepeat == PlaySongFragment.Repeat.REPEAT_ALL.value) {
-            isRepeatAll = true
-        } else {
-            isRepeatOne = false
-            isRepeatAll = false
         }
     }
 

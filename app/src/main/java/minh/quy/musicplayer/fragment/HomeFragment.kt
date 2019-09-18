@@ -415,7 +415,6 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         mainActivity?.musicService?.songList!![position].isSelected = true
     }
 
-
     private fun setDataForBottomPlayback(song: Song) {
         tv_artist_playback?.text = song.artistName
         tv_song_name_playback?.text = song.songName

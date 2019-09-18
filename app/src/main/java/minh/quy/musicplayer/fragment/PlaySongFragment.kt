@@ -151,7 +151,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         if (mainActivity!!.isFirstPlay) {
             mainActivity?.musicService?.setSongPosition(songPosition)
             mainActivity?.musicService?.playMusic()
-            mediaPlayer?.seekTo(mainActivity?.currentDuration!!.toInt())
+            mediaPlayer?.seekTo(mainActivity?.musicService?.currentDuration!!.toInt())
             btn_play_and_pause_play_song?.setImageResource(R.drawable.ic_play_pause_white)
         }
         mainActivity!!.isFirstPlay = false
@@ -213,21 +213,21 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     }
 
     private fun actionSuffle() {
-        if (mainActivity!!.isSuffle) {
-            mainActivity?.isSuffle = false
+        if (mainActivity!!.musicService!!.isSuffle) {
+            mainActivity?.musicService?.isSuffle = false
             Toast.makeText(mContext, getString(R.string.suffle_off), Toast.LENGTH_SHORT).show()
             setSuffleOff()
         } else {
             Toast.makeText(mContext, getString(R.string.suffle_on), Toast.LENGTH_SHORT).show()
-            mainActivity?.isSuffle = true
+            mainActivity?.musicService?.isSuffle = true
             setSuffleOn()
         }
     }
 
     private fun actionRepeat() {
-        if (mainActivity?.currenRepeat == Repeat.NONE.value) {
+        if (mainActivity?.musicService?.currenRepeat == Repeat.NONE.value) {
             repeatOne()
-        } else if (mainActivity?.currenRepeat == Repeat.REPEAT_ONE.value) {
+        } else if (mainActivity?.musicService?.currenRepeat == Repeat.REPEAT_ONE.value) {
             repeatAll()
         } else {
             noRepeat()
@@ -237,26 +237,26 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
 
     fun repeatOne() {
         Toast.makeText(mContext, getString(R.string.repeat_one), Toast.LENGTH_SHORT).show()
-        mainActivity?.isRepeatOne = true
-        mainActivity!!.currenRepeat++
-        mainActivity?.isRepeatAll = false
+        mainActivity?.musicService?.isRepeatOne = true
+        mainActivity!!.musicService!!.currenRepeat++
+        mainActivity?.musicService?.isRepeatAll = false
         mediaPlayer?.isLooping = true
     }
 
     fun repeatAll() {
         Toast.makeText(mContext, getString(R.string.repeat_all), Toast.LENGTH_SHORT).show()
-        mainActivity?.isRepeatOne = false
-        mainActivity!!.currenRepeat++
-        mainActivity?.isRepeatAll = true
+        mainActivity?.musicService?.isRepeatOne = false
+        mainActivity!!.musicService!!.currenRepeat++
+        mainActivity?.musicService?.isRepeatAll = true
         mediaPlayer?.isLooping = false
     }
 
     fun noRepeat() {
         Toast.makeText(mContext, getString(R.string.repeat_off), Toast.LENGTH_SHORT).show()
-        mainActivity?.isRepeatOne = false
-        mainActivity?.currenRepeat = 0
+        mainActivity?.musicService?.isRepeatOne = false
+        mainActivity?.musicService?.currenRepeat = 0
         mediaPlayer?.isLooping = false
-        mainActivity?.isRepeatAll = false
+        mainActivity?.musicService?.isRepeatAll = false
     }
 
     private fun actionPrevious() {
@@ -273,11 +273,14 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     }
 
     private fun actionNext() {
+        if(mainActivity?.musicService!!.isRepeatAll){
+
+        }
         if (songPosition < mainActivity?.musicService?.songList!!.size - 1) {
             mainActivity?.musicService?.setSongPosition(songPosition + 1)
             songPosition++
         } else {
-            mainActivity?.musicService?.setSongPosition(mainActivity?.musicService?.songList!!.size - 1)
+            mainActivity?.musicService?.setSongPosition(0)
         }
         btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
         playSong()
@@ -297,9 +300,9 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     }
 
     fun initRepeatBtn() {
-        if (mainActivity?.currenRepeat == Repeat.REPEAT_ONE.value) {
+        if (mainActivity?.musicService?.currenRepeat == Repeat.REPEAT_ONE.value) {
             setImageRepeatOneMode()
-        } else if (mainActivity?.currenRepeat == Repeat.REPEAT_ALL.value) {
+        } else if (mainActivity?.musicService?.currenRepeat == Repeat.REPEAT_ALL.value) {
             setImageRepeatAllMode()
         } else {
             setImageNoRepeatMode()
@@ -337,7 +340,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     }
 
     fun initSuffleBtn() {
-        if (mainActivity!!.isSuffle) {
+        if (mainActivity!!.musicService!!.isSuffle) {
             setSuffleOn()
         } else {
             setSuffleOff()
@@ -387,8 +390,8 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     fun updateSeekbar() {
         var currentPos = mediaPlayer?.currentPosition
         if (currentPos!! < 0) {
-            currentPos = mainActivity?.currentDuration!!.toInt()
-            tv_realtime_song?.text = Utils.convertSongDuration(mainActivity?.currentDuration!!)
+            currentPos = mainActivity?.musicService?.currentDuration!!.toInt()
+            tv_realtime_song?.text = Utils.convertSongDuration(mainActivity?.musicService?.currentDuration!!)
             seekbar?.progress = currentPos
         } else {
             tv_realtime_song?.text = Utils.convertSongDuration(currentPos.toLong())

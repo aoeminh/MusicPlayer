@@ -9,7 +9,9 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import minh.quy.musicplayer.fragment.PlaySongFragment
 import minh.quy.musicplayer.model.Song
+import minh.quy.musicplayer.sharepreferences.UserPreferences
 import kotlin.random.Random
 
 class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
@@ -72,6 +74,9 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
         super.onCreate()
         mediaPlayer = MediaPlayer()
         initMediaPlayer()
+        getRepeatAndSuffleMode()
+        currentDuration = getSongDuration()
+        currenSongId = getSongId()
 
     }
 
@@ -90,6 +95,8 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
 
     override fun onDestroy() {
         super.onDestroy()
+        saveRepeatAndSuffleMode()
+        saveSongId()
     }
 
     fun initMediaPlayer() {
@@ -136,5 +143,49 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
+    fun saveRepeatAndSuffleMode() {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        userPreferences?.saveRepeatMode(currenRepeat)
+        userPreferences?.saveSuffleMode(isSuffle)
+
+    }
+
+    fun saveSongId() {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        userPreferences?.saveSongId(currenSongId!!)
+    }
+
+    fun getSongId(): String? {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        return userPreferences?.getSongId()
+    }
+
+
+    fun getSongDuration(): Long? {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        return userPreferences?.getSongDuration()
+    }
+
+
+
+    fun getRepeatAndSuffleMode() {
+        val userPreferences = UserPreferences.getInstance(applicationContext)
+        currenRepeat = userPreferences!!.getRepeatMode()
+        isSuffle = userPreferences.getSuffleMode()
+        setRepeatMode()
+    }
+
+    fun setRepeatMode() {
+        if (currenRepeat == PlaySongFragment.Repeat.REPEAT_ONE.value) {
+            isRepeatOne = true
+        } else if (currenRepeat == PlaySongFragment.Repeat.REPEAT_ALL.value) {
+            isRepeatAll = true
+        } else {
+            isRepeatOne = false
+            isRepeatAll = false
+        }
+    }
+
+    
 
 }

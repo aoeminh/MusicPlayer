@@ -146,7 +146,6 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
                         setSongSelected( intent.getStringExtra(
                             PlayMusicService.EXTRA_SONG_ID
                         )!!)
-
                     }
                 }
             }

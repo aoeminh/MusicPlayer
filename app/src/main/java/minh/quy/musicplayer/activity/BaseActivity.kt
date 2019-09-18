@@ -41,7 +41,7 @@ abstract class BaseActivity : AppCompatActivity() {
             musicService?.songList?.clear()
             musicService?.songList?.addAll(songlist)
             musicBound = true
-            musicService?.currenSongId = getSongId()
+
             sendBroadcastUpdateView()
             //pass list
 
@@ -203,8 +203,5 @@ abstract class BaseActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
-    fun getSongId(): String? {
-        val userPreferences = UserPreferences.getInstance(applicationContext)
-        return userPreferences?.getSongId()
-    }
+
 }
