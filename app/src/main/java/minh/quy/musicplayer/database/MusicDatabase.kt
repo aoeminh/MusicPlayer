@@ -5,11 +5,11 @@ import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import minh.quy.musicplayer.dao.PlaylistDAO
-import minh.quy.musicplayer.dao.SongDAO
+import minh.quy.musicplayer.dao.PlaylistSongDAO
+import minh.quy.musicplayer.model.PlayListSong
 import minh.quy.musicplayer.model.Playlist
-import minh.quy.musicplayer.model.Song
 
-@Database(entities = arrayOf(Playlist::class), version = 1)
+@Database(entities = arrayOf(Playlist::class, PlayListSong::class), version = 1)
 abstract class MusicDatabase : RoomDatabase() {
 
     companion object {
@@ -26,7 +26,6 @@ abstract class MusicDatabase : RoomDatabase() {
     }
 
     abstract fun getPlaylistDAO(): PlaylistDAO
-
-
+    abstract fun getPlayListSongDAO(): PlaylistSongDAO
 
 }

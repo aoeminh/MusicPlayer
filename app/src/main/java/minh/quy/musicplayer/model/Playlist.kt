@@ -7,8 +7,6 @@ import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "playlists")
 class Playlist @JvmOverloads constructor(
-
-
     @ColumnInfo(name = "playlist_name")
     var name: String,
 

@@ -12,6 +12,7 @@ import minh.quy.musicplayer.fragment.PlaySongFragment
 import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import minh.quy.musicplayer.sharepreferences.UserPreferences
 import android.content.Intent
+import minh.quy.musicplayer.model.Playlist
 
 
 class MainActivity : BaseActivity() {
@@ -27,6 +28,7 @@ class MainActivity : BaseActivity() {
 
     var fragmentManager: FragmentManager = supportFragmentManager
     var isFirstPlay = true
+    var playlists: MutableList<Playlist> = arrayListOf()
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main

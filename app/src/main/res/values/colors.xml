@@ -26,6 +26,7 @@
     <color name="scrim">#42000000</color>
     <color name="white">#FFFFFF</color>
     <color name="black_transparent">#400A0101</color>
+    <color name="black_common">#000</color>
 
     <!-- text selected -->
     <color name="text_selected">#1E88E5</color>

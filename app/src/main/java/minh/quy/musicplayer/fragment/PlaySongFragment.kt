@@ -15,17 +15,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_playsong.*
+import kotlinx.android.synthetic.main.popup_add_to_playlist.view.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
+import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.activity.MainActivity
+import minh.quy.musicplayer.adapter.AddToPlaylistAdapter
+import minh.quy.musicplayer.model.PlayListSong
+import minh.quy.musicplayer.model.Playlist
 import minh.quy.musicplayer.service.PlayMusicService
 
 
-class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
+class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTouchListener,
+    OnItemCommonClick {
 
 
     enum class Repeat(val value: Int) {
@@ -62,6 +70,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     var downYPostion = 0
     var upYPosition = 0
     var receiver: BroadcastReceiver? = null
+    var addAdapter: AddToPlaylistAdapter? = null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -106,6 +115,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         super.onDestroy()
         unregistUpdateSongSelected()
     }
+
     override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
 
     }
@@ -151,6 +161,16 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         return true
     }
 
+    override fun onItemClick(postion: Int) {
+        val playlistSong = PlayListSong(
+            mainActivity!!.playlists[postion].id!!,
+            mainActivity?.musicService?.songList!![songPosition].songId!!
+        )
+        val result =
+            mainActivity?.musicDatabase?.getPlayListSongDAO()?.insertSongIntoPlayList(playlistSong)
+        Log.d("minh",result.toString())
+    }
+
     fun setDataForView() {
         if (mainActivity!!.isFirstPlay) {
             mainActivity?.musicService?.setSongPosition(songPosition)
@@ -174,7 +194,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         Log.d("minhse", seekbar?.max.toString())
         if (mediaPlayer!!.isPlaying) {
             btn_play_and_pause_play_song?.setImageResource(R.drawable.ic_play_pause_white)
-        }else{
+        } else {
             btn_play_and_pause_play_song?.setImageResource(R.drawable.ic_play_play_white)
         }
         initRepeatBtn()
@@ -207,7 +227,25 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         seekbar.setOnSeekBarChangeListener(this)
         btn_suffle_play_song.setOnClickListener { view -> actionSuffle() }
         img_song_queue.setOnClickListener { view -> actionShowQueue() }
-        img_back_play_song_fragment.setOnClickListener{ view -> actionBack()}
+        img_back_play_song_fragment.setOnClickListener { view -> actionBack() }
+        img_add_to_playlist.setOnClickListener { view -> actionAdd() }
+    }
+
+    private fun actionAdd() {
+        val builder = AlertDialog.Builder(context!!)
+        val dialogView = layoutInflater.inflate(R.layout.popup_add_to_playlist, null)
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+        dialogView.rv_playlists_add_to_playlis.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            addAdapter = AddToPlaylistAdapter(context, mainActivity?.playlists!!)
+            addAdapter?.setItemClick(this@PlaySongFragment)
+            adapter = addAdapter
+        }
+
+        alertDialog.show()
+
+
     }
 
     private fun actionBack() {
@@ -369,7 +407,8 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         var currentPos = mediaPlayer?.currentPosition
         if (currentPos!! < 0) {
             currentPos = mainActivity?.musicService?.currentDuration!!.toInt()
-            tv_realtime_song?.text = Utils.convertSongDuration(mainActivity?.musicService?.currentDuration!!)
+            tv_realtime_song?.text =
+                Utils.convertSongDuration(mainActivity?.musicService?.currentDuration!!)
             seekbar?.progress = currentPos
         } else {
             tv_realtime_song?.text = Utils.convertSongDuration(currentPos.toLong())

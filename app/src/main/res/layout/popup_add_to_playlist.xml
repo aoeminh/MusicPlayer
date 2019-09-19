@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="@dimen/_250sdp"
+    android:layout_height="match_parent"
+    android:background="@drawable/background2">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title_add_to_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/add_to_playlist"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_20ssp"
+        android:gravity="center"
+        />
+    <View
+        android:id="@+id/line_add_to_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title_add_to_playlist"
+        app:layout_constraintBottom_toTopOf="@id/rv_playlists_add_to_playlis"
+        android:background="@color/white"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_playlists_add_to_playlis"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:layout_constraintTop_toBottomOf="@+id/line_add_to_playlist"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+</LinearLayout>

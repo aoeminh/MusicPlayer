@@ -28,7 +28,6 @@ import minh.quy.musicplayer.presenter.PlaylistPresenter
 class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist {
 
     var adapterPlaylist: PlaylistAdapter? = null
-    var playlists: MutableList<Playlist> = arrayListOf()
     var presenter: PlaylistPresenter? = null
     var homeFragment: HomeFragment? = null
 
@@ -66,8 +65,8 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist 
         liveData?.observe(this, Observer<MutableList<Playlist>> {
             Log.d("MinhNQ", it.size.toString())
             adapterPlaylist?.addPlaylists(it)
-            playlists.clear()
-            playlists.addAll(it)
+            mainActivity.playlists.clear()
+            mainActivity.playlists.addAll(it)
         })
     }
 
@@ -97,7 +96,7 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist 
         rv_playlist.apply {
             layoutManager = LinearLayoutManager(contextBase, RecyclerView.VERTICAL, false)
             adapterPlaylist = PlaylistAdapter(contextBase!!)
-            adapterPlaylist?.addPlaylists(playlists)
+            adapterPlaylist?.addPlaylists(mainActivity.playlists)
             adapter = adapterPlaylist
 
         }
