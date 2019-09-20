@@ -13,6 +13,6 @@ interface PlaylistSongDAO {
     fun insertSongIntoPlayList(playListSong: PlayListSong): Long
 
     @Query("SELECT * FROM playlists_song WHERE playlist_id LIKE :playlistId")
-    fun getAllSongInPlaylist(playlistId: Int): PlayListSong
+    fun getAllSongInPlaylist(playlistId: Int): MutableList<PlayListSong>
 
 }

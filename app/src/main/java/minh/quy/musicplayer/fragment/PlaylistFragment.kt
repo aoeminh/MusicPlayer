@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_playlist.*
 import kotlinx.android.synthetic.main.popup_create_new_playlist.view.*
 import layout.HomeFragment
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.PlaylistAdapter
 import minh.quy.musicplayer.contract.IPlaylistView
@@ -25,7 +27,7 @@ import minh.quy.musicplayer.model.Playlist
 import minh.quy.musicplayer.presenter.PlaylistPresenter
 
 
-class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist {
+class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist, OnItemCommonClick {
 
     var adapterPlaylist: PlaylistAdapter? = null
     var presenter: PlaylistPresenter? = null
@@ -92,11 +94,21 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist 
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun onItemClick(postion: Int) {
+        var fragment = ListSongFragment.newInstance(mainActivity.playlists[postion].id!!, mainActivity.playlists[postion].name)
+        var transaction = mainActivity.fragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_main, fragment, null)
+        transaction.addToBackStack(null)
+        transaction.commit()
+
+    }
+
     fun initRecyclerView() {
         rv_playlist.apply {
             layoutManager = LinearLayoutManager(contextBase, RecyclerView.VERTICAL, false)
             adapterPlaylist = PlaylistAdapter(contextBase!!)
             adapterPlaylist?.addPlaylists(mainActivity.playlists)
+            adapterPlaylist?.setItemClick(this@PlaylistFragment)
             adapter = adapterPlaylist
 
         }
