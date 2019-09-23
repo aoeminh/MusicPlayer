@@ -76,7 +76,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
         gotoPlaySongFragment(postion)
         setSongQueue()
         setSongSelected(songlist[postion].songId!!)
-        updateSongSelected((songlist[postion].songId!!))
+//        updateSongSelected((songlist[postion].songId!!))
     }
 
     fun setSongSelected(songId: String) {
@@ -143,9 +143,11 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
                     PlayMusicService.ACTION_UPDATE_VIEW -> {
-                        setSongSelected( intent.getStringExtra(
-                            PlayMusicService.EXTRA_SONG_ID
-                        )!!)
+                        setSongSelected(
+                            intent.getStringExtra(
+                                PlayMusicService.EXTRA_SONG_ID
+                            )!!
+                        )
                     }
                 }
             }

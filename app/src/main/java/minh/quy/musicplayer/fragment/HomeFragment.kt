@@ -393,7 +393,6 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
                     PlayMusicService.ACTION_UPDATE_VIEW -> {
-                        setSongSelected(mainActivity?.musicService?.songPos!!)
                         setDataForBottomPlayback(mainActivity?.musicService?.songList?.get(getSongPositon())!!)
 
                         }

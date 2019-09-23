@@ -168,7 +168,8 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         )
         val result =
             mainActivity?.musicDatabase?.getPlayListSongDAO()?.insertSongIntoPlayList(playlistSong)
-        Log.d("minh",result.toString())
+        Toast.makeText(context,R.string.added_to_playlist,Toast.LENGTH_SHORT).show()
+        Log.d("minh", result.toString())
     }
 
     fun setDataForView() {

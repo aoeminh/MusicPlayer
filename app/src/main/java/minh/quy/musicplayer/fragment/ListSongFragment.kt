@@ -92,7 +92,6 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
 
     }
 
-
     fun getSong(songId: String){
         mainActivity?.songlist?.forEach{
             if(songId.equals(it.songId)){

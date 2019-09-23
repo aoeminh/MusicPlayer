@@ -78,8 +78,7 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
         }
     }
 
-    fun setSongSelected(position: Int) {
-        mainActivity?.musicService?.songList!![position].isSelected = true
+    fun setSongSelected() {
         mAdapter?.notifyDataSetChanged()
     }
 
@@ -88,7 +87,8 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                when(intent?.action){
-                   PlayMusicService.ACTION_UPDATE_VIEW -> setSongSelected(mainActivity?.musicService?.songPos!!)
+                   //update when next song from service
+                   PlayMusicService.ACTION_UPDATE_VIEW -> setSongSelected()
                }
             }
         }
