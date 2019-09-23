@@ -44,6 +44,9 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
             if (isRepeatAll) {
                 songPos = 0
                 playMusic()
+            }else{
+                songPos = songList.size - 1
+                mediaPlayer?.pause()
             }
         } else {
             playMusic()
@@ -203,7 +206,12 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
         if (mediaPlayer!!.isPlaying) {
             mediaPlayer?.pause()
         } else {
-            mediaPlayer?.start()
+            if(songPos < songList.size - 1){
+                mediaPlayer?.start()
+            }else{
+                playMusic()
+            }
+
         }
         sendBroadcastUpdateView(songPos)
     }
@@ -219,9 +227,6 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
             }
         }
         playMusic()
-//        btn_play_and_pause_play_song.setImageResource(R.drawable.ic_play_pause_white)
-//        playSong()
-//        setDataForView()
     }
 
 }

@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AlertDialogLayout
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -71,6 +72,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     var upYPosition = 0
     var receiver: BroadcastReceiver? = null
     var addAdapter: AddToPlaylistAdapter? = null
+    var alertDialog: AlertDialog?= null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -162,13 +164,29 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     }
 
     override fun onItemClick(postion: Int) {
+        val playlistId = mainActivity!!.playlists[postion].id!!
+        val songId = mainActivity?.musicService?.songList!![songPosition].songId!!
+
+        //if song exist
+        val listPlaylistSong =
+            mainActivity?.musicDatabase?.getPlayListSongDAO()?.getAllSongInPlaylist(playlistId)
+        listPlaylistSong?.forEach {
+            if (songId.equals(it.songId)) {
+                Toast.makeText(context, R.string.song_exists, Toast.LENGTH_SHORT).show()
+                alertDialog?.dismiss()
+                return
+            }
+        }
+
         val playlistSong = PlayListSong(
-            mainActivity!!.playlists[postion].id!!,
-            mainActivity?.musicService?.songList!![songPosition].songId!!
+            playlistId,
+            songId
         )
+
         val result =
             mainActivity?.musicDatabase?.getPlayListSongDAO()?.insertSongIntoPlayList(playlistSong)
-        Toast.makeText(context,R.string.added_to_playlist,Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.added_to_playlist, Toast.LENGTH_SHORT).show()
+        alertDialog?.dismiss()
         Log.d("minh", result.toString())
     }
 
@@ -236,7 +254,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         val builder = AlertDialog.Builder(context!!)
         val dialogView = layoutInflater.inflate(R.layout.popup_add_to_playlist, null)
         builder.setView(dialogView)
-        val alertDialog = builder.create()
+        alertDialog = builder.create()
         dialogView.rv_playlists_add_to_playlis.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addAdapter = AddToPlaylistAdapter(context, mainActivity?.playlists!!)
@@ -244,9 +262,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
             adapter = addAdapter
         }
 
-        alertDialog.show()
-
-
+        alertDialog?.show()
     }
 
     private fun actionBack() {
@@ -405,20 +421,23 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     }
 
     fun updateSeekbar() {
-        var currentPos = mediaPlayer?.currentPosition
-        if (currentPos!! < 0) {
-            currentPos = mainActivity?.musicService?.currentDuration!!.toInt()
-            tv_realtime_song?.text =
-                Utils.convertSongDuration(mainActivity?.musicService?.currentDuration!!)
-            seekbar?.progress = currentPos
-        } else {
-            tv_realtime_song?.text = Utils.convertSongDuration(currentPos.toLong())
-            seekbar?.progress = currentPos
+        if(mediaPlayer!!.isPlaying){
+            var currentPos = mediaPlayer?.currentPosition
+            if (currentPos!! < 0) {
+                currentPos = mainActivity?.musicService?.currentDuration!!.toInt()
+                tv_realtime_song?.text =
+                    Utils.convertSongDuration(mainActivity?.musicService?.currentDuration!!)
+                seekbar?.progress = currentPos
+            } else {
+                tv_realtime_song?.text = Utils.convertSongDuration(currentPos.toLong())
+                seekbar?.progress = currentPos
+            }
+
+            if (isVisible) {
+                handler.postDelayed(runnable, 500)
+            }
         }
 
-        if (isVisible) {
-            handler.postDelayed(runnable, 500)
-        }
     }
 
     var handler = Handler()

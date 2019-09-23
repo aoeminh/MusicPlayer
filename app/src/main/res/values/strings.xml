@@ -50,6 +50,7 @@
     <string name="repeat_off">Repeat all off</string>
     <string name="creat_new_playlist_success">Creat new Playlist success</string>
     <string name="create_playlist_fail">Create fail, please try again</string>
-    <string name="added_to_playlist">Added to Playlist</string>
+    <string name="added_to_playlist">Added to playlist</string>
+    <string name="song_exists">Song slready exist in playlist</string>
 
 </resources>
