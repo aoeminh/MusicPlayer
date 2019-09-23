@@ -76,6 +76,13 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if(listSong.size <=0){
+            rv_list_song.visibility = View.GONE
+            nested_scroll.visibility = View.VISIBLE
+        }else{
+            rv_list_song.visibility = View.VISIBLE
+            nested_scroll.visibility = View.GONE
+        }
         rv_list_song?.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             mAdapter = ListSongAdapter(context, listSong)
