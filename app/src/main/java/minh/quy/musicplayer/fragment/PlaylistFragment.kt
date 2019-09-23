@@ -1,15 +1,13 @@
 package minh.quy.musicplayer.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,16 +16,17 @@ import kotlinx.android.synthetic.main.fragment_playlist.*
 import kotlinx.android.synthetic.main.popup_create_new_playlist.view.*
 import layout.HomeFragment
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.action.IActionOption
 import minh.quy.musicplayer.action.OnItemCommonClick
-import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.PlaylistAdapter
 import minh.quy.musicplayer.contract.IPlaylistView
 import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import minh.quy.musicplayer.model.Playlist
+import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.presenter.PlaylistPresenter
 
 
-class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist, OnItemCommonClick {
+class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist, OnItemCommonClick, IActionOption {
 
     var adapterPlaylist: PlaylistAdapter? = null
     var presenter: PlaylistPresenter? = null
@@ -95,11 +94,48 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
     }
 
     override fun onItemClick(postion: Int) {
-        var fragment = ListSongFragment.newInstance(mainActivity.playlists[postion].id!!, mainActivity.playlists[postion].name)
+        var fragment =
+            ListSongFragment.newInstance(mainActivity.playlists[postion].id!!, mainActivity.playlists[postion].name)
         var transaction = mainActivity.fragmentManager.beginTransaction()
         transaction.replace(R.id.frame_main, fragment, null)
         transaction.addToBackStack(null)
         transaction.commit()
+
+    }
+
+    override fun onOptionClick(position: Int, view: View) {
+        val popUpMenu = PopupMenu(context!!, view)
+        popUpMenu.menuInflater.inflate(R.menu.menu_item_playlist, popUpMenu.menu)
+
+
+        popUpMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.item_play_playlist -> {
+                    playPlayList(mainActivity.playlists[position].id!!)
+                }
+                R.id.item_play_next_playlist -> {
+                    playNext(mainActivity.playlists[position].id!!)
+                }
+                R.id.item_add_queue_playlist -> {
+                    addToQueue(mainActivity.playlists[position].id!!)
+                }
+                R.id.item_delete_playlist ->{
+                    mainActivity.musicDatabase?.getPlaylistDAO()?.deletePlaylist(mainActivity.playlists[position])
+                }
+
+            }
+
+            true
+        })
+    }
+
+    private fun addToQueue(playlistId: Int) {
+        mainActivity.musicService?.songList?.addAll(mainActivity.musicService?.songList!!.size, getSongs(playlistId))
+
+    }
+
+    private fun playNext(playlistId: Int) {
+        mainActivity.musicService?.songList?.addAll(mainActivity.musicService?.songPos!! + 1, getSongs(playlistId))
 
     }
 
@@ -109,10 +145,35 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
             adapterPlaylist = PlaylistAdapter(contextBase!!)
             adapterPlaylist?.addPlaylists(mainActivity.playlists)
             adapterPlaylist?.setItemClick(this@PlaylistFragment)
+            adapterPlaylist?.setActionOption(this@PlaylistFragment)
             adapter = adapterPlaylist
 
         }
     }
+
+    fun playPlayList(playlistId: Int) {
+
+        mainActivity.musicService?.songList?.clear()
+        mainActivity.musicService?.songList?.addAll(getSongs(playlistId))
+        mainActivity.musicService?.setSongPosition(0)
+        mainActivity.musicService?.playMusic()
+    }
+
+    fun getSongs(playlistId: Int): MutableList<Song> {
+        val listSong = arrayListOf<Song>()
+        val listPlaylistSong =
+            mainActivity.musicDatabase?.getPlayListSongDAO()?.getAllSongInPlaylist(playlistId)
+        listPlaylistSong?.forEach { playlistId ->
+            mainActivity.songlist.forEach {
+                if (playlistId.songId.equals(it.songId)) {
+                    listSong.add(it)
+                }
+            }
+        }
+
+        return listSong
+    }
+
 
     fun showPopupCreatePlaylist() {
         val alertDialogBuilder = AlertDialog.Builder(contextBase!!)

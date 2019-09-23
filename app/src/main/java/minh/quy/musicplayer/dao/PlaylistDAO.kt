@@ -1,10 +1,7 @@
 package minh.quy.musicplayer.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import minh.quy.musicplayer.model.Playlist
 
 @Dao
@@ -16,5 +13,6 @@ interface PlaylistDAO {
     @Query("SELECT * FROM playlists")
     fun getAllPlaylist(): LiveData<MutableList<Playlist>>
 
-    
+    @Delete
+    fun deletePlaylist(playlist: Playlist)
 }
