@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_add_song.*
 import kotlinx.android.synthetic.main.item_list_add_song_fragment.view.*
 import minh.quy.musicplayer.R
@@ -91,7 +92,7 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
 
     fun initRecyclerView() {
         rv_add_song_fragment?.apply {
-            layoutManager = LinearLayoutManager(context!!, LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
             mAdapter = AddSongAdapter(context, songList)
             mAdapter?.setItemClick(this@AddSongFragment)
             adapter = mAdapter

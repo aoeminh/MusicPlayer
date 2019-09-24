@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.bottom_playback.*
 import kotlinx.android.synthetic.main.fragment_list_song.*
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
@@ -77,24 +79,10 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initToolbar()
-        if(listSong.size <=0){
-            rv_list_song.visibility = View.GONE
-            nested_scroll.visibility = View.VISIBLE
-        }else{
-            rv_list_song.visibility = View.VISIBLE
-            nested_scroll.visibility = View.GONE
-        }
-        rv_list_song?.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            mAdapter = ListSongAdapter(context, listSong)
-            mAdapter?.setOnItemClick(this@ListSongFragment)
-            adapter = mAdapter
-        }
-        img_list_song?.setImageResource(
-            Utils.getDrawableIdDefaultImage(
-                Random.nextInt(1, 7)
-            )
-        )
+        initRecyclerView()
+        initPlayback()
+        setBigImage()
+        setActionPlayback()
 
     }
 
@@ -112,7 +100,43 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
 
     }
 
-    fun initToolbar(){
+
+    fun setBigImage() {
+        img_list_song?.setImageResource(
+            Utils.getDrawableIdDefaultImage(
+                Random.nextInt(1, 7)
+            )
+        )
+    }
+
+    fun initPlayback() {
+        mainActivity?.musicService?.let {
+            mainActivity?.musicService?.songPos?.let { position ->
+                mainActivity?.musicService?.songList?.get(
+                    position
+                )?.let { song -> setDataForBottomPlayback(song) }
+
+            }
+        }
+    }
+
+    fun initRecyclerView() {
+        if (listSong.size <= 0) {
+            rv_list_song.visibility = View.GONE
+            nested_scroll.visibility = View.VISIBLE
+        } else {
+            rv_list_song.visibility = View.VISIBLE
+            nested_scroll.visibility = View.GONE
+        }
+        rv_list_song?.apply {
+            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            mAdapter = ListSongAdapter(context, listSong)
+            mAdapter?.setOnItemClick(this@ListSongFragment)
+            adapter = mAdapter
+        }
+    }
+
+    fun initToolbar() {
         val activity = activity as AppCompatActivity?
         toolbar_list_song.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         activity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -157,7 +181,10 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
                     //update when next song from service
-                    PlayMusicService.ACTION_UPDATE_VIEW -> mAdapter?.notifyDataSetChanged()
+                    PlayMusicService.ACTION_UPDATE_VIEW -> {
+                        mAdapter?.notifyDataSetChanged()
+                        setDataForBottomPlayback(mainActivity?.musicService?.songList?.get(getSongPositon())!!)
+                    }
                 }
             }
         }
@@ -173,4 +200,71 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
         }
     }
 
+    private fun setDataForBottomPlayback(song: Song) {
+        tv_artist_playback?.text = song.artistName
+        tv_song_name_playback?.text = song.songName
+
+        mainActivity?.musicService?.mediaPlayer?.let {
+            if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
+                img_play_playback?.setImageResource(R.drawable.ic_pause_blue_24dp)
+            } else {
+                img_play_playback?.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
+            }
+        }
+
+    }
+
+    fun setActionPlayback() {
+        ctl_playback?.setOnClickListener { view -> gotoPlaySongFragment() }
+        img_play_playback?.setOnClickListener { view -> actionBtnPlay() }
+        img_song_queue_playback?.setOnClickListener { view -> showSongQueue() }
+    }
+
+    fun gotoPlaySongFragment() {
+        if (mainActivity?.musicService?.songList!!.size <= 0) {
+            mainActivity?.musicService?.songList!!.addAll(mainActivity!!.musicService?.songList!!)
+        }
+        val fragment = PlaySongFragment.newInstance(getSongPositon())
+        val transaction = mainActivity!!.fragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.fragment_enter,
+            R.anim.fragment_exit, R.anim.fragment_enter,
+            R.anim.fragment_exit
+        )
+        transaction.replace(R.id.frame_main, fragment, null)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    fun actionBtnPlay() {
+        if (mainActivity?.musicService?.songList!!.size <= 0) {
+            mainActivity?.musicService?.songList!!.addAll(mainActivity!!.musicService?.songList!!)
+        }
+        if (mainActivity!!.isFirstPlay) {
+            mainActivity?.musicService?.setSongPosition(getSongPositon())
+            mainActivity?.musicService?.playMusic()
+            mainActivity!!.isFirstPlay = false
+        }
+        if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
+            img_play_playback.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
+            mainActivity?.musicService?.mediaPlayer?.pause()
+        } else {
+            img_play_playback.setImageResource(R.drawable.ic_pause_blue_24dp)
+            mainActivity?.musicService?.mediaPlayer?.start()
+        }
+    }
+
+    fun showSongQueue() {
+        val bottomSheetFragment = BottomSheetFragment.newInstance()
+        bottomSheetFragment.show(mainActivity?.fragmentManager, "")
+    }
+
+    fun getSongPositon(): Int {
+        for (i in 0 until mainActivity!!.musicService?.songList?.size!!) {
+            if (mainActivity!!.musicService?.songList!![i].songId.equals(mainActivity?.musicService?.currenSongId)) {
+                return i
+            }
+        }
+        return 0
+    }
 }
