@@ -103,12 +103,12 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
     }
 
     override fun onItemClick(postion: Int) {
-        var fragment =
+        val fragment =
             ListSongFragment.newInstance(
                 mainActivity.playlists[postion].id!!,
                 mainActivity.playlists[postion].name
             )
-        var transaction = mainActivity.fragmentManager.beginTransaction()
+        val transaction = mainActivity.fragmentManager.beginTransaction()
         transaction.replace(R.id.frame_main, fragment, null)
         transaction.addToBackStack(null)
         transaction.commit()
@@ -137,12 +137,15 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
                         ?.deletePlaylist(mainActivity.playlists[position])
                 }
                 R.id.item_edit_playlist -> {
-                    editPlaylist(mainActivity.playlists[position].id!!,(mainActivity.playlists[position].name))
+                    editPlaylist(
+                        mainActivity.playlists[position].id!!,
+                        (mainActivity.playlists[position].name)
+                    )
                 }
-
-
+                R.id.item_add_song_playlist -> {
+                    gotoAddSongFragment(position)
+                }
             }
-
             true
         })
 
@@ -177,8 +180,16 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
         }
     }
 
-    fun playPlayList(playlistId: Int) {
+    fun gotoAddSongFragment(position: Int){
+        val fragment = AddSongFragment.newInstance(mainActivity.playlists[position].id!!)
+        val transaction = mainActivity.fragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_main,fragment,null)
+        transaction.addToBackStack(null)
+        transaction.commit()
 
+    }
+
+    fun playPlayList(playlistId: Int) {
         mainActivity.musicService?.songList?.clear()
         mainActivity.musicService?.songList?.addAll(getSongs(playlistId))
         mainActivity.musicService?.setSongPosition(0)

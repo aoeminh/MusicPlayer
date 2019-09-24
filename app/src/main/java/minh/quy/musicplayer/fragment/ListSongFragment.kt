@@ -76,6 +76,7 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initToolbar()
         if(listSong.size <=0){
             rv_list_song.visibility = View.GONE
             nested_scroll.visibility = View.VISIBLE
@@ -94,15 +95,6 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
                 Random.nextInt(1, 7)
             )
         )
-        val activity = activity as AppCompatActivity?
-        toolbar_list_song.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        activity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        activity?.supportActionBar?.setHomeButtonEnabled(true)
-        activity?.supportActionBar?.setDisplayShowTitleEnabled(false);
-        toolbar_list_song?.title = title
-        toolbar_list_song?.setNavigationOnClickListener {
-            mainActivity?.fragmentManager?.popBackStack()
-        }
 
     }
 
@@ -117,6 +109,19 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
         }
         setSongQueue()
         gotoPlaySongFragment(postion)
+
+    }
+
+    fun initToolbar(){
+        val activity = activity as AppCompatActivity?
+        toolbar_list_song.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        activity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        activity?.supportActionBar?.setHomeButtonEnabled(true)
+        activity?.supportActionBar?.setDisplayShowTitleEnabled(false);
+        toolbar_list_song?.title = title
+        toolbar_list_song?.setNavigationOnClickListener {
+            mainActivity?.fragmentManager?.popBackStack()
+        }
 
     }
 

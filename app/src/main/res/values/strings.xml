@@ -62,5 +62,9 @@
     <string name="edit_playlist">Edit Playlist</string>
     <string name="add_song">Add song</string>
 
+    <!-- add song fragment -->
+    <string name="title_toolbar_add_songs">Add Songs</string>
+    <string name="added_one_song">%d song added to playlist</string>
+    <string name="added_multi_song">%d songs added to playlist</string>
 
 </resources>

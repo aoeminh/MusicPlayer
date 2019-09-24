@@ -27,6 +27,7 @@
     <color name="white">#FFFFFF</color>
     <color name="black_transparent">#400A0101</color>
     <color name="black_common">#000</color>
+    <color name="checkbox_color">#2196F3</color>
 
     <!-- text selected -->
     <color name="text_selected">#1E88E5</color>
