@@ -22,13 +22,12 @@
     <string name="sufftle">Sufftle</string>
     <string name="add_to_home_screen">Add to Home screen</string>
 
-    <!-- popup create new playlist -->
+    <!-- popup create, edit playlist -->
     <string name="text_btn_cancel">Cancel</string>
     <string name="text_btn_create">Create New</string>
     <string name="text_name_playlist">Name:</string>
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
-
 
     <!-- song fragment -->
     <string name="one_dot">•</string>
@@ -41,6 +40,7 @@
     <string name="tracks">tracks</string>
     <string name="add_to_playlist">Add to Playlist</string>
     <string name="not_found_song">No songs found</string>
+    <string name="done">Done</string>
 
 
     <!-- play song fragment -->

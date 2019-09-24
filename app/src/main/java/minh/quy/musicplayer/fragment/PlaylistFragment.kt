@@ -26,7 +26,8 @@ import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.presenter.PlaylistPresenter
 
 
-class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist, OnItemCommonClick, IActionOption {
+class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist, OnItemCommonClick,
+    IActionOption {
 
     var adapterPlaylist: PlaylistAdapter? = null
     var presenter: PlaylistPresenter? = null
@@ -73,16 +74,24 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
 
     override fun onResponseInserPlaylist(isSuccess: Boolean) {
         if (isSuccess) {
-            Toast.makeText(contextBase, getString(R.string.creat_new_playlist_success), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                contextBase,
+                getString(R.string.creat_new_playlist_success),
+                Toast.LENGTH_SHORT
+            ).show()
         } else {
-            Toast.makeText(contextBase, getString(R.string.create_playlist_fail), Toast.LENGTH_SHORT)
+            Toast.makeText(
+                contextBase,
+                getString(R.string.create_playlist_fail),
+                Toast.LENGTH_SHORT
+            )
                 .show()
         }
 
     }
 
     override fun createNewPlaylist() {
-        showPopupCreatePlaylist()
+        showPopupCreatePlaylist(resources.getString(R.string.create_new_playlist))
     }
 
     override fun sortPlaylist() {
@@ -95,7 +104,10 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
 
     override fun onItemClick(postion: Int) {
         var fragment =
-            ListSongFragment.newInstance(mainActivity.playlists[postion].id!!, mainActivity.playlists[postion].name)
+            ListSongFragment.newInstance(
+                mainActivity.playlists[postion].id!!,
+                mainActivity.playlists[postion].name
+            )
         var transaction = mainActivity.fragmentManager.beginTransaction()
         transaction.replace(R.id.frame_main, fragment, null)
         transaction.addToBackStack(null)
@@ -119,23 +131,37 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
                 R.id.item_add_queue_playlist -> {
                     addToQueue(mainActivity.playlists[position].id!!)
                 }
-                R.id.item_delete_playlist ->{
-                    mainActivity.musicDatabase?.getPlaylistDAO()?.deletePlaylist(mainActivity.playlists[position])
+                R.id.item_delete_playlist -> {
+
+                    mainActivity.musicDatabase?.getPlaylistDAO()
+                        ?.deletePlaylist(mainActivity.playlists[position])
                 }
+                R.id.item_edit_playlist -> {
+                    editPlaylist(mainActivity.playlists[position].id!!,(mainActivity.playlists[position].name))
+                }
+
 
             }
 
             true
         })
+
+        popUpMenu.show()
     }
 
     private fun addToQueue(playlistId: Int) {
-        mainActivity.musicService?.songList?.addAll(mainActivity.musicService?.songList!!.size, getSongs(playlistId))
+        mainActivity.musicService?.songList?.addAll(
+            mainActivity.musicService?.songList!!.size,
+            getSongs(playlistId)
+        )
 
     }
 
     private fun playNext(playlistId: Int) {
-        mainActivity.musicService?.songList?.addAll(mainActivity.musicService?.songPos!! + 1, getSongs(playlistId))
+        mainActivity.musicService?.songList?.addAll(
+            mainActivity.musicService?.songPos!! + 1,
+            getSongs(playlistId)
+        )
 
     }
 
@@ -163,9 +189,9 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
         val listSong = arrayListOf<Song>()
         val listPlaylistSong =
             mainActivity.musicDatabase?.getPlayListSongDAO()?.getAllSongInPlaylist(playlistId)
-        listPlaylistSong?.forEach { playlistId ->
+        listPlaylistSong?.forEach { playlist ->
             mainActivity.songlist.forEach {
-                if (playlistId.songId.equals(it.songId)) {
+                if (playlist.songId.equals(it.songId)) {
                     listSong.add(it)
                 }
             }
@@ -174,21 +200,47 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
         return listSong
     }
 
+    fun editPlaylist(playlistId: Int, playlistName: String) {
+        showPopupCreatePlaylist(
+            resources.getString(R.string.edit_playlist),
+            playlistId,
+            playlistName
+        )
+    }
 
-    fun showPopupCreatePlaylist() {
+
+    fun showPopupCreatePlaylist(title: String, playlistId: Int = 0, playlistName: String = "") {
         val alertDialogBuilder = AlertDialog.Builder(contextBase!!)
         val dialogView = layoutInflater.inflate(R.layout.popup_create_new_playlist, null)
         alertDialogBuilder.setView(dialogView)
         val alertDialog = alertDialogBuilder.create()
-        dialogView.btn_create_playlist.setOnClickListener {
-            if (!dialogView.edt_name_playlist.text.toString().isEmpty()) {
-                presenter?.inserNewPlaylist(Playlist(dialogView.edt_name_playlist.text.toString()))
-                Log.d("MinhNQ", " insert playlist")
-                alertDialog.dismiss()
-            } else {
-                Toast.makeText(contextBase, "Enter playlist name", Toast.LENGTH_SHORT).show()
+        dialogView.tv_popup_title.text = title
+        if (title.equals(resources.getString(R.string.create_new_playlist))) {
+            dialogView.btn_create_playlist.text = resources.getString(R.string.text_btn_create)
+            dialogView.btn_create_playlist.setOnClickListener {
+                if (!dialogView.edt_name_playlist.text.toString().trim().isEmpty()) {
+                    presenter?.inserNewPlaylist(Playlist(dialogView.edt_name_playlist.text.toString()))
+                    alertDialog.dismiss()
+                } else {
+                    Toast.makeText(contextBase, "Enter playlist name", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            dialogView.btn_create_playlist.text = resources.getString(R.string.edit_playlist)
+            dialogView.edt_name_playlist.setText(playlistName)
+            dialogView.btn_create_playlist.setOnClickListener {
+                if (!dialogView.edt_name_playlist.text.toString().trim().isEmpty()) {
+                    presenter?.updatePlaylist(
+                        dialogView.edt_name_playlist.text.toString(),
+                        playlistId
+                    )
+                    alertDialog.dismiss()
+                } else {
+                    Toast.makeText(contextBase, "Enter playlist name", Toast.LENGTH_SHORT).show()
+                }
             }
         }
+        dialogView.tv_popup_title.text = title
 
         dialogView.btn_cancle_playlist.setOnClickListener { alertDialog.dismiss() }
         alertDialog.show()

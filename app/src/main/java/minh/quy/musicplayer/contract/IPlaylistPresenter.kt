@@ -7,4 +7,6 @@ import minh.quy.musicplayer.model.Playlist
 interface IPlaylistPresenter {
     fun getAllPlaylist(musicDatabase: MusicDatabase?)
     fun inserNewPlaylist(playlist: Playlist)
+    fun updatePlaylist(name: String, playlistId: Int)
+
 }

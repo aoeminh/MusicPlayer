@@ -1,5 +1,6 @@
 package minh.quy.musicplayer.presenter
 
+import android.util.Log
 import minh.quy.musicplayer.contract.IPlaylistPresenter
 import minh.quy.musicplayer.contract.IPlaylistView
 import minh.quy.musicplayer.database.MusicDatabase
@@ -16,9 +17,13 @@ class PlaylistPresenter(val view: IPlaylistView) : IPlaylistPresenter {
         resultCount?.let {
             if (it > 0) {
                 view.onResponseInserPlaylist(true)
-            }else{
+            } else {
                 view.onResponseInserPlaylist(false)
             }
         }
+    }
+
+    override fun updatePlaylist(name: String, playlistId: Int) {
+        val result = musicDatabase?.getPlaylistDAO()?.updatePlaylist(name, playlistId)
     }
 }
