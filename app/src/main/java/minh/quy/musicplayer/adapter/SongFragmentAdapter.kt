@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.item_song_fragment.view.*
 import minh.quy.musicplayer.Constant.Companion.MAX_DEFAULT_COUNT
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
+import minh.quy.musicplayer.action.IOptionListener
 import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.model.Song
 
@@ -19,6 +20,7 @@ class SongFragmentAdapter(var context: Context, var songList: MutableList<Song>)
 
     var currenImage = 1
     lateinit var onItemCommonClick: OnItemCommonClick
+    var iOptionListener: IOptionListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_song_fragment, parent, false)
@@ -103,10 +105,17 @@ class SongFragmentAdapter(var context: Context, var songList: MutableList<Song>)
         this.onItemCommonClick = onItemCommonClick
     }
 
+    fun setOptionListener(iOptionListener: IOptionListener){
+        this.iOptionListener = iOptionListener
+    }
+
     inner class ViewHolder(val item: View) : RecyclerView.ViewHolder(item) {
         fun setOnclickItem() {
             item.setOnClickListener {
                 onItemCommonClick.onItemClick(adapterPosition)
+            }
+            item.img_option_item_song.setOnClickListener {
+                iOptionListener?.onOptionClick(adapterPosition,it)
             }
         }
     }

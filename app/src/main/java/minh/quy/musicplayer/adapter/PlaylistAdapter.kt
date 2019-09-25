@@ -1,7 +1,6 @@
 package minh.quy.musicplayer.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import kotlinx.android.synthetic.main.item_list_playlist.view.*
 import minh.quy.musicplayer.Constant.Companion.MAX_DEFAULT_COUNT
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
-import minh.quy.musicplayer.action.IActionOption
+import minh.quy.musicplayer.action.IOptionListener
 import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.model.Playlist
 
@@ -18,7 +17,7 @@ class PlaylistAdapter(var context: Context) : RecyclerView.Adapter<PlaylistAdapt
     var listPlaylist: MutableList<Playlist> = arrayListOf()
     var currenImage = 1
     var onItemCommonClick: OnItemCommonClick? = null
-    var iActionOption: IActionOption? = null
+    var iOptionListener: IOptionListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_list_playlist, parent, false)
         return ViewHolder(view)
@@ -45,7 +44,7 @@ class PlaylistAdapter(var context: Context) : RecyclerView.Adapter<PlaylistAdapt
             onItemCommonClick?.onItemClick(position)
         }
         holder.item.img_option_item_list_playlist.setOnClickListener {
-            iActionOption?.onOptionClick(position,it)
+            iOptionListener?.onOptionClick(position,it)
         }
     }
 
@@ -59,8 +58,8 @@ class PlaylistAdapter(var context: Context) : RecyclerView.Adapter<PlaylistAdapt
     fun setItemClick(onItemCommonClick: OnItemCommonClick) {
         this.onItemCommonClick = onItemCommonClick;
     }
-    fun setActionOption(iActionOption: IActionOption) {
-        this.iActionOption = iActionOption;
+    fun setActionOption(iOptionListener: IOptionListener) {
+        this.iOptionListener = iOptionListener;
     }
 
     inner class ViewHolder(var item: View) : RecyclerView.ViewHolder(item) {

@@ -84,9 +84,8 @@ open class BaseFragment : Fragment() {
         android.Manifest.permission.READ_EXTERNAL_STORAGE
     ) == PackageManager.PERMISSION_GRANTED
 
-    fun showDialogSetting() {
+    open fun showDialogSetting() {
         isNeedRequest = false
-        Log.d("minhnh","showDialogSetting")
         var builder = AlertDialog.Builder(activity)
         builder.apply {
             setCancelable(false)

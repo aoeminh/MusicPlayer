@@ -61,6 +61,10 @@
     <string name="delete">Delete</string>
     <string name="edit_playlist">Edit Playlist</string>
     <string name="add_song">Add song</string>
+    <string name="add_to_playlist_menu">Add to Playlist</string>
+    <string name="go_to_album">Go to Album</string>
+    <string name="go_to_artist">Go to Artist</string>
+    <string name="set_as_ringtone">Set as Ringtone</string>
 
     <!-- add song fragment -->
     <string name="title_toolbar_add_songs">Add Songs</string>

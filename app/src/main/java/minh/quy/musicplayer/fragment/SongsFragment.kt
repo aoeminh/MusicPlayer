@@ -4,14 +4,18 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
 import android.content.pm.PackageManager
+import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -24,6 +28,7 @@ import layout.HomeFragment
 import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.RequestPermission
+import minh.quy.musicplayer.action.IOptionListener
 import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.SongFragmentAdapter
@@ -31,14 +36,16 @@ import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import minh.quy.musicplayer.model.Album
 import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.service.PlayMusicService
+import java.io.File
 import java.util.jar.Manifest
 
-class SongsFragment : BaseFragment(), OnItemCommonClick {
+class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
 
     var songlist: MutableList<Song> = arrayListOf()
     var adapterSong: SongFragmentAdapter? = null
     var receiver: BroadcastReceiver? = null
-
+    val WRITE_SETTING_PERMISSION = 99
+    var itemClickPosition = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         songlist.addAll(mainActivity.songlist)
@@ -79,6 +86,168 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
 //        updateSongSelected((songlist[postion].songId!!))
     }
 
+    override fun onOptionClick(position: Int, view: View) {
+        showPopUpOption(position, view)
+    }
+
+    fun showPopUpOption(position: Int, view: View) {
+
+        itemClickPosition = position
+        val popUpMenu = PopupMenu(context!!, view)
+        popUpMenu.menuInflater.inflate(R.menu.menu_item_song, popUpMenu.menu)
+
+
+        popUpMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+            when (item.itemId) {
+
+                R.id.item_play_next_song -> {
+                    playNext(songlist[position])
+                }
+
+                R.id.item_add_queue_playlist -> {
+                    addToQueue(songlist[position])
+                }
+
+                R.id.item_go_to_album -> {
+
+                }
+
+                R.id.item_go_to_artist -> {
+
+                }
+
+                R.id.item_set_ringtone -> {
+                    if(isHasPermission()){
+                        setRingtone(songlist[position])
+                    }else{
+                        requestWriteSettingPermission()
+                    }
+                }
+            }
+            true
+        })
+
+        popUpMenu.show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == WRITE_SETTING_PERMISSION) {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setRingtone(songlist[itemClickPosition])
+            } else {
+                showDialogSetting()
+            }
+        }
+
+    }
+
+    override fun showDialogSetting() {
+        isNeedRequest = false
+        var builder = AlertDialog.Builder(activity)
+        builder.apply {
+            setCancelable(false)
+            setMessage(R.string.permission_necessary)
+            setPositiveButton(R.string.ok) { dialog, which ->
+                run {
+                    requestWriteSettingPermission()
+                }
+            }
+            setNegativeButton(R.string.cancel) { dialogInterface, i ->
+                run {
+                    Toast.makeText(context!!, "You don't have permission", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    fun setRingtone(song: Song) {
+
+        val path = song.data
+        val file = File(path!!)
+        val contentValues = ContentValues();
+        contentValues.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath())
+        val filterName = path.substring(path.lastIndexOf("/") + 1)
+        contentValues.put(MediaStore.MediaColumns.TITLE, filterName)
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
+        contentValues.put(MediaStore.MediaColumns.SIZE, file.length())
+        contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true)
+        val uri = MediaStore.Audio.Media.getContentUriForPath(path)
+        var cursor = context!!.getContentResolver().query(
+            uri!!,
+            null,
+            MediaStore.MediaColumns.DATA + "=?",
+            arrayOf(path),
+            null
+        )
+        if (cursor != null && cursor.moveToFirst() && cursor.getCount() > 0) {
+            val id = cursor.getString(0)
+            contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true)
+            context!!.getContentResolver().update(
+                uri,
+                contentValues,
+                MediaStore.MediaColumns.DATA + "=?",
+                arrayOf(path)
+            )
+            var newuri = ContentUris.withAppendedId(uri, id.toLong())
+            try {
+                RingtoneManager.setActualDefaultRingtoneUri(
+                    context,
+                    RingtoneManager.TYPE_RINGTONE,
+                    newuri
+                )
+                Toast.makeText(context, "Set as Ringtone Successfully.", Toast.LENGTH_SHORT).show();
+            } catch (t: Throwable) {
+                t.printStackTrace();
+            }
+            cursor.close();
+        }
+
+    }
+
+    fun requestWriteSettingPermission() {
+        if (!isHasPermission()) {
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                val intent =  Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+                intent.setData(Uri.parse("package:" + context!!.getPackageName()))
+                startActivityForResult(intent, WRITE_SETTING_PERMISSION)
+            } else {
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.WRITE_SETTINGS),
+                    WRITE_SETTING_PERMISSION
+                )
+            }
+
+        }
+
+    }
+
+    fun isHasPermission(): Boolean{
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            return  Settings.System.canWrite(context!!)
+        }else{
+            return ActivityCompat.checkSelfPermission(
+                context!!,
+                android.Manifest.permission.WRITE_SETTINGS
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    fun playNext(song: Song) {
+        mainActivity.musicService?.songList?.add(mainActivity.musicService?.songPos!! + 1, song)
+    }
+
+    fun addToQueue(song: Song) {
+        mainActivity.musicService?.songList?.add(song)
+    }
+
     fun setSongSelected(songId: String) {
         for (i in 0 until songlist.size) {
             songlist[i].isSelected = songlist[i].songId.equals(songId)
@@ -111,6 +280,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick {
             layoutManager = LinearLayoutManager(contextBase, RecyclerView.VERTICAL, false)
             adapterSong = SongFragmentAdapter(contextBase!!, songlist)
             adapterSong?.setOnItemClick(this@SongsFragment)
+            adapterSong?.setOptionListener(this@SongsFragment)
             adapter = adapterSong
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
 

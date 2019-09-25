@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_playlist.*
 import kotlinx.android.synthetic.main.popup_create_new_playlist.view.*
 import layout.HomeFragment
 import minh.quy.musicplayer.R
-import minh.quy.musicplayer.action.IActionOption
+import minh.quy.musicplayer.action.IOptionListener
 import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.adapter.PlaylistAdapter
 import minh.quy.musicplayer.contract.IPlaylistView
@@ -27,7 +27,7 @@ import minh.quy.musicplayer.presenter.PlaylistPresenter
 
 
 class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist, OnItemCommonClick,
-    IActionOption {
+    IOptionListener {
 
     var adapterPlaylist: PlaylistAdapter? = null
     var presenter: PlaylistPresenter? = null

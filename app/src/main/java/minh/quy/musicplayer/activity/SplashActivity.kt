@@ -44,21 +44,25 @@ class SplashActivity : AppCompatActivity() {
                 this,
                 arrayOf(
                     android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    android.Manifest.permission.WRITE_SETTINGS
                 ),
                 RequestPermission.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
             )
         }
     }
 
-    fun isHavePermission() = ActivityCompat.checkSelfPermission(
+    fun isHavePermission() = (ActivityCompat.checkSelfPermission(
         this,
         android.Manifest.permission.READ_EXTERNAL_STORAGE
-    ) == PackageManager.PERMISSION_GRANTED
+    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+        this,
+        android.Manifest.permission.WRITE_SETTINGS
+    ) == PackageManager.PERMISSION_GRANTED)
 
     fun showDialogSetting() {
 
-        Log.d("minhnh","onCreate SplashActivity")
+        Log.d("minhnh", "onCreate SplashActivity")
         val builder = AlertDialog.Builder(this)
         builder.apply {
             setCancelable(false)
@@ -69,7 +73,7 @@ class SplashActivity : AppCompatActivity() {
                 }
             }
             setNegativeButton(R.string.cancel) { dialogInterface, i ->
-                run{
+                run {
                     finish()
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
@@ -79,8 +83,8 @@ class SplashActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    fun gotoMain(){
-        val intent = Intent(this,MainActivity::class.java)
+    fun gotoMain() {
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
 
     }
