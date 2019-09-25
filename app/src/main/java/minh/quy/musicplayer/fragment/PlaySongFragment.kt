@@ -45,7 +45,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
 
     companion object {
         val EXTRA_POSITION = "extra.position"
-        val EXTRA_SONG_ID = "extra.song.id"
+        val EXTRA_SONG_ID = "extra.song.playlisyId"
         val ACTION_UPDATE_SONG = "action.update.song"
         fun newInstance(positin: Int): PlaySongFragment {
             val bundle = Bundle()

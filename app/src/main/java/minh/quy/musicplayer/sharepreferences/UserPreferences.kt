@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 const val PREFERENT_NAME = "music.preferent"
 const val EXTRA_REPEAT = "extra.repeat "
 const val EXTRA_SUFFLE = "extra.suffle"
-const val EXTRA_SONG_ID = "extra.song.id"
+const val EXTRA_SONG_ID = "extra.song.playlisyId"
 const val EXTRA_SONG_DURATION = "extra.song.duration"
 
 class UserPreferences() {

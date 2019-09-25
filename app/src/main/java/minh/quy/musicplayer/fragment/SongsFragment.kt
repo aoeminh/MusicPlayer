@@ -97,7 +97,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
         popUpMenu.menuInflater.inflate(R.menu.menu_item_song, popUpMenu.menu)
 
 
-        popUpMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+        popUpMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
 
                 R.id.item_play_next_song -> {
@@ -109,23 +109,23 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
                 }
 
                 R.id.item_go_to_album -> {
-
+                    gotoSongFragment(position,ListSongFragment.TypeListsong.ALBUM.type)
                 }
 
                 R.id.item_go_to_artist -> {
-
+                    gotoSongFragment(position,ListSongFragment.TypeListsong.ARTIST.type)
                 }
 
                 R.id.item_set_ringtone -> {
-                    if(isHasPermission()){
+                    if (isHasPermission()) {
                         setRingtone(songlist[position])
-                    }else{
+                    } else {
                         requestWriteSettingPermission()
                     }
                 }
             }
             true
-        })
+        }
 
         popUpMenu.show()
     }
@@ -167,8 +167,31 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
         alertDialog.show()
     }
 
-    fun setRingtone(song: Song) {
+    fun gotoSongFragment(position: Int, type: Int) {
+        val fragment: ListSongFragment
+        if (type == ListSongFragment.TypeListsong.ALBUM.type) {
+            fragment =
+                ListSongFragment.newInstance(
+                    songlist[position].albumId,
+                    songlist[position].albumName!!,
+                    ListSongFragment.TypeListsong.ALBUM.type
+                )
+        } else {
+            fragment =
+                ListSongFragment.newInstance(
+                    songlist[position].artistName!!,
+                    songlist[position].artistName!!,
+                    ListSongFragment.TypeListsong.ARTIST.type
+                )
+        }
 
+        val transaction = mainActivity.fragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_main, fragment, null)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    fun setRingtone(song: Song) {
         val path = song.data
         val file = File(path!!)
         val contentValues = ContentValues();
@@ -215,7 +238,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
         if (!isHasPermission()) {
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                val intent =  Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+                val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
                 intent.setData(Uri.parse("package:" + context!!.getPackageName()))
                 startActivityForResult(intent, WRITE_SETTING_PERMISSION)
             } else {
@@ -229,10 +252,10 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
 
     }
 
-    fun isHasPermission(): Boolean{
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            return  Settings.System.canWrite(context!!)
-        }else{
+    fun isHasPermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return Settings.System.canWrite(context!!)
+        } else {
             return ActivityCompat.checkSelfPermission(
                 context!!,
                 android.Manifest.permission.WRITE_SETTINGS

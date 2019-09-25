@@ -103,16 +103,21 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
     }
 
     override fun onItemClick(postion: Int) {
+        gotoSongFragment(postion)
+
+    }
+
+    fun gotoSongFragment(position: Int){
         val fragment =
             ListSongFragment.newInstance(
-                mainActivity.playlists[postion].id!!,
-                mainActivity.playlists[postion].name
+                mainActivity.playlists[position].id!!,
+                mainActivity.playlists[position].name,
+                ListSongFragment.TypeListsong.PLAYLIST.type
             )
         val transaction = mainActivity.fragmentManager.beginTransaction()
         transaction.replace(R.id.frame_main, fragment, null)
         transaction.addToBackStack(null)
         transaction.commit()
-
     }
 
     override fun onOptionClick(position: Int, view: View) {

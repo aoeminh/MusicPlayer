@@ -26,15 +26,45 @@ import kotlin.random.Random
 
 class ListSongFragment : Fragment(), OnItemCommonClick {
 
-    companion object {
-        val EXTRA_ID = "extra.id"
-        val EXTRA_NAME = "extra.name"
+    enum class TypeListsong(var type: Int) {
+        PLAYLIST(1),
+        ARTIST(2),
+        ALBUM(3)
+    }
 
-        fun newInstance(id: Int, title: String): ListSongFragment {
+    companion object {
+        val EXTRA_PLAYLIST_ID = "extra.playlist.playlisyId"
+        val EXTRA_NAME = "extra.name"
+        val EXTRA_ALBUM_ID = "extra.album.albumId"
+        val EXTRA_ARTIST_NAME = "extra.artist.name"
+        val EXTRA_TYPE_LIST_SONG = "extra.type.listsong"
+
+        fun newInstance(id: Int, title: String, type: Int): ListSongFragment {
             var fragment = ListSongFragment()
             var bundle = Bundle()
-            bundle.putInt(EXTRA_ID, id)
+            bundle.putInt(EXTRA_PLAYLIST_ID, id)
             bundle.putString(EXTRA_NAME, title)
+            bundle.putInt(EXTRA_TYPE_LIST_SONG, type)
+            fragment.arguments = bundle
+            return fragment
+        }
+
+        fun newInstance(id: Long, title: String, type: Int): ListSongFragment {
+            var fragment = ListSongFragment()
+            var bundle = Bundle()
+            bundle.putLong(EXTRA_ALBUM_ID, id)
+            bundle.putString(EXTRA_NAME, title)
+            bundle.putInt(EXTRA_TYPE_LIST_SONG, type)
+            fragment.arguments = bundle
+            return fragment
+        }
+
+        fun newInstance(artistName: String, title: String, type: Int): ListSongFragment {
+            var fragment = ListSongFragment()
+            var bundle = Bundle()
+            bundle.putString(EXTRA_ARTIST_NAME, artistName)
+            bundle.putString(EXTRA_NAME, title)
+            bundle.putInt(EXTRA_TYPE_LIST_SONG, type)
             fragment.arguments = bundle
             return fragment
         }
@@ -43,9 +73,12 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
     var mAdapter: ListSongAdapter? = null
     var listSong: MutableList<Song> = arrayListOf()
     var mainActivity: MainActivity? = null
-    var id: Int? = null
+    var playlisyId: Int? = null
+    var albumId: Long? = null
+    var artistName: String? = null
     var title: String? = null
     var receiver: BroadcastReceiver? = null
+    var typeListSong: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,14 +86,23 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
             mainActivity = activity as MainActivity
         }
         arguments?.let {
-            id = it.getInt(EXTRA_ID, 0)
-            title = it.getString(EXTRA_NAME, "")
-        }
+            typeListSong = it.getInt(EXTRA_TYPE_LIST_SONG, 1)
+            title = it.getString(EXTRA_NAME,"")
+            when (typeListSong) {
+                TypeListsong.PLAYLIST.type -> {
+                    playlisyId = it.getInt(EXTRA_PLAYLIST_ID, 0)
+                    getAllSongFromPlaylistId()
+                }
+                TypeListsong.ALBUM.type -> {
+                    albumId = it.getLong(EXTRA_ALBUM_ID)
+                    getAllSongFromAlbumId()
+                }
+                TypeListsong.ARTIST.type -> {
+                    artistName = it.getString(EXTRA_ARTIST_NAME)
+                    getAllSongFromArtistId()
+                }
+            }
 
-        val listPlaylistSong =
-            mainActivity?.musicDatabase?.getPlayListSongDAO()?.getAllSongInPlaylist(id!!)
-        listPlaylistSong?.forEach {
-            getSong(it.songId)
         }
 
         registUpdateSongSelected()
@@ -168,6 +210,31 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
         }
     }
 
+    fun getAllSongFromAlbumId(){
+        mainActivity?.songlist?.forEach {
+            if(albumId == it.albumId){
+                listSong.add(it)
+            }
+        }
+    }
+
+    fun getAllSongFromArtistId(){
+        mainActivity?.songlist?.forEach {
+            if(artistName.equals(it.artistName)){
+                listSong.add(it)
+            }
+        }
+    }
+
+
+    fun getAllSongFromPlaylistId() {
+        val listPlaylistSong =
+            mainActivity?.musicDatabase?.getPlayListSongDAO()?.getAllSongInPlaylist(playlisyId!!)
+        listPlaylistSong?.forEach {
+            getSong(it.songId)
+        }
+    }
+
     fun gotoPlaySongFragment(postion: Int) {
         val fragment = PlaySongFragment.newInstance(postion)
         val transaction = mainActivity?.fragmentManager?.beginTransaction()
@@ -183,7 +250,11 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
                     //update when next song from service
                     PlayMusicService.ACTION_UPDATE_VIEW -> {
                         mAdapter?.notifyDataSetChanged()
-                        setDataForBottomPlayback(mainActivity?.musicService?.songList?.get(getSongPositon())!!)
+                        setDataForBottomPlayback(
+                            mainActivity?.musicService?.songList?.get(
+                                getSongPositon()
+                            )!!
+                        )
                     }
                 }
             }
@@ -211,7 +282,6 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
                 img_play_playback?.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
             }
         }
-
     }
 
     fun setActionPlayback() {

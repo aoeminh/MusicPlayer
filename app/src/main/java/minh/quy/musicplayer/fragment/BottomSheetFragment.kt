@@ -23,7 +23,7 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
 
     companion object {
         val ACITON_ITEM_BOTTOM_CLICK = "action.item.bottom.click"
-        val EXTRA_SONG_ID = "action.song.id"
+        val EXTRA_SONG_ID = "action.song.playlisyId"
         fun newInstance(): BottomSheetFragment {
             val fragment = BottomSheetFragment()
             return fragment

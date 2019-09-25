@@ -55,7 +55,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
 
     companion object {
         val ACTION_UPDATE_VIEW = "action.update.view"
-        val EXTRA_SONG_ID = "extra.song.id"
+        val EXTRA_SONG_ID = "extra.song.playlisyId"
     }
 
     var binder: Binder = MusicBinder()
