@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fast_scroller.*
 import kotlinx.android.synthetic.main.fragment_songs.*
+import kotlinx.android.synthetic.main.popup_add_to_playlist.view.*
 import layout.HomeFragment
 import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
@@ -31,9 +32,11 @@ import minh.quy.musicplayer.Utils.RequestPermission
 import minh.quy.musicplayer.action.IOptionListener
 import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.activity.MainActivity
+import minh.quy.musicplayer.adapter.AddToPlaylistAdapter
 import minh.quy.musicplayer.adapter.SongFragmentAdapter
 import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
 import minh.quy.musicplayer.model.Album
+import minh.quy.musicplayer.model.PlayListSong
 import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.service.PlayMusicService
 import java.io.File
@@ -46,6 +49,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
     var receiver: BroadcastReceiver? = null
     val WRITE_SETTING_PERMISSION = 99
     var itemClickPosition = 0
+    var addAdapter: AddToPlaylistAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         songlist.addAll(mainActivity.songlist)
@@ -108,12 +112,16 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
                     addToQueue(songlist[position])
                 }
 
+                R.id.item_add_to_playlist -> {
+                    optionAddToPlaylist(position)
+                }
+
                 R.id.item_go_to_album -> {
-                    gotoSongFragment(position,ListSongFragment.TypeListsong.ALBUM.type)
+                    gotoSongFragment(position, Constant.TypeListsong.ALBUM.type)
                 }
 
                 R.id.item_go_to_artist -> {
-                    gotoSongFragment(position,ListSongFragment.TypeListsong.ARTIST.type)
+                    gotoSongFragment(position, Constant.TypeListsong.ARTIST.type)
                 }
 
                 R.id.item_set_ringtone -> {
@@ -167,21 +175,65 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
         alertDialog.show()
     }
 
+    fun optionAddToPlaylist(position: Int) {
+        val builder = AlertDialog.Builder(context!!)
+        val dialogView = layoutInflater.inflate(R.layout.popup_add_to_playlist, null)
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+        dialogView.rv_playlists_add_to_playlis.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            addAdapter = AddToPlaylistAdapter(context, mainActivity.playlists)
+            addAdapter?.setItemClick(object : OnItemCommonClick{
+                override fun onItemClick(postion: Int) {
+                    val playlistId = mainActivity.playlists[postion].id!!
+                    val songId = songlist[position].songId!!
+
+                    //if song exist
+                    val listPlaylistSong =
+                        mainActivity.musicDatabase?.getPlayListSongDAO()?.getAllSongInPlaylist(playlistId)
+                    listPlaylistSong?.forEach {
+                        if (songId.equals(it.songId)) {
+                            Toast.makeText(context, R.string.song_exists, Toast.LENGTH_SHORT).show()
+                            alertDialog?.dismiss()
+                            return
+                        }
+                    }
+
+                    val playlistSong = PlayListSong(
+                        playlistId,
+                        songId
+                    )
+
+                    val result =
+                        mainActivity.musicDatabase?.getPlayListSongDAO()?.insertSongIntoPlayList(playlistSong)
+                    Toast.makeText(context, R.string.added_to_playlist, Toast.LENGTH_SHORT).show()
+                    alertDialog?.dismiss()
+                    Log.d("minh", result.toString())
+                    val playListSong = PlayListSong(mainActivity.playlists[postion].id!!,songlist[position].songId!!)
+                    mainActivity.musicDatabase?.getPlayListSongDAO()?.insertSongIntoPlayList(playListSong)
+                }
+            })
+            adapter = addAdapter
+        }
+
+        alertDialog?.show()
+    }
+
     fun gotoSongFragment(position: Int, type: Int) {
         val fragment: ListSongFragment
-        if (type == ListSongFragment.TypeListsong.ALBUM.type) {
+        if (type == Constant.TypeListsong.ALBUM.type) {
             fragment =
                 ListSongFragment.newInstance(
                     songlist[position].albumId,
                     songlist[position].albumName!!,
-                    ListSongFragment.TypeListsong.ALBUM.type
+                    Constant.TypeListsong.ALBUM.type
                 )
         } else {
             fragment =
                 ListSongFragment.newInstance(
                     songlist[position].artistName!!,
                     songlist[position].artistName!!,
-                    ListSongFragment.TypeListsong.ARTIST.type
+                    Constant.TypeListsong.ARTIST.type
                 )
         }
 

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.bottom_playback.*
 import kotlinx.android.synthetic.main.fragment_list_song.*
+import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
 import minh.quy.musicplayer.action.OnItemCommonClick
@@ -26,12 +27,6 @@ import kotlin.random.Random
 
 class ListSongFragment : Fragment(), OnItemCommonClick {
 
-    enum class TypeListsong(var type: Int) {
-        PLAYLIST(1),
-        ARTIST(2),
-        ALBUM(3)
-    }
-
     companion object {
         val EXTRA_PLAYLIST_ID = "extra.playlist.playlisyId"
         val EXTRA_NAME = "extra.name"
@@ -40,8 +35,8 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
         val EXTRA_TYPE_LIST_SONG = "extra.type.listsong"
 
         fun newInstance(id: Int, title: String, type: Int): ListSongFragment {
-            var fragment = ListSongFragment()
-            var bundle = Bundle()
+            val fragment = ListSongFragment()
+            val bundle = Bundle()
             bundle.putInt(EXTRA_PLAYLIST_ID, id)
             bundle.putString(EXTRA_NAME, title)
             bundle.putInt(EXTRA_TYPE_LIST_SONG, type)
@@ -50,8 +45,8 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
         }
 
         fun newInstance(id: Long, title: String, type: Int): ListSongFragment {
-            var fragment = ListSongFragment()
-            var bundle = Bundle()
+            val fragment = ListSongFragment()
+            val bundle = Bundle()
             bundle.putLong(EXTRA_ALBUM_ID, id)
             bundle.putString(EXTRA_NAME, title)
             bundle.putInt(EXTRA_TYPE_LIST_SONG, type)
@@ -60,8 +55,8 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
         }
 
         fun newInstance(artistName: String, title: String, type: Int): ListSongFragment {
-            var fragment = ListSongFragment()
-            var bundle = Bundle()
+            val fragment = ListSongFragment()
+            val bundle = Bundle()
             bundle.putString(EXTRA_ARTIST_NAME, artistName)
             bundle.putString(EXTRA_NAME, title)
             bundle.putInt(EXTRA_TYPE_LIST_SONG, type)
@@ -89,20 +84,19 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
             typeListSong = it.getInt(EXTRA_TYPE_LIST_SONG, 1)
             title = it.getString(EXTRA_NAME,"")
             when (typeListSong) {
-                TypeListsong.PLAYLIST.type -> {
+                Constant.TypeListsong.PLAYLIST.type -> {
                     playlisyId = it.getInt(EXTRA_PLAYLIST_ID, 0)
                     getAllSongFromPlaylistId()
                 }
-                TypeListsong.ALBUM.type -> {
+                Constant.TypeListsong.ALBUM.type -> {
                     albumId = it.getLong(EXTRA_ALBUM_ID)
                     getAllSongFromAlbumId()
                 }
-                TypeListsong.ARTIST.type -> {
+                Constant.TypeListsong.ARTIST.type -> {
                     artistName = it.getString(EXTRA_ARTIST_NAME)
                     getAllSongFromArtistId()
                 }
             }
-
         }
 
         registUpdateSongSelected()

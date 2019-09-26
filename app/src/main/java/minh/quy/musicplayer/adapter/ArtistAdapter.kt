@@ -10,6 +10,8 @@ import kotlinx.android.synthetic.main.item_artist_fragment.view.*
 import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
+import minh.quy.musicplayer.action.IOptionListener
+import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.model.Artist
 
 class ArtistAdapter(val context: Context) : RecyclerView.Adapter<ArtistAdapter.ViewHolder>(),
@@ -17,6 +19,8 @@ class ArtistAdapter(val context: Context) : RecyclerView.Adapter<ArtistAdapter.V
 
     var artistList: MutableList<Artist> = arrayListOf()
     var currenImage = 1
+    var onItemCommonClick: OnItemCommonClick? = null
+    var iOptionListener: IOptionListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
@@ -42,6 +46,13 @@ class ArtistAdapter(val context: Context) : RecyclerView.Adapter<ArtistAdapter.V
                 currenImage
             )
         )
+
+        holder.item.setOnClickListener {
+            onItemCommonClick?.onItemClick(position)
+        }
+        holder.item.img_option_item_artist_fragment.setOnClickListener {
+            iOptionListener?.onOptionClick(position,it)
+        }
     }
 
     override fun getSectionTitle(position: Int): String {
@@ -52,6 +63,11 @@ class ArtistAdapter(val context: Context) : RecyclerView.Adapter<ArtistAdapter.V
         artistList.clear()
         artistList.addAll(artists)
         notifyDataSetChanged()
+    }
+
+    fun setItemClick(onItemCommonClick: OnItemCommonClick, iOptionListener: IOptionListener) {
+        this.iOptionListener = iOptionListener
+        this.onItemCommonClick = onItemCommonClick
     }
 
     inner class ViewHolder(val item: View) : RecyclerView.ViewHolder(item)

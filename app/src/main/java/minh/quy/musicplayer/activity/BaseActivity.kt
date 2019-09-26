@@ -141,7 +141,7 @@ abstract class BaseActivity : AppCompatActivity() {
             }
             artist@ for (j in 0 until artistList.size) {
                 val artist = artistList[j]
-                if (artist.artistId == song.artistId) {
+                if (artist.artistName == song.artistName) {
                     exist = true
                     artist.songs.add(song)
                     artist.songCount += 1

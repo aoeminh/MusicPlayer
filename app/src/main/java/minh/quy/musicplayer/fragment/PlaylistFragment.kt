@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_playlist.*
 import kotlinx.android.synthetic.main.popup_create_new_playlist.view.*
 import layout.HomeFragment
+import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.action.IOptionListener
 import minh.quy.musicplayer.action.OnItemCommonClick
@@ -107,12 +108,12 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
 
     }
 
-    fun gotoSongFragment(position: Int){
+    fun gotoSongFragment(position: Int) {
         val fragment =
             ListSongFragment.newInstance(
                 mainActivity.playlists[position].id!!,
                 mainActivity.playlists[position].name,
-                ListSongFragment.TypeListsong.PLAYLIST.type
+                Constant.TypeListsong.PLAYLIST.type
             )
         val transaction = mainActivity.fragmentManager.beginTransaction()
         transaction.replace(R.id.frame_main, fragment, null)
@@ -185,10 +186,13 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
         }
     }
 
-    fun gotoAddSongFragment(position: Int){
-        val fragment = AddSongFragment.newInstance(mainActivity.playlists[position].id!!)
+    fun gotoAddSongFragment(position: Int) {
+        val fragment = AddSongFragment.newInstance(
+            mainActivity.playlists[position].id!!,
+            Constant.TypeListsong.PLAYLIST.type
+        )
         val transaction = mainActivity.fragmentManager.beginTransaction()
-        transaction.replace(R.id.frame_main,fragment,null)
+        transaction.replace(R.id.frame_main, fragment, null)
         transaction.addToBackStack(null)
         transaction.commit()
 

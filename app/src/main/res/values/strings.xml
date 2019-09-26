@@ -40,6 +40,7 @@
     <string name="tracks">tracks</string>
     <string name="add_to_playlist">Add to Playlist</string>
     <string name="not_found_song">No songs found</string>
+    <string name="all_song_already">All songs already exist in playlist </string>
     <string name="done">Done</string>
 
 
@@ -52,7 +53,7 @@
     <string name="creat_new_playlist_success">Creat new Playlist success</string>
     <string name="create_playlist_fail">Create fail, please try again</string>
     <string name="added_to_playlist">Added to playlist</string>
-    <string name="song_exists">Song slready exist in playlist</string>
+    <string name="song_exists">Song already exist in playlist</string>
 
     <!-- menu item -->
     <string name="play">Play</string>

@@ -10,25 +10,50 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         app:title="@string/title_toolbar_add_songs"
-        app:titleTextColor="@color/white"/>
+        app:titleTextColor="@color/white" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_add_song_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar_add_song" />
+        android:layout_below="@+id/toolbar_add_song"
+        android:layout_above="@id/btn_add_to_play_list"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/ln_no_song_add_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_add_song"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_song_not_found" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="@string/all_song_already"
+            android:textColor="#CCCCCC" />
+
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_add_to_play_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/_10sdp"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@drawable/bg_btn_add_song_fragment"
         android:text="@string/add_to_playlist"
         android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:background="@drawable/bg_btn_add_song_fragment"/>
+        android:textColor="@color/white" />
 
 </RelativeLayout>
