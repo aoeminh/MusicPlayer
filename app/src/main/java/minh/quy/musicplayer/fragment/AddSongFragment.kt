@@ -60,7 +60,7 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
     }
 
     var playlistId: Int? = null
-    var songList: MutableList<Song> = arrayListOf()
+    var songList: MutableList<Song?> = arrayListOf()
     var mAdapter: AddSongAdapter? = null
     var currentPlayListSong: MutableList<PlayListSong>? = arrayListOf()
     var type: Int? = null
@@ -77,7 +77,7 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
                     playlistId = it.getInt(EXTRA_PLAYLIST_ID, 0)
                     songList.addAll(mainActivity.songlist)
                     songList.forEach {
-                        it.isSelected = false
+                        it?.isSelected = false
                     }
                     removeSongAlreadyExist()
                 }
@@ -133,11 +133,11 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
 
     override fun onItemClick(position: Int, view: View) {
 
-        if (songList[position].isSelected) {
-            songList[position].isSelected = false
+        if (songList[position]!!.isSelected) {
+            songList[position]?.isSelected = false
             view.chk_add_song_fragment.isChecked = false
         } else {
-            songList[position].isSelected = true
+            songList[position]?.isSelected = true
             view.chk_add_song_fragment.isChecked = true
         }
     }
@@ -169,7 +169,7 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
         currentPlayListSong?.forEach { playslistSong ->
             val songIterator = songList.listIterator()
             songIterator.forEach {
-                if (playslistSong.songId.equals(it.songId)) {
+                if (playslistSong.songId.equals(it?.songId)) {
                     songIterator.remove()
                 }
             }
@@ -192,7 +192,7 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
         builder.setView(dialogView)
         alertDialog = builder.create()
         dialogView.rv_playlists_add_to_playlis.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             addAdapter = AddToPlaylistAdapter(context, mainActivity.playlists)
             addAdapter?.setItemClick(object : OnItemCommonClick {
                 override fun onItemClick(postion: Int) {
@@ -224,9 +224,9 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
     fun addSongIntoPlayList() {
         var numSongAdded = 0
         songList.forEach { song ->
-            if (song.isSelected) {
+            if (song!!.isSelected) {
                 mainActivity.musicDatabase?.getPlayListSongDAO()?.insertSongIntoPlayList(
-                    PlayListSong(playlistId!!, song.songId!!)
+                    PlayListSong(playlistId!!, song?.songId!!)
                 )
                 numSongAdded++
             }
