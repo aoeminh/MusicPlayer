@@ -91,6 +91,12 @@ class ArtistFragment : BaseFragment(), IOptionListener, OnItemCommonClick {
             mainActivity.musicService?.songPos!! + 1,
             getSongs(artistId)
         )
+
+        Toast.makeText(
+            context,
+            String.format(resources.getString(R.string.added_to_queue), getSongs(artistId).size),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     fun optionAddToQueue(artistId: Long) {
@@ -98,6 +104,11 @@ class ArtistFragment : BaseFragment(), IOptionListener, OnItemCommonClick {
             mainActivity.musicService?.songList!!.size,
             getSongs(artistId)
         )
+        Toast.makeText(
+            context,
+            String.format(resources.getString(R.string.added_to_queue), getSongs(artistId).size),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     fun gotoSongFragment(position: Int) {

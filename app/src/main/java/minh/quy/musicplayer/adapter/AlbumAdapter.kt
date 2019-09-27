@@ -11,12 +11,16 @@ import kotlinx.android.synthetic.main.item_album_list.view.*
 import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
+import minh.quy.musicplayer.action.IOptionListener
+import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.model.Album
 
 class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>(),
     SectionTitleProvider {
     var albumList: MutableList<Album> = arrayListOf()
     var currenImage = 1
+    var iOptionListener: IOptionListener? = null
+    var onItemCommonClick: OnItemCommonClick? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_album_list, parent, false)
@@ -42,6 +46,14 @@ class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.Vie
                 currenImage
             )
         )
+
+        holder.item.img_option_item_album.setOnClickListener {
+            iOptionListener?.onOptionClick(position,it)
+        }
+        holder.item.setOnClickListener {
+            onItemCommonClick?.onItemClick(position)
+        }
+
     }
 
     override fun getSectionTitle(position: Int): String {
@@ -52,6 +64,11 @@ class AlbumAdapter(val context: Context) : RecyclerView.Adapter<AlbumAdapter.Vie
         this.albumList.clear()
         this.albumList.addAll(albums)
         notifyDataSetChanged()
+    }
+
+    fun setItemClick(onItemCommonClick: OnItemCommonClick, iOptionListener: IOptionListener) {
+        this.iOptionListener = iOptionListener
+        this.onItemCommonClick = onItemCommonClick
     }
 
     inner class ViewHolder(val item: View) : RecyclerView.ViewHolder(item)

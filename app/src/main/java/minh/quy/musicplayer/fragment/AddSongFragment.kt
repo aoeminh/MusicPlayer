@@ -80,6 +80,8 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
                         it?.isSelected = false
                     }
                     removeSongAlreadyExist()
+                    // add view when last item has been cover by button add
+
                 }
                 TypeListsong.ARTIST.type -> {
                     val artistName = it.getString(EXTRA_ARTIST_NAME, "")
@@ -91,8 +93,6 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
                         }
                     }
                     showPlaylists()
-
-
                 }
 
                 TypeListsong.ALBUM.type -> {
@@ -103,6 +103,7 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
                             songList.add(it)
                         }
                     }
+                    showPlaylists()
                 }
             }
         }
@@ -119,6 +120,7 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showHideView()
         initToolbar()
         initRecyclerView()
         setAction()
@@ -167,12 +169,20 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
             mainActivity.musicDatabase?.getPlayListSongDAO()
                 ?.getAllSongInPlaylist(playlistId!!)
         currentPlayListSong?.forEach { playslistSong ->
-            val songIterator = songList.listIterator()
-            songIterator.forEach {
-                if (playslistSong.songId.equals(it?.songId)) {
-                    songIterator.remove()
+            if(!songList.isEmpty()){
+                val songIterator = songList.listIterator()
+                songIterator.forEach {
+                    if (playslistSong.songId.equals(it?.songId)) {
+                        songIterator.remove()
+                    }
                 }
+
             }
+        }
+
+        // add empty view when last item has been covered by buton add
+        if(songList.size> 0 && songList.last() != null){
+            songList.add(songList.size,null)
         }
     }
 
@@ -211,24 +221,26 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
 
     fun showHideView(){
         if (songList.size <= 0) {
-            ln_no_song_add_fragment.visibility = View.VISIBLE
-            rv_add_song_fragment.visibility = View.GONE
-            btn_add_to_play_list.visibility = View.GONE
+            ln_no_song_add_fragment?.visibility = View.VISIBLE
+            rv_add_song_fragment?.visibility = View.GONE
+            btn_add_to_play_list?.visibility = View.GONE
         }else{
-            rv_add_song_fragment.visibility = View.VISIBLE
-            ln_no_song_add_fragment.visibility = View.GONE
-            btn_add_to_play_list.visibility = View.VISIBLE
+            rv_add_song_fragment?.visibility = View.VISIBLE
+            ln_no_song_add_fragment?.visibility = View.GONE
+            btn_add_to_play_list?.visibility = View.VISIBLE
         }
     }
 
     fun addSongIntoPlayList() {
         var numSongAdded = 0
         songList.forEach { song ->
-            if (song!!.isSelected) {
-                mainActivity.musicDatabase?.getPlayListSongDAO()?.insertSongIntoPlayList(
-                    PlayListSong(playlistId!!, song?.songId!!)
-                )
-                numSongAdded++
+            song?.let {
+                if (song.isSelected) {
+                    mainActivity.musicDatabase?.getPlayListSongDAO()?.insertSongIntoPlayList(
+                        PlayListSong(playlistId!!, song.songId!!)
+                    )
+                    numSongAdded++
+                }
             }
         }
         showNumberSongAdded(numSongAdded)

@@ -164,6 +164,12 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
             getSongs(playlistId)
         )
 
+        Toast.makeText(
+            context,
+            String.format(resources.getString(R.string.added_to_queue), getSongs(playlistId).size),
+            Toast.LENGTH_SHORT
+        ).show()
+
     }
 
     private fun playNext(playlistId: Int) {
@@ -171,6 +177,12 @@ class PlaylistFragment : BaseFragment(), IPlaylistView, FunctionToolbarPlaylist,
             mainActivity.musicService?.songPos!! + 1,
             getSongs(playlistId)
         )
+
+        Toast.makeText(
+            context,
+            String.format(resources.getString(R.string.added_to_queue), getSongs(playlistId).size),
+            Toast.LENGTH_SHORT
+        ).show()
 
     }
 
