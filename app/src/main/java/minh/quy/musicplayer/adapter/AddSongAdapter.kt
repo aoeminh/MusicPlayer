@@ -4,14 +4,16 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_list_add_song_fragment.view.*
 import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
+import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.model.Song
 
-class AddSongAdapter(var context: Context, var listSong: MutableList<Song?>?) :
+class AddSongAdapter(var context: Context, var listSong: MutableList<Song>?) :
     RecyclerView.Adapter<AddSongAdapter.ViewHolder>() {
 
     var onItemCommonClick: onItemClick? = null
@@ -28,7 +30,6 @@ class AddSongAdapter(var context: Context, var listSong: MutableList<Song?>?) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         val song = listSong?.get(position)
         holder.itemView.chk_add_song_fragment.isChecked = song!!.isSelected
 
@@ -48,9 +49,6 @@ class AddSongAdapter(var context: Context, var listSong: MutableList<Song?>?) :
                 currenImage
             )
         )
-        if(position == listSong!!.size -1){
-            listSong?.add(null)
-        }
         holder.itemView.setOnClickListener {
             onItemCommonClick?.onItemClick(position, holder.itemView)
         }
@@ -63,7 +61,7 @@ class AddSongAdapter(var context: Context, var listSong: MutableList<Song?>?) :
         this.onItemCommonClick = onItemCommonClick
     }
 
-    interface onItemClick {
+    interface onItemClick{
         fun onItemClick(position: Int, view: View)
     }
 
