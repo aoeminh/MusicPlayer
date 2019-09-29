@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_add_song.*
+import kotlinx.android.synthetic.main.fragment_list_song.*
 import kotlinx.android.synthetic.main.item_list_add_song_fragment.view.*
 import kotlinx.android.synthetic.main.popup_add_to_playlist.view.*
 import minh.quy.musicplayer.Constant

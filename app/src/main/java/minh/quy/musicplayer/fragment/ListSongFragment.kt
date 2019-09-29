@@ -1,5 +1,6 @@
 package minh.quy.musicplayer.fragment
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.bottom_playback.*
 import kotlinx.android.synthetic.main.fragment_list_song.*
+import kotlinx.android.synthetic.main.fragment_list_song.view.*
 import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
@@ -82,7 +84,7 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
         }
         arguments?.let {
             typeListSong = it.getInt(EXTRA_TYPE_LIST_SONG, 1)
-            title = it.getString(EXTRA_NAME,"")
+            title = it.getString(EXTRA_NAME, "")
             when (typeListSong) {
                 Constant.TypeListsong.PLAYLIST.type -> {
                     playlisyId = it.getInt(EXTRA_PLAYLIST_ID, 0)
@@ -114,12 +116,39 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getSongList()
         initToolbar()
         initRecyclerView()
         initPlayback()
         setBigImage()
-        setActionPlayback()
+        setAction()
+        showFabAddSong(view)
 
+    }
+
+    fun getSongList() {
+        listSong.clear()
+
+        when (typeListSong) {
+            Constant.TypeListsong.PLAYLIST.type -> {
+                getAllSongFromPlaylistId()
+            }
+            Constant.TypeListsong.ALBUM.type -> {
+                getAllSongFromAlbumId()
+            }
+            Constant.TypeListsong.ARTIST.type -> {
+                getAllSongFromArtistId()
+            }
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun showFabAddSong(view: View) {
+        if (typeListSong == Constant.TypeListsong.PLAYLIST.type) {
+            view.fab_add_song.visibility = View.VISIBLE
+        } else {
+            view.fab_add_song?.visibility = View.GONE
+        }
     }
 
     override fun onDestroy() {
@@ -204,17 +233,17 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
         }
     }
 
-    fun getAllSongFromAlbumId(){
+    fun getAllSongFromAlbumId() {
         mainActivity?.songlist?.forEach {
-            if(albumId == it.albumId){
+            if (albumId == it.albumId) {
                 listSong.add(it)
             }
         }
     }
 
-    fun getAllSongFromArtistId(){
+    fun getAllSongFromArtistId() {
         mainActivity?.songlist?.forEach {
-            if(artistName.equals(it.artistName)){
+            if (artistName.equals(it.artistName)) {
                 listSong.add(it)
             }
         }
@@ -278,10 +307,24 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
         }
     }
 
-    fun setActionPlayback() {
+    fun setAction() {
         ctl_playback?.setOnClickListener { view -> gotoPlaySongFragment() }
         img_play_playback?.setOnClickListener { view -> actionBtnPlay() }
         img_song_queue_playback?.setOnClickListener { view -> showSongQueue() }
+        fab_add_song.setOnClickListener { gotoAddSongFragment() }
+
+    }
+
+    fun gotoAddSongFragment() {
+        val fragment = AddSongFragment.newInstance(
+            playlisyId!!,
+            Constant.TypeListsong.PLAYLIST.type
+        )
+        val transaction = mainActivity?.fragmentManager?.beginTransaction()
+        transaction?.replace(R.id.frame_main, fragment, null)
+        transaction?.addToBackStack(null)
+        transaction?.commit()
+
     }
 
     fun gotoPlaySongFragment() {

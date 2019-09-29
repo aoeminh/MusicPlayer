@@ -31,4 +31,7 @@
 
     <!-- text selected -->
     <color name="text_selected">#1E88E5</color>
+
+    <!-- listsong fragment -->
+    <color name="background_fab">#1E88E5</color>
 </resources>
