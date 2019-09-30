@@ -72,5 +72,7 @@
     <string name="title_toolbar_add_songs">Add Songs</string>
     <string name="added_one_song">%d song added to playlist</string>
     <string name="added_multi_song">%d songs added to playlist</string>
+    <string name="channel_name">music_player</string>
+    <string name="channel_description">music_player</string>
 
 </resources>
