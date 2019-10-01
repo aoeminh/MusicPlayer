@@ -21,7 +21,7 @@ open class BaseFragment : Fragment() {
     var isRequestPermission = false
     var isNeedRequest = true
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         contextBase = context
     }

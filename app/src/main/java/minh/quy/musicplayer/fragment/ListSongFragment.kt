@@ -363,7 +363,7 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
 
     fun showSongQueue() {
         val bottomSheetFragment = BottomSheetFragment.newInstance()
-        bottomSheetFragment.show(mainActivity?.fragmentManager, "")
+        bottomSheetFragment.show(mainActivity?.fragmentManager!!, "")
     }
 
     fun getSongPositon(): Int {

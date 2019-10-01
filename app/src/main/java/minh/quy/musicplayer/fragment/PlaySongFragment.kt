@@ -74,7 +74,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     var addAdapter: AddToPlaylistAdapter? = null
     var alertDialog: AlertDialog?= null
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
     }
@@ -275,7 +275,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
 
     fun showSongQueue() {
         val bottomSheetFragment = BottomSheetFragment.newInstance()
-        bottomSheetFragment.show(mainActivity?.fragmentManager, "")
+        bottomSheetFragment.show(mainActivity?.fragmentManager!!, "")
     }
 
     private fun actionSuffle() {

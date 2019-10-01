@@ -54,7 +54,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
     var mContext: Context? = null
     var receiver: BroadcastReceiver? = null
 
-    override fun onAttachFragment(childFragment: Fragment?) {
+    override fun onAttachFragment(childFragment: Fragment) {
         super.onAttachFragment(childFragment)
         mContext = context
     }
@@ -110,11 +110,11 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         unRegisterUpdatePlayback()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
+    override fun onPrepareOptionsMenu(menu: Menu) {
         when (tabSelected) {
             MainActivity.PositionNavigation.PLAYLIST.position -> {
                 toolbar_main.menu.clear()
@@ -451,7 +451,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     fun showSongQueue() {
         val bottomSheetFragment = BottomSheetFragment.newInstance()
-        bottomSheetFragment.show(mainActivity?.fragmentManager, "")
+        bottomSheetFragment.show(mainActivity?.fragmentManager!!, "")
     }
 
     fun getSongPositon(): Int {
