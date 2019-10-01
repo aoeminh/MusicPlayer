@@ -1,36 +1,36 @@
 package minh.quy.musicplayer.service
 
-import android.app.*
-import android.content.BroadcastReceiver
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.MediaMetadata
 import android.media.MediaPlayer
 import android.media.session.MediaController
-import android.media.session.MediaSession
 import android.media.session.MediaSessionManager
-import android.media.session.PlaybackState
 import android.net.Uri
-import android.os.*
+import android.os.Binder
+import android.os.Build
+import android.os.IBinder
+import android.os.PowerManager
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.media.session.MediaButtonReceiver
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.fragment.PlaySongFragment
 import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.sharepreferences.UserPreferences
 import kotlin.random.Random
-import android.media.MediaMetadata.METADATA_KEY_ALBUM_ART
-import android.graphics.Bitmap
-
-import android.media.MediaMetadata
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
-import android.widget.RemoteViews
-import androidx.media.session.MediaButtonReceiver
-import minh.quy.musicplayer.activity.MainActivity
 
 
 enum class PlaybackType(var type: Int) {
@@ -129,15 +129,15 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
         intent?.let {
             if (intent.action == ACTION_NOTIFICATION_BUTTON_CLICK) {
                 when (intent.getIntExtra(EXTRA_ACTION_TYPE, 0)) {
-                    PlaybackType.PLAY.type -> {
+                  R.id.img_previous_notification -> {
                         actionBtnPlay()
                     }
 
-                    PlaybackType.PREVIOUS.type -> {
+                  R.id.img_play_notification -> {
                         actionPrevious()
                     }
 
-                    PlaybackType.NEXT.type -> {
+                    R.id.img_next_notification -> {
                         actionNext()
                     }
                 }
@@ -274,34 +274,37 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
         customLayout.setImageViewResource(R.id.img_song_image_notification, R.drawable.album_art_1)
         customLayout.setOnClickPendingIntent(
             R.id.img_previous_notification, createPendingIntent(
-                PlaybackType.PREVIOUS.type
+                R.id.img_previous_notification
             )
         )
         customLayout.setOnClickPendingIntent(
             R.id.img_play_notification, createPendingIntent(
-                PlaybackType.PLAY.type
+                R.id.img_play_notification
             )
         )
         customLayout.setOnClickPendingIntent(
             R.id.img_next_notification, createPendingIntent(
-                PlaybackType.NEXT.type
+                R.id.img_next_notification
             )
         )
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setCustomContentView(customLayout)
-            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomBigContentView(customLayout)
+            .setStyle(
+                androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
+                    .setMediaSession(mediaSession?.sessionToken)
+            )
             .setSmallIcon(R.mipmap.ic_launcher)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .build()
-        w   ith(NotificationManagerCompat.from(this)) {
+        with(NotificationManagerCompat.from(this)) {
             notify(NOTIFICATION_ID, notification)
         }
 
     }
 
     fun createPendingIntent(actionType: Int): PendingIntent {
-        var intent = Intent(this, PlayMusicService::class.java)
+        val intent = Intent(this, PlayMusicService::class.java)
         intent.action = ACTION_NOTIFICATION_BUTTON_CLICK
         intent.putExtra(EXTRA_ACTION_TYPE, actionType)
         return PendingIntent.getService(this, 0, intent, 0)
