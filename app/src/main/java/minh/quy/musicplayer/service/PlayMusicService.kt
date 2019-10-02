@@ -4,13 +4,16 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.MediaMetadata
 import android.media.MediaPlayer
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
+import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Binder
 import android.os.Build
@@ -103,10 +106,11 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
     var currenRepeat = 0
     var currenSongId: String? = null
     var currentDuration: Long? = 0
-    var mediasessionManager: MediaSessionManager? = null
     var mediaSession: MediaSessionCompat? = null
-    var mediaControl: MediaController.TransportControls? = null
     lateinit var stateBuilder: PlaybackStateCompat.Builder
+    var collap_notification: RemoteViews? = null
+    var expand_notification: RemoteViews? = null
+    var builder = NotificationCompat.Builder(this,CHANNEL_ID)
 
     override fun onBind(p0: Intent?): IBinder? {
         return this.binder
@@ -121,29 +125,10 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
         currentDuration = getSongDuration()
         currenSongId = getSongId()
         createNotificationChannel()
-
+        register()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-//        MediaButtonReceiver.handleIntent(mediaSession!!, intent)
-        intent?.let {
-            if (intent.action == ACTION_NOTIFICATION_BUTTON_CLICK) {
-                when (intent.getIntExtra(EXTRA_ACTION_TYPE, 0)) {
-                  R.id.img_previous_notification -> {
-                        actionBtnPlay()
-                    }
-
-                  R.id.img_play_notification -> {
-                        actionPrevious()
-                    }
-
-                    R.id.img_next_notification -> {
-                        actionNext()
-                    }
-                }
-            }
-
-        }
         return super.onStartCommand(intent, flags, startId)
 
     }
@@ -161,7 +146,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
         saveRepeatAndSuffleMode()
         saveSongId()
         removeNotification()
-
+        unregisterNotificationButtonClick()
     }
 
     fun initMediaPlayer() {
@@ -268,33 +253,24 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
 
     fun createCustomNotification() {
         val song = songList[songPos]
-        val customLayout = RemoteViews(packageName, R.layout.layout_notification_custom)
-        customLayout.setTextViewText(R.id.tv_songname_notification, song.songName)
-        customLayout.setTextViewText(R.id.tv_artist_notification, song.artistName)
-        customLayout.setImageViewResource(R.id.img_song_image_notification, R.drawable.album_art_1)
-        customLayout.setOnClickPendingIntent(
-            R.id.img_previous_notification, createPendingIntent(
-                R.id.img_previous_notification
-            )
-        )
-        customLayout.setOnClickPendingIntent(
-            R.id.img_play_notification, createPendingIntent(
-                R.id.img_play_notification
-            )
-        )
-        customLayout.setOnClickPendingIntent(
-            R.id.img_next_notification, createPendingIntent(
-                R.id.img_next_notification
-            )
-        )
+        creatExpandNotification(song)
+        creatCollapNotification(song)
+        val intent =Intent(this, MainActivity::class.java)
+        intent.flags =   Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setCustomBigContentView(customLayout)
+        val contentIntent =
+            PendingIntent.getActivity(this, 0, intent, 0)
+        val notification = builder
+            .setCustomBigContentView(expand_notification)
+            .setCustomContentView(collap_notification)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setColor(resources.getColor(R.color.background_fab))
+            .setColorized(true)
+            .setContentIntent(contentIntent)
             .setStyle(
                 androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
                     .setMediaSession(mediaSession?.sessionToken)
             )
-            .setSmallIcon(R.mipmap.ic_launcher)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .build()
         with(NotificationManagerCompat.from(this)) {
@@ -303,28 +279,77 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
 
     }
 
-    fun createPendingIntent(actionType: Int): PendingIntent {
-        val intent = Intent(this, PlayMusicService::class.java)
-        intent.action = ACTION_NOTIFICATION_BUTTON_CLICK
-        intent.putExtra(EXTRA_ACTION_TYPE, actionType)
-        return PendingIntent.getService(this, 0, intent, 0)
+    fun creatCollapNotification(song: Song): RemoteViews? {
+        collap_notification =
+            RemoteViews(packageName, R.layout.collap_custom_layout_notification)
+        collap_notification?.setTextViewText(R.id.tv_songname_collap_noti, song.songName)
+        collap_notification?.setTextViewText(R.id.tv_artist_collap_noti, song.artistName)
+        collap_notification?.setOnClickPendingIntent(
+            R.id.img_previous_collap_notification, createPendingIntent(
+                PlaybackType.PREVIOUS.type
+            )
+        )
+        collap_notification?.setOnClickPendingIntent(
+            R.id.img_play_collap_notification, createPendingIntent(
+                PlaybackType.PLAY.type
+            )
+        )
+        collap_notification?.setOnClickPendingIntent(
+            R.id.img_next_collap_notification, createPendingIntent(
+                PlaybackType.NEXT.type
+            )
+        )
+
+        return collap_notification
     }
 
-    private fun updateMetaData() {
-        val song = songList[songPos]
-        val albumArt = BitmapFactory.decodeResource(
-            resources,
-            R.drawable.album_art_1
-        ) //replace with medias albumArt
-        // Update the current metadata
-        mediaSession?.setMetadata(
-            MediaMetadataCompat.Builder()
-                .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, albumArt)
-                .putString(MediaMetadata.METADATA_KEY_ARTIST, song.artistName)
-                .putString(MediaMetadata.METADATA_KEY_ALBUM, song.albumName)
-                .putString(MediaMetadata.METADATA_KEY_TITLE, song.songName)
-                .build()
+    fun creatExpandNotification(song: Song): RemoteViews? {
+        expand_notification = RemoteViews(packageName, R.layout.layout_notification_custom)
+        expand_notification?.setTextViewText(R.id.tv_songname_notification, song.songName)
+        expand_notification?.setTextViewText(R.id.tv_artist_notification, song.artistName)
+
+        expand_notification?.setOnClickPendingIntent(
+            R.id.img_previous_notification, createPendingIntent(
+                PlaybackType.PREVIOUS.type
+            )
         )
+        expand_notification?.setOnClickPendingIntent(
+            R.id.img_play_notification, createPendingIntent(
+                PlaybackType.PLAY.type
+            )
+        )
+        expand_notification?.setOnClickPendingIntent(
+            R.id.img_next_notification, createPendingIntent(
+                PlaybackType.NEXT.type
+            )
+        )
+        return expand_notification
+
+    }
+
+    fun createPendingIntent(actionType: Int): PendingIntent {
+        val intent = Intent()
+
+        when (actionType) {
+            PlaybackType.PREVIOUS.type -> {
+                intent.action = ACTION_PREVIOUS
+                intent.putExtra(EXTRA_ACTION_TYPE, actionType)
+                return PendingIntent.getBroadcast(this, 0, intent, 0)
+            }
+
+            PlaybackType.PLAY.type -> {
+                intent.action = ACTION_PLAY
+                intent.putExtra(EXTRA_ACTION_TYPE, actionType)
+                return PendingIntent.getBroadcast(this, 0, intent, 0)
+            }
+
+            PlaybackType.NEXT.type -> {
+                intent.action = ACTION_NEXT
+                intent.putExtra(EXTRA_ACTION_TYPE, actionType)
+                return PendingIntent.getBroadcast(this, 0, intent, 0)
+            }
+        }
+        return PendingIntent.getBroadcast(this, 0, intent, 0)
     }
 
     fun removeNotification() {
@@ -468,4 +493,61 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
         playMusic()
     }
 
+    fun register() {
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(ACTION_NEXT)
+        intentFilter.addAction(ACTION_PREVIOUS)
+        intentFilter.addAction(ACTION_PLAY)
+        registerReceiver(receiver, intentFilter)
+
+    }
+
+    fun unregisterNotificationButtonClick() {
+        unregisterReceiver(receiver)
+    }
+
+    val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+
+            when (intent?.action) {
+                ACTION_PLAY -> {
+                    actionBtnPlay()
+                    if (mediaPlayer!!.isPlaying) {
+                        collap_notification?.setImageViewResource(
+                            R.id.img_play_collap_notification,
+                            R.drawable.ic_pause_white_24dp
+                        )
+                        expand_notification?.setImageViewResource(
+                            R.id.img_play_notification,
+                            R.drawable.ic_pause_white_24dp
+                        )
+
+                    } else {
+                        collap_notification?.setImageViewResource(
+                            R.id.img_play_collap_notification,
+                            R.drawable.ic_play_arrow_white_24dp
+                        )
+
+                        expand_notification?.setImageViewResource(
+                            R.id.img_play_notification,
+                            R.drawable.ic_play_arrow_white_24dp
+                        )
+                        builder.setCustomBigContentView(expand_notification)
+                        builder.setCustomContentView(collap_notification)
+                        with(NotificationManagerCompat.from(applicationContext)) {
+                            notify(NOTIFICATION_ID, builder.build())
+                        }
+                    }
+                }
+
+                ACTION_PREVIOUS -> {
+                    actionPrevious()
+                }
+
+                ACTION_NEXT -> {
+                    actionNext()
+                }
+            }
+        }
+    }
 }
