@@ -442,9 +442,11 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         }
         if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
             img_play_playback.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
+            mainActivity?.musicService?.updateNoti()
             mainActivity?.musicService?.mediaPlayer?.pause()
         } else {
             img_play_playback.setImageResource(R.drawable.ic_pause_blue_24dp)
+            mainActivity?.musicService?.updateNoti()
             mainActivity?.musicService?.mediaPlayer?.start()
         }
     }

@@ -44,7 +44,7 @@ enum class PlaybackType(var type: Int) {
 }
 
 class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
-    MediaPlayer.OnCompletionListener {
+        MediaPlayer.OnCompletionListener {
     override fun onPrepared(p0: MediaPlayer?) {
         mediaPlayer?.start()
     }
@@ -110,7 +110,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
     lateinit var stateBuilder: PlaybackStateCompat.Builder
     var collap_notification: RemoteViews? = null
     var expand_notification: RemoteViews? = null
-    var builder = NotificationCompat.Builder(this,CHANNEL_ID)
+    var builder = NotificationCompat.Builder(this, CHANNEL_ID)
 
     override fun onBind(p0: Intent?): IBinder? {
         return this.binder
@@ -151,8 +151,8 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
 
     fun initMediaPlayer() {
         mediaPlayer?.setWakeMode(
-            getApplicationContext(),
-            PowerManager.PARTIAL_WAKE_LOCK
+                getApplicationContext(),
+                PowerManager.PARTIAL_WAKE_LOCK
         )
         mediaPlayer?.setOnPreparedListener(this)
         mediaPlayer?.setOnCompletionListener(this)
@@ -165,13 +165,13 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
 //        mediaControl = mediaSession?.controller?.transportControls
         mediaSession?.setMediaButtonReceiver(null)
         stateBuilder = PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY
-                        or PlaybackStateCompat.ACTION_PAUSE
-                        or PlaybackStateCompat.ACTION_PLAY_PAUSE
-                        or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-                        or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
-            )
+                .setActions(
+                        PlaybackStateCompat.ACTION_PLAY
+                                or PlaybackStateCompat.ACTION_PAUSE
+                                or PlaybackStateCompat.ACTION_PLAY_PAUSE
+                                or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                                or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                )
         mediaSession?.setPlaybackState(stateBuilder.build())
         mediaSession?.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
@@ -212,39 +212,39 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
 
 //        val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
         val contentIntent =
-            PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
+                PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
         //create new notification
         val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle(song.songName)
-            .setContentText(song.artistName)
-            .setContentIntent(contentIntent)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setColorized(true)
-            .addAction(
-                R.drawable.ic_play_previous_white,
-                "previous",
-                MediaButtonReceiver.buildMediaButtonPendingIntent(
-                    this,
-                    PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(song.songName)
+                .setContentText(song.artistName)
+                .setContentIntent(contentIntent)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setColorized(true)
+                .addAction(
+                        R.drawable.ic_play_previous_white,
+                        "previous",
+                        MediaButtonReceiver.buildMediaButtonPendingIntent(
+                                this,
+                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                        )
                 )
-            )
-            .addAction(
-                icon_pause_play,
-                titlePlay_pause,
-                MediaButtonReceiver.buildMediaButtonPendingIntent(
-                    this,
-                    PlaybackStateCompat.ACTION_PAUSE
+                .addAction(
+                        icon_pause_play,
+                        titlePlay_pause,
+                        MediaButtonReceiver.buildMediaButtonPendingIntent(
+                                this,
+                                PlaybackStateCompat.ACTION_PAUSE
+                        )
                 )
-            )
-            .addAction(
-                R.drawable.ic_play_next_white,
-                "next",
-                MediaButtonReceiver.buildMediaButtonPendingIntent(
-                    this,
-                    PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                .addAction(
+                        R.drawable.ic_play_next_white,
+                        "next",
+                        MediaButtonReceiver.buildMediaButtonPendingIntent(
+                                this,
+                                PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                        )
                 )
-            )
         with(NotificationManagerCompat.from(this)) {
             notify(NOTIFICATION_ID, builder.build())
         }
@@ -255,24 +255,24 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
         val song = songList[songPos]
         creatExpandNotification(song)
         creatCollapNotification(song)
-        val intent =Intent(this, MainActivity::class.java)
-        intent.flags =   Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-
+        val intent = Intent(this, MainActivity::class.java)
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
         val contentIntent =
-            PendingIntent.getActivity(this, 0, intent, 0)
+                PendingIntent.getActivity(this, 0, intent, 0)
         val notification = builder
-            .setCustomBigContentView(expand_notification)
-            .setCustomContentView(collap_notification)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setColor(resources.getColor(R.color.background_fab))
-            .setColorized(true)
-            .setContentIntent(contentIntent)
-            .setStyle(
-                androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
-                    .setMediaSession(mediaSession?.sessionToken)
-            )
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .build()
+                .setCustomBigContentView(expand_notification)
+                .setCustomContentView(collap_notification)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setColor(resources.getColor(R.color.background_fab))
+                .setColorized(true)
+                .setContentIntent(contentIntent)
+                .setStyle(
+                        androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
+                                .setMediaSession(mediaSession?.sessionToken)
+                )
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .build()
         with(NotificationManagerCompat.from(this)) {
             notify(NOTIFICATION_ID, notification)
         }
@@ -281,23 +281,36 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
 
     fun creatCollapNotification(song: Song): RemoteViews? {
         collap_notification =
-            RemoteViews(packageName, R.layout.collap_custom_layout_notification)
+                RemoteViews(packageName, R.layout.collap_custom_layout_notification)
         collap_notification?.setTextViewText(R.id.tv_songname_collap_noti, song.songName)
         collap_notification?.setTextViewText(R.id.tv_artist_collap_noti, song.artistName)
+
+        if (mediaPlayer!!.isPlaying) {
+            collap_notification?.setImageViewResource(
+                    R.id.img_play_collap_notification,
+                    R.drawable.ic_play_arrow_white_24dp
+            )
+
+        } else {
+            collap_notification?.setImageViewResource(
+                    R.id.img_play_collap_notification,
+                    R.drawable.ic_pause_white_24dp
+            )
+        }
         collap_notification?.setOnClickPendingIntent(
-            R.id.img_previous_collap_notification, createPendingIntent(
+                R.id.img_previous_collap_notification, createPendingIntent(
                 PlaybackType.PREVIOUS.type
-            )
+        )
         )
         collap_notification?.setOnClickPendingIntent(
-            R.id.img_play_collap_notification, createPendingIntent(
+                R.id.img_play_collap_notification, createPendingIntent(
                 PlaybackType.PLAY.type
-            )
+        )
         )
         collap_notification?.setOnClickPendingIntent(
-            R.id.img_next_collap_notification, createPendingIntent(
+                R.id.img_next_collap_notification, createPendingIntent(
                 PlaybackType.NEXT.type
-            )
+        )
         )
 
         return collap_notification
@@ -307,21 +320,32 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
         expand_notification = RemoteViews(packageName, R.layout.layout_notification_custom)
         expand_notification?.setTextViewText(R.id.tv_songname_notification, song.songName)
         expand_notification?.setTextViewText(R.id.tv_artist_notification, song.artistName)
+        if (mediaPlayer!!.isPlaying) {
+            expand_notification?.setImageViewResource(
+                    R.id.img_play_notification,
+                    R.drawable.ic_play_arrow_white_24dp
+            )
 
+        } else {
+            expand_notification?.setImageViewResource(
+                    R.id.img_play_notification,
+                    R.drawable.ic_pause_white_24dp
+            )
+        }
         expand_notification?.setOnClickPendingIntent(
-            R.id.img_previous_notification, createPendingIntent(
+                R.id.img_previous_notification, createPendingIntent(
                 PlaybackType.PREVIOUS.type
-            )
+        )
         )
         expand_notification?.setOnClickPendingIntent(
-            R.id.img_play_notification, createPendingIntent(
+                R.id.img_play_notification, createPendingIntent(
                 PlaybackType.PLAY.type
-            )
+        )
         )
         expand_notification?.setOnClickPendingIntent(
-            R.id.img_next_notification, createPendingIntent(
+                R.id.img_next_notification, createPendingIntent(
                 PlaybackType.NEXT.type
-            )
+        )
         )
         return expand_notification
 
@@ -371,7 +395,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
             }
             // Register the channel with the system
             val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -468,15 +492,18 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
 
     fun actionBtnPlay() {
         if (mediaPlayer!!.isPlaying) {
+            updateNoti()
             mediaPlayer?.pause()
         } else {
+
             if (songPos < songList.size - 1) {
+                updateNoti()
                 mediaPlayer?.start()
             } else {
                 playMusic()
             }
-
         }
+
         sendBroadcastUpdateView(songPos)
     }
 
@@ -499,7 +526,6 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
         intentFilter.addAction(ACTION_PREVIOUS)
         intentFilter.addAction(ACTION_PLAY)
         registerReceiver(receiver, intentFilter)
-
     }
 
     fun unregisterNotificationButtonClick() {
@@ -511,33 +537,8 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
 
             when (intent?.action) {
                 ACTION_PLAY -> {
+
                     actionBtnPlay()
-                    if (mediaPlayer!!.isPlaying) {
-                        collap_notification?.setImageViewResource(
-                            R.id.img_play_collap_notification,
-                            R.drawable.ic_pause_white_24dp
-                        )
-                        expand_notification?.setImageViewResource(
-                            R.id.img_play_notification,
-                            R.drawable.ic_pause_white_24dp
-                        )
-
-                    } else {
-                        collap_notification?.setImageViewResource(
-                            R.id.img_play_collap_notification,
-                            R.drawable.ic_play_arrow_white_24dp
-                        )
-
-                        expand_notification?.setImageViewResource(
-                            R.id.img_play_notification,
-                            R.drawable.ic_play_arrow_white_24dp
-                        )
-                        builder.setCustomBigContentView(expand_notification)
-                        builder.setCustomContentView(collap_notification)
-                        with(NotificationManagerCompat.from(applicationContext)) {
-                            notify(NOTIFICATION_ID, builder.build())
-                        }
-                    }
                 }
 
                 ACTION_PREVIOUS -> {
@@ -547,7 +548,15 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
                 ACTION_NEXT -> {
                     actionNext()
                 }
+
             }
         }
     }
+
+    fun updateNoti() {
+        creatCollapNotification(songList[songPos])
+        creatExpandNotification(songList[songPos])
+        createCustomNotification()
+    }
+
 }

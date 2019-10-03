@@ -353,9 +353,11 @@ class ListSongFragment : Fragment(), OnItemCommonClick {
             mainActivity!!.isFirstPlay = false
         }
         if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
+            mainActivity?.musicService?.updateNoti()
             img_play_playback.setImageResource(R.drawable.ic_play_arrow_blue_24dp)
             mainActivity?.musicService?.mediaPlayer?.pause()
         } else {
+            mainActivity?.musicService?.updateNoti()
             img_play_playback.setImageResource(R.drawable.ic_pause_blue_24dp)
             mainActivity?.musicService?.mediaPlayer?.start()
         }
