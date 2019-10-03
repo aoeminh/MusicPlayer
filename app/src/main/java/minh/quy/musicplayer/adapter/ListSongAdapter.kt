@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.item_song_fragment.view.*
 import minh.quy.musicplayer.Constant.Companion.MAX_DEFAULT_COUNT
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.Utils
+import minh.quy.musicplayer.action.IOptionListener
 import minh.quy.musicplayer.action.OnItemCommonClick
 import minh.quy.musicplayer.model.Song
 
@@ -18,6 +19,8 @@ class ListSongAdapter(var context: Context, var listsong: MutableList<Song>) :
 
     var onItemCommonClick: OnItemCommonClick? = null
     var currenImage = 1
+    var iOptionListener: IOptionListener? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_song_fragment, parent, false)
         return ViewHolder(view)
@@ -86,6 +89,14 @@ class ListSongAdapter(var context: Context, var listsong: MutableList<Song>) :
         holder.item.setOnClickListener {
             onItemCommonClick?.onItemClick(position)
         }
+
+        holder.item.img_option_item_song.setOnClickListener {
+            iOptionListener?.onOptionClick(position, it)
+        }
+    }
+
+    fun setOptionListener(iOptionListener: IOptionListener){
+        this.iOptionListener = iOptionListener
     }
 
     fun setOnItemClick(onItemCommonClick: OnItemCommonClick) {

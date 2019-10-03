@@ -1,20 +1,28 @@
 package minh.quy.musicplayer.fragment
 
 import android.app.AlertDialog
+import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.RingtoneManager
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import minh.quy.musicplayer.R
 import minh.quy.musicplayer.Utils.RequestPermission
 import minh.quy.musicplayer.activity.MainActivity
-
+import minh.quy.musicplayer.model.Song
+import java.io.File
 
 
 open class BaseFragment : Fragment() {
+
+    val WRITE_SETTING_PERMISSION = 99
 
     lateinit var mainActivity: MainActivity
     var contextBase: Context? = null
@@ -83,6 +91,55 @@ open class BaseFragment : Fragment() {
         context!!,
         android.Manifest.permission.READ_EXTERNAL_STORAGE
     ) == PackageManager.PERMISSION_GRANTED
+
+
+    fun setRingtone(song: Song) {
+        val path = song.data
+        val file = File(path!!)
+        val contentValues = ContentValues();
+        contentValues.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath())
+        val filterName = path.substring(path.lastIndexOf("/") + 1)
+        contentValues.put(MediaStore.MediaColumns.TITLE, filterName)
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
+        contentValues.put(MediaStore.MediaColumns.SIZE, file.length())
+        contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true)
+        val uri = MediaStore.Audio.Media.getContentUriForPath(path)
+        val cursor = context!!.getContentResolver().query(
+            uri!!,
+            null,
+            MediaStore.MediaColumns.DATA + "=?",
+            arrayOf(path),
+            null
+        )
+        if (cursor != null && cursor.moveToFirst() && cursor.getCount() > 0) {
+            val id = cursor.getString(0)
+            contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true)
+            context!!.getContentResolver().update(
+                uri,
+                contentValues,
+                MediaStore.MediaColumns.DATA + "=?",
+                arrayOf(path)
+            )
+            var newuri = ContentUris.withAppendedId(uri, id.toLong())
+            try {
+                RingtoneManager.setActualDefaultRingtoneUri(
+                    context,
+                    RingtoneManager.TYPE_RINGTONE,
+                    newuri
+                )
+                Toast.makeText(context, resources.getString(R.string.set_ringtone_success), Toast.LENGTH_SHORT).show();
+            } catch (t: Throwable) {
+                t.printStackTrace();
+            }
+            cursor.close();
+        }
+
+    }
+
+    open fun showToastOneSongAdded(){
+        Toast.makeText(context, String.format(resources.getString(R.string.added_one_song),1), Toast.LENGTH_SHORT).show();
+
+    }
 
     open fun showDialogSetting() {
         isNeedRequest = false

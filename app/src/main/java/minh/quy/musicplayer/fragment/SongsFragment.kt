@@ -1,15 +1,12 @@
 package minh.quy.musicplayer.fragment
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
 import android.content.pm.PackageManager
-import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,37 +14,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fast_scroller.*
 import kotlinx.android.synthetic.main.fragment_songs.*
 import kotlinx.android.synthetic.main.popup_add_to_playlist.view.*
-import layout.HomeFragment
 import minh.quy.musicplayer.Constant
 import minh.quy.musicplayer.R
-import minh.quy.musicplayer.Utils.RequestPermission
 import minh.quy.musicplayer.action.IOptionListener
 import minh.quy.musicplayer.action.OnItemCommonClick
-import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.AddToPlaylistAdapter
 import minh.quy.musicplayer.adapter.SongFragmentAdapter
-import minh.quy.musicplayer.funtiontoolbar.FunctionToolbarPlaylist
-import minh.quy.musicplayer.model.Album
+
 import minh.quy.musicplayer.model.PlayListSong
 import minh.quy.musicplayer.model.Song
 import minh.quy.musicplayer.service.PlayMusicService
-import java.io.File
-import java.util.jar.Manifest
 
 class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
 
     var songlist: MutableList<Song> = arrayListOf()
     var adapterSong: SongFragmentAdapter? = null
     var receiver: BroadcastReceiver? = null
-    val WRITE_SETTING_PERMISSION = 99
     var itemClickPosition = 0
     var addAdapter: AddToPlaylistAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,11 +107,11 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
                 }
 
                 R.id.item_go_to_album -> {
-                    gotoSongFragment(position, Constant.TypeListsong.ALBUM.type)
+                    gotoListSongFragment(position, Constant.TypeListsong.ALBUM.type)
                 }
 
                 R.id.item_go_to_artist -> {
-                    gotoSongFragment(position, Constant.TypeListsong.ARTIST.type)
+                    gotoListSongFragment(position, Constant.TypeListsong.ARTIST.type)
                 }
 
                 R.id.item_set_ringtone -> {
@@ -150,12 +140,19 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
                 showDialogSetting()
             }
         }
+    }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == WRITE_SETTING_PERMISSION && Settings.System.canWrite(context)) {
+                setRingtone(songlist[itemClickPosition])
+        }
     }
 
     override fun showDialogSetting() {
         isNeedRequest = false
-        var builder = AlertDialog.Builder(activity)
+        val builder = AlertDialog.Builder(activity)
         builder.apply {
             setCancelable(false)
             setMessage(R.string.permission_necessary)
@@ -219,7 +216,7 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
         alertDialog?.show()
     }
 
-    fun gotoSongFragment(position: Int, type: Int) {
+    fun gotoListSongFragment(position: Int, type: Int) {
         val fragment: ListSongFragment
         if (type == Constant.TypeListsong.ALBUM.type) {
             fragment =
@@ -243,52 +240,10 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
         transaction.commit()
     }
 
-    fun setRingtone(song: Song) {
-        val path = song.data
-        val file = File(path!!)
-        val contentValues = ContentValues();
-        contentValues.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath())
-        val filterName = path.substring(path.lastIndexOf("/") + 1)
-        contentValues.put(MediaStore.MediaColumns.TITLE, filterName)
-        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
-        contentValues.put(MediaStore.MediaColumns.SIZE, file.length())
-        contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true)
-        val uri = MediaStore.Audio.Media.getContentUriForPath(path)
-        var cursor = context!!.getContentResolver().query(
-            uri!!,
-            null,
-            MediaStore.MediaColumns.DATA + "=?",
-            arrayOf(path),
-            null
-        )
-        if (cursor != null && cursor.moveToFirst() && cursor.getCount() > 0) {
-            val id = cursor.getString(0)
-            contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true)
-            context!!.getContentResolver().update(
-                uri,
-                contentValues,
-                MediaStore.MediaColumns.DATA + "=?",
-                arrayOf(path)
-            )
-            var newuri = ContentUris.withAppendedId(uri, id.toLong())
-            try {
-                RingtoneManager.setActualDefaultRingtoneUri(
-                    context,
-                    RingtoneManager.TYPE_RINGTONE,
-                    newuri
-                )
-                Toast.makeText(context, "Set as Ringtone Successfully.", Toast.LENGTH_SHORT).show();
-            } catch (t: Throwable) {
-                t.printStackTrace();
-            }
-            cursor.close();
-        }
 
-    }
 
     fun requestWriteSettingPermission() {
         if (!isHasPermission()) {
-
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
                 intent.setData(Uri.parse("package:" + context!!.getPackageName()))
@@ -301,7 +256,6 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
             }
 
         }
-
     }
 
     fun isHasPermission(): Boolean {
@@ -317,10 +271,12 @@ class SongsFragment : BaseFragment(), OnItemCommonClick, IOptionListener {
 
     fun playNext(song: Song) {
         mainActivity.musicService?.songList?.add(mainActivity.musicService?.songPos!! + 1, song)
+        showToastOneSongAdded()
     }
 
     fun addToQueue(song: Song) {
         mainActivity.musicService?.songList?.add(song)
+        showToastOneSongAdded()
     }
 
     fun setSongSelected(songId: String) {

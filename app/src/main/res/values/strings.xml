@@ -43,7 +43,7 @@
     <string name="all_song_already">All songs already exist in playlist </string>
     <string name="done">Done</string>
     <string name="added_to_queue">%d songs added to queue</string>
-
+    <string name="set_ringtone_success">Set as Ringtone Successfully</string>
 
     <!-- play song fragment -->
     <string name="suffle_on">Suffle on</string>

@@ -220,6 +220,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
         initSuffleBtn()
         setBlurImageBackground()
         updateSeekbar()
+        mainActivity!!.isFirstPlay = false
     }
 
     fun setBlurImageBackground() {
@@ -421,7 +422,7 @@ class PlaySongFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnTou
     }
 
     fun updateSeekbar() {
-        if(mediaPlayer!!.isPlaying){
+        if(!mainActivity!!.isFirstPlay){
             var currentPos = mediaPlayer?.currentPosition
             if (currentPos!! < 0) {
                 currentPos = mainActivity?.musicService?.currentDuration!!.toInt()
