@@ -9,10 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.bottom_sheet_fragment.*
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.Utils.SongTouchHelper
 import minh.quy.musicplayer.activity.MainActivity
 import minh.quy.musicplayer.adapter.BottomSheetAdapter
 import minh.quy.musicplayer.main
@@ -33,6 +35,7 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
     var mAdapter: BottomSheetAdapter? = null
     var mainActivity: MainActivity? = null
     var receiver: BroadcastReceiver? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (activity is MainActivity) {
@@ -58,6 +61,10 @@ class BottomSheetFragment() : BottomSheetDialogFragment(),
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = mAdapter
         }
+
+        val songTouchHelper = SongTouchHelper(mAdapter!!)
+        val touchHelper = ItemTouchHelper(songTouchHelper)
+        touchHelper.attachToRecyclerView(rv_list_bottom_sheet)
 
     }
 

@@ -8,10 +8,31 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_list_bottom_sheet.view.*
 import minh.quy.musicplayer.R
+import minh.quy.musicplayer.Utils.SongTouchHelper
 import minh.quy.musicplayer.model.Song
+import java.util.Collections.swap
+
+import java.util.*
+
 
 class BottomSheetAdapter(var context: Context, var list: MutableList<Song>) :
-    RecyclerView.Adapter<BottomSheetAdapter.ViewHolder>() {
+    RecyclerView.Adapter<BottomSheetAdapter.ViewHolder>(), SongTouchHelper.ActionCompletionContract {
+    override fun onViewMoved(oldPosition: Int, newPosition: Int) {
+        if (oldPosition < newPosition) {
+            for (i in oldPosition until newPosition) {
+                swap(list, i, i + 1)
+            }
+        } else {
+            for (i in oldPosition downTo newPosition + 1) {
+                swap(list, i, i - 1)
+            }
+        }
+        notifyItemMoved(oldPosition, newPosition)
+    }
+
+    override fun onViewSwiped(position: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 
     var functionBottomFragmen: IFunctionBottomFragment? = null
