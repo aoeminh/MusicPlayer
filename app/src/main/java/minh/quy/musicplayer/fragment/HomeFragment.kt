@@ -79,12 +79,14 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mainActivity?.musicService?.let { mainActivity?.musicService?.songPos?.let { position ->
-            mainActivity?.musicService?.songList?.get(
-                position
-            )?.let { song -> setDataForBottomPlayback(song) }
+        mainActivity?.musicService?.let {
+            mainActivity?.musicService?.songPos?.let { position ->
+                mainActivity?.musicService?.songList?.get(
+                    position
+                )?.let { song -> setDataForBottomPlayback(song) }
 
-        } }
+            }
+        }
 
 
     }
@@ -142,22 +144,27 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             R.id.item_search_toolbar -> {
                 Toast.makeText(activity, "Search", Toast.LENGTH_SHORT).show()
             }
-            minh.quy.musicplayer.R.id.item_voice_toolbar -> {
+            R.id.item_voice_toolbar -> {
                 Toast.makeText(activity, "Voice", Toast.LENGTH_SHORT).show()
             }
-            minh.quy.musicplayer.R.id.item_create_playlist -> {
+            R.id.item_create_playlist -> {
                 functionToolbarPlaylist?.createNewPlaylist()
             }
-            minh.quy.musicplayer.R.id.item_equalizer -> {
+            R.id.item_equalizer -> {
+                val transaction = mainActivity?.fragmentManager?.beginTransaction()
+                val equalizerFragment = EqualizerFragment.newInstance()
+                transaction?.replace(R.id.frame_main,equalizerFragment)
+                transaction?.addToBackStack(null)
+                transaction?.commit()
                 Toast.makeText(activity, "Equalizer", Toast.LENGTH_SHORT).show()
             }
-            minh.quy.musicplayer.R.id.item_sort -> {
+            R.id.item_sort -> {
                 Toast.makeText(activity, "Sort", Toast.LENGTH_SHORT).show()
             }
-            minh.quy.musicplayer.R.id.item_sufftle -> {
+            R.id.item_sufftle -> {
                 Toast.makeText(activity, "Sufftle", Toast.LENGTH_SHORT).show()
             }
-            minh.quy.musicplayer.R.id.item_add_to_home_screen -> {
+            R.id.item_add_to_home_screen -> {
                 Toast.makeText(activity, "Add", Toast.LENGTH_SHORT).show()
             }
 
@@ -185,7 +192,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         val transaction = mainActivity!!.fragmentManager.beginTransaction()
         transaction.setCustomAnimations(
             R.anim.fragment_enter,
-            R.anim.fragment_exit,R.anim.fragment_enter,
+            R.anim.fragment_exit, R.anim.fragment_enter,
             R.anim.fragment_exit
         )
         transaction.replace(R.id.frame_main, fragment, null)
@@ -393,12 +400,16 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
                     PlayMusicService.ACTION_UPDATE_VIEW -> {
-                        setDataForBottomPlayback(mainActivity?.musicService?.songList?.get(getSongPositon())!!)
+                        setDataForBottomPlayback(
+                            mainActivity?.musicService?.songList?.get(
+                                getSongPositon()
+                            )!!
+                        )
 
-                        }
                     }
                 }
             }
+        }
 
         val intentFilter = IntentFilter()
         intentFilter.addAction(PlayMusicService.ACTION_UPDATE_VIEW)
@@ -438,7 +449,7 @@ class HomeFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
         if (mainActivity!!.isFirstPlay) {
             mainActivity?.musicService?.setSongPosition(getSongPositon())
             mainActivity?.musicService?.playMusic()
-            mainActivity!!.isFirstPlay =false
+            mainActivity!!.isFirstPlay = false
         }
         if (mainActivity?.musicService?.mediaPlayer!!.isPlaying) {
             img_play_playback.setImageResource(R.drawable.ic_play_arrow_blue_24dp)

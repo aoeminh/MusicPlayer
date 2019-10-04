@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container_equalizer_fragment"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/container_equalizer_fragment">
+    android:orientation="vertical"
+    android:paddingStart="@dimen/_10sdp"
+    android:paddingEnd="@dimen/_10sdp">
+    <androidx.appcompat.widget.Toolbar android:id="@+id/toolbar_equalizer"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_gravity="center"
+        android:background="@color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/equalizer"
+        app:titleTextColor="@color/white" />
 
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/spinner_equalizer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        />
 </LinearLayout>
