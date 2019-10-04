@@ -75,4 +75,7 @@
     <string name="channel_name">music_player</string>
     <string name="channel_description">music_player</string>
 
+    <!-- equalizer fragment -->
+    <string name="frequency_header">%d Hz</string>
+
 </resources>

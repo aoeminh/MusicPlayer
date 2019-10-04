@@ -11,6 +11,7 @@ import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.MediaMetadata
 import android.media.MediaPlayer
+import android.media.audiofx.Equalizer
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
@@ -111,6 +112,7 @@ class PlayMusicService : Service(), MediaPlayer.OnPreparedListener,
     var collap_notification: RemoteViews? = null
     var expand_notification: RemoteViews? = null
     var builder = NotificationCompat.Builder(this, CHANNEL_ID)
+    var equalizer: Equalizer? = null
 
     override fun onBind(p0: Intent?): IBinder? {
         return this.binder
