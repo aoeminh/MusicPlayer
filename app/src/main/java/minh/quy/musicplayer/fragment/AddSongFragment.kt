@@ -156,6 +156,7 @@ class AddSongFragment : BaseFragment(), AddSongAdapter.onItemClick {
         }
     }
 
+
     fun initRecyclerView() {
         rv_add_song_fragment?.apply {
             layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_equalizer.*
@@ -44,9 +45,25 @@ class EqualizerFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initToolbar()
         setupEqualizerFxAndUI()
         createEqualizer(view)
 
+    }
+
+    fun initToolbar() {
+        val activity = activity as AppCompatActivity?
+        toolbar_equalizer.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        activity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        activity?.supportActionBar?.setHomeButtonEnabled(true)
+        activity?.supportActionBar?.setDisplayShowTitleEnabled(false);
+        toolbar_equalizer?.setNavigationOnClickListener {
+            goBack()
+        }
+    }
+
+    fun goBack() {
+        mainActivity.fragmentManager.popBackStack()
     }
 
     fun setupEqualizerFxAndUI() {
@@ -180,18 +197,18 @@ class EqualizerFragment : BaseFragment() {
             }
         }
         val equalizerSpinnerAdapter =
-            ArrayAdapter<String>(
+            ArrayAdapter(
                 context!!,
-                android.R.layout.simple_spinner_item,
+                R.layout.item_spinner_equalizer,
+                R.id.text1,
                 equalizerPresetNames
             )
-        equalizerSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        equalizerSpinnerAdapter.setDropDownViewResource(R.layout.checked_item_spinner)
 
         spinner_equalizer.adapter = equalizerSpinnerAdapter
 
         spinner_equalizer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
-
             }
 
             override fun onItemSelected(
